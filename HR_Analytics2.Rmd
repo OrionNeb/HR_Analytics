@@ -4,6 +4,7 @@ author: "Christian Roth"
 date: "2023-09-03"
 output: 
   html_document:
+    css: styles.css
     toc: yes
     toc_depth: 3
     df_print: paged
@@ -15,22 +16,105 @@ csl: apa.csl
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+```{r, message=FALSE, include=FALSE}
+if(!require("tidyverse")) {install.packages("tidyverse");library("tidyverse")}
+#zur einfachen Speicherung und Bearbeitung von 'Tibbles' (Alternative zu den herkömmlichen Dataframes)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+if(!require("ggplot2")) {install.packages("ggplot2");library("ggplot2")}
+#zur Visualisierung
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+if(!require("lubridate")) {install.packages("lubridate");library("lubridate")}
+#macht es einfacher, mit Datums- und Zeitangaben zu arbeiten
 
-```{r cars}
-summary(cars)
+if(!require("explore")) {install.packages("explore");library("explore")}
+#zur grafischen Erkundung einer Variable oder Tabelle
+
+if(!require("rpart")) {install.packages("rpart");library("rpart")}
+#wird verwendet für die Erstellung von Erstellung von Entscheidungsbaum-Modellensowohl für Klassifikations- als auch für Regressionsanalysen
+
+if(!require("caret")) {install.packages("caret");library("caret")}
+# wird für maschinelles Lernen, Modelltraining, Evaluierung und Auswahl von Modellen verwendet
+
+if(!require("rpart.plot")) {install.packages("rpart.plot");library("rpart.plot")}
+#um die Darstellung und Visualisierung von Entscheidungsbaum-Modellen zu verbessern, die mit dem rpart-Paket erstellt wurden
+
+if(!require("randomForest")) {install.packages("randomForest");library("randomForest")}
+#steht für die Implementierung des Random Forest Algorithmus, welches eine leistungsstarke Methode für maschinelles Lernen ist, die für Klassifikations- und Regressionsaufgaben verwendet wird
+
+if(!require("psych")) {install.packages("psych");library("psych")}
+#wird für die Durchführung von psychometrischen Analysen und psychologischen Tests in der Psychologie und verwandten Bereichen verwendet
+
+library(readr)
+#ist Teil des tidyverse und liest den Datensatz ein
+
+library("viridis")
+#zum Erstellen von farbigen Grafiken und Plots
+
+library("corrplot")
+#bietet Funktionen zur Visualisierung von Korrelationsmatrizen
+
+library("GGally")
+#ermöglicht die Erstellung von Paardiagrammen und anderen komplexen Diagrammen
+
+library("Metrics")
+#Sammlung von Funktionen zur Bewertung von Modellen, insb. Machine-Learning-Umgebungen
+
+library("neuralnet")
+#ermöglicht das Training und die Erstellung von künstlichen neuralen Netzwerken
+
+library("purrr")
+#bietet Funktionen zur Arbeit mit Funktionen und Vektoren, um den Umgang mit Daten zu erleichtern
+
+library("dplyr")
+#bietet eine Reihe von Funktionen, die speziell dafür entwickelt wurden, um Datenmanipulationen zu vereinfachen
+
+library("tidyr")
+#wird verwendet, um "unordentliche" Daten zu bereinigen
+
+library("rlang")
+#zentrale Sammlung von Funktionen und Werkzeugen, die in R für die Programmierung mit Tidyverse-Paketen entwickelt wurden
+library(tibble)
+#ist Teil des "tidyverse"-Ökosystems in R und bietet eine moderne Repräsentation von Dataframes
+
+rm(list = ls())
+
 ```
 
-## Including Plots
+# 1. Business Understanding
 
-You can also embed plots, for example:
+## Zielsetzung
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+Das übergeordnete Ziel dieses Berichts ist es, die Faktoren zu identifizieren und zu analysieren, die die Jobzufriedenheit von Mitarbeitern beeinflussen. Dabei möchten wir insbesondere verstehen, wie verschiedene Aspekte wie Gehalt, Arbeitsbedingungen, Mitarbeiterbeziehungen und anerkannte Arbeitsleistung die Zufriedenheit am Arbeitsplatz beeinflussen. Die Ergebnisse dieser Analyse sollen als Grundlage für HR-Entscheidungen und -Strategien dienen, um die Mitarbeiterzufriedenheit und -bindung zu verbessern.
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Fragen, die beantwortet werden sollen
+
+* Welche Faktoren haben den größten Einfluss auf die Jobzufriedenheit?  
+* Wie korrelieren Gehalt, Arbeitsbedingungen und andere Variablen mit der Jobzufriedenheit?  
+* Welche Empfehlungen können wir für die Personalabteilung ableiten, um die Mitarbeiterzufriedenheit zu verbessern?  
+
+## Aktualisierte These
+
+Die zentrale These dieses Berichts lautet:  
+
+**"Mitarbeiter, die ein höheres Gehalt erhalten, bessere Arbeitsbedingungen vorfinden, positive Mitarbeiterbeziehungen pflegen und deren Arbeitsleistung anerkannt wird bzw. deren Arbeitsanforderungen erfüllbar sind, haben eine höhere Jobzufriedenheit."**  
+
+In diesem Zusammenhang werden spezifische Variablen wie **"MonthlyIncome"**, **"WorkLifeBalance"**, **"RelationshipSatisfaction"** und andere näher betrachtet und analysiert.
+
+## Methodik
+
+Dieser Bericht wird nach dem Cross-Industry Standard Process for Data Mining (CRISP-DM) entwickelt. Dieses standardisierte Vorgehensmodell ermöglicht eine strukturierte und effiziente Analyse von Datensätzen und ist branchenübergreifend anerkannt. 
+
+Der CRISP-DM-Leitfaden (Cross-Industry Standard Process for Data Mining) wurde ursprünglich im Jahr 1999 veröffentlicht. Dieser Leitfaden stellt ein Rahmenwerk für den Prozess der Datenanalyse und des Data Mining vor und hat zum Ziel, den gesamten Lebenszyklus eines Data-Mining-Projekts zu strukturieren. Der Leitfaden wurde von einem Konsortium entwickelt, das Unternehmen wie IBM, NCR Corporation und DaimlerChrysler AG umfasste.
+
+Der CRISP-DM-Leitfaden ist in sechs Phasen unterteilt:
+
+1. Business Understanding: Verständnis für die geschäftlichen Anforderungen und Ziele  
+2. Data Understanding: Verständnis für die verfügbaren Daten und ihre Qualität  
+3. Data Preparation: Vorbereitung und Aufbereitung der Daten für die Analyse  
+4. Modeling: Auswahl und Anwendung von Data-Mining-Techniken und -Modellen  
+5. Evaluation: Bewertung der Modelle in Bezug auf ihre Effektivität und Geschäftsnutzen  
+6. Deployment: Implementierung der Modelle in die geschäftliche Praxis  
+
+Dieser Leitfaden hat sich als sehr nützlich und anwendungsorientiert erwiesen und wird häufig in der Industrie sowie im akademischen Bereich verwendet. Er bietet eine strukturierte Herangehensweise, um Data-Mining-Projekte effizient und effektiv zu managen.
+
+Jede dieser Phasen wird in diesem Bericht ausführlich behandelt, um einen ganzheitlichen Überblick und fundierte Schlussfolgerungen zu ermöglichen.
