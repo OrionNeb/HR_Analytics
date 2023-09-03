@@ -1,0 +1,566 @@
+---
+title: "HR Analytics"
+author: "Christian Roth"
+date: "29.07.2023"
+output:
+  html_document:
+    toc: yes
+    toc_depth: '3'
+    df_print: paged
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+    number_sections: yes
+    theme: flatly
+    code_folding: hide
+    html_document:
+      toc: yes
+      toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, include=FALSE}
+if(!require("tidyverse")) {install.packages("tidyverse");library("tidyverse")}
+#zur einfachen Speicherung und Bearbeitung von 'Tibbles' (Alternative zu den herkömmlichen Dataframes)
+
+if(!require("ggplot2")) {install.packages("ggplot2");library("ggplot2")}
+#zur Visualisierung
+
+if(!require("lubridate")) {install.packages("lubridate");library("lubridate")}
+#macht es einfacher, mit Datums- und Zeitangaben zu arbeiten
+
+if(!require("explore")) {install.packages("explore");library("explore")}
+#zur grafischen Erkundung einer Variable oder Tabelle
+
+if(!require("rpart")) {install.packages("rpart");library("rpart")}
+#wird verwendet für die Erstellung von Erstellung von Entscheidungsbaum-Modellensowohl für Klassifikations- als auch für Regressionsanalysen
+
+if(!require("caret")) {install.packages("caret");library("caret")}
+# wird für maschinelles Lernen, Modelltraining, Evaluierung und Auswahl von Modellen verwendet
+
+if(!require("rpart.plot")) {install.packages("rpart.plot");library("rpart.plot")}
+#um die Darstellung und Visualisierung von Entscheidungsbaum-Modellen zu verbessern, die mit dem rpart-Paket erstellt wurden
+
+if(!require("randomForest")) {install.packages("randomForest");library("randomForest")}
+#steht für die Implementierung des Random Forest Algorithmus, welches eine leistungsstarke Methode für maschinelles Lernen ist, die für Klassifikations- und Regressionsaufgaben verwendet wird
+
+if(!require("psych")) {install.packages("psych");library("psych")}
+#wird für die Durchführung von psychometrischen Analysen und psychologischen Tests in der Psychologie und verwandten Bereichen verwendet
+
+library(readr)
+#ist Teil des tidyverse und liest den Datensatz ein
+
+library("viridis")
+#zum Erstellen von farbigen Grafiken und Plots
+
+library("corrplot")
+#bietet Funktionen zur Visualisierung von Korrelationsmatrizen
+
+library("GGally")
+#ermöglicht die Erstellung von Paardiagrammen und anderen komplexen Diagrammen
+
+library("Metrics")
+#Sammlung von Funktionen zur Bewertung von Modellen, insb. Machine-Learning-Umgebungen
+
+library("neuralnet")
+#ermöglicht das Training und die Erstellung von künstlichen neuralen Netzwerken
+
+library("purrr")
+#bietet Funktionen zur Arbeit mit Funktionen und Vektoren, um den Umgang mit Daten zu erleichtern
+
+library("dplyr")
+#bietet eine Reihe von Funktionen, die speziell dafür entwickelt wurden, um Datenmanipulationen zu vereinfachen
+
+library("tidyr")
+#wird verwendet, um "unordentliche" Daten zu bereinigen
+
+library("rlang")
+#zentrale Sammlung von Funktionen und Werkzeugen, die in R für die Programmierung mit Tidyverse-Paketen entwickelt wurden
+library(tibble)
+#ist Teil des "tidyverse"-Ökosystems in R und bietet eine moderne Repräsentation von Dataframes
+
+rm(list = ls())
+
+```
+
+
+# 1 Aufgabe und Daten verstehen
+In dieser Arbeit soll untersucht werden, welche Faktoren die Jobzufriedenheit der Mitarbeiter beeinflussen und ob es möglich ist, die Fluktuation (Attrition) der Mitarbeiter auf Grundlage der HR-Daten vorherzusagen. Hierzu steht ein Datenset aus der HR-Abteilung eines Unternehmens zur Verfügung, das 38 Spalten und 1481 Zeilen umfasst. Das Dataset steht unter: <https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download>  zur Verfügung. Benutzt wird die CSV-Datei HR_Analytics unter: <https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download&select=HR_Analytics.csv>.
+
+In der letzten Spalte gibt es 57 Nullwerte und einige doppelte Werte in der Spalte "employeeID".
+Als Teil der explorativen Datenanalyse (EDA) wurden vorher die letzte Spalte und die doppelten Zeilen ebenfalls entfernt.
+
+Zunächst importieren wir die Daten in R und nutzen die readr-Bibliothek:
+
+```{r, message=FALSE}
+HR_Analytics <-read_csv("HR_Analytics.csv")
+
+```
+
+Wir möchten insbesondere folgende Thesen untersuchen:
+
+These 1: Mitarbeiter, die ein höheres Gehalt erhalten, bessere Arbeitsbedingungen vorfinden, positive Mitarbeiterbeziehungen pflegen und deren Arbeitsleistung anerkannt wird bzw. deren Arbeitsanforderungen erfüllbar sind, haben eine höhere Jobzufriedenheit.
+
+These 2: Mitarbeiter mit geringem Gehalt, niedriger Jobzufriedenheit und schlechter Work-Life-Balance, die in einer unbefriedigenden Arbeitsumgebung arbeiten und schlechte Beziehungen zu Kollegen und Vorgesetzten haben, neigen eher dazu, das Unternehmen zu verlassen (Fluktuation).
+
+Diese Thesen sollen explorativ untersucht werden und kommen eventuell in der Modellfindung zum Einsatz. Weitere Thesen werden sich eventuell bei der Sichtung der Daten ergeben.
+
+Um die Daten zu betrachten, verwenden wir die View()-Funktion:
+
+```{r}
+View(HR_Analytics)
+
+```
+
+Nachdem die Daten explorativ untersucht und die Thesen bestätigt oder widerlegt werden, können Modelle entwickelt werden, um die Jobzufriedenheit und Mitarbeiterfluktuation basierend auf den verfügbaren Attributen vorherzusagen. Es werden verschiedene statistische Modelle und maschinelle Lernmethoden verwenden, um die besten Prädiktoren für beide Aspekte zu identifizieren und das Modell entsprechend anzupassen.
+
+Nur erstellen wir eine Tabelle mit der knitr::kable() Funktion:
+
+```{r, message=FALSE, include=FALSE}
+if(!require("magrittr")) {install.packages("magrittr");library("magrittr")}
+library(magrittr)
+```
+
+
+```{r}
+#HR_Analytics
+HR_Analytics %>%
+  head() %>%
+  knitr::kable(caption = "Das Spaltenformat des eingelesenen Datensatzes")
+```
+Das Ergebnis liefert eine formatierte Tabelle der ersten sechs Zeilen des "HR_Analytics"-Datensatzes. Dadurch bekommen wir einen ersten Eindruck von den Daten bevor man die eigentliche Analyse beginnt. 
+
+
+Der Datensatz hat **`r nrow(HR_Analytics)`** Zeilen und **`r ncol(HR_Analytics)`** Spalten. Die Daten sind bereits *tidy*, das bedeutet:
+
+1. Jede Variable bildet eine Spalte.
+2. Jede Beobachtung bildet eine Zeile.
+3. Jeder Zellwert repräsentiert eine Messung oder ein Merkmal.
+
+Jede Zeile in der **HR_Analytics**-Tabelle repräsentiert einen individuellen Mitarbeiter innerhalb der Organisation, aus der die Daten stammen. Die Werte in den Spalten für jede Zeile bieten spezifische Informationen über den jeweiligen Mitarbeiter. 
+
+Die Variablen haben folgende Bedeutungen:
+
+```{r, echo=FALSE} 
+variable_definitions <- tribble(
+  ~Variable, ~Typ, ~Bedeutung,
+  "EmpID", "integer (int)", "Mitarbeiter-ID",
+  "Age", "double (dbl)", "Alter",
+  "AgeGroup", "character (chr)", "Altersgruppe",
+  "Attrition", "character (chr)", "Fluktuation",
+  "BusinessTravel", "character (chr)", "Geschäftsreisen",
+  "DailyRate", "double (dbl)", "Tagesrate",
+  "Department", "character (chr)", "Abteilung",
+  "DistanceFromHome", "double (dbl)", "Entfernung zum Heim",
+  "Education", "integer (int)", "Bildungsgrad",
+  "EducationField", "character (chr)", "Bildungsfeld",
+  "EmployeeCount", "integer (int)", "Mitarbeiteranzahl",
+  "EmployeeNumber", "integer (int)", "Mitarbeiternummer",
+  "EnvironmentSatisfaction", "integer (int)", "Zufriedenheit mit der Arbeitsumgebung",
+  "Gender", "character (chr)", "Geschlecht",
+  "HourlyRate", "double (dbl)", "Stundenlohn",
+  "JobInvolvement", "integer (int)", "Arbeitsbeteiligung",
+  "JobLevel", "integer (int)", "Joblevel",
+  "JobRole", "character (chr)", "Jobrolle",
+  "JobSatisfaction", "integer (int)", "Jobzufriedenheit",
+  "MaritalStatus", "character (chr)", "Familienstand",
+  "MonthlyIncome", "double (dbl)", "Monatliches Einkommen",
+  "SalarySlab", "character (chr)", "Gehaltsstufe",
+  "MonthlyRate", "double (dbl)", "Monatliche Rate",
+  "NumCompanies", "integer (int)", "Anzahl der Unternehmen",
+  "Over18", "character (chr)", "Über 18",
+  "OverTime", "character (chr)", "Überstunden",
+  "PercentSalaryHike", "double (dbl)", "Prozentuale Gehaltserhöhung",
+  "PerformanceRating", "integer (int)", "Leistungsbewertung",
+  "RelationshipSatisfaction", "integer (int)", "Zufriedenheit in der Beziehung",
+  "StandardHours", "integer (int)", "Standardarbeitsstunden",
+  "StockOptionLevel", "integer (int)", "Aktienoptionslevel",
+  "TotalWorkingYears", "double (dbl)", "Gesamtzahl der Arbeitsjahre",
+  "TrainingTimesLastYear", "integer (int)", "Trainingszeiten im letzten Jahr",
+  "WorkLifeBalance", "integer (int)", "Work-Life-Balance",
+  "YearsAtCompany", "double (dbl)", "Jahre im Unternehmen",
+  "YearsInCurrentRole", "double (dbl)", "Jahre in aktueller Rolle",
+  "YearsSinceLastPromotion", "double (dbl)", "Jahre seit letzter Beförderung",
+  "YearsWithCurrManager", "double (dbl)", "Jahre mit aktuellem Manager"
+)
+```
+
+
+```{r} 
+print(variable_definitions, n = Inf)
+```
+
+
+Zunächst verschaffen wir uns einen Überblick über die Daten.
+
+```{r}
+HR_Analytics %>% describe_tbl()
+```
+1. Im Datensatz gibt es 1480 Instanzen (Beobachtungen) mit 38 Variablen.
+2. 57 Beobachtungen enthalten fehlende Werte (NA).
+3. 1 Variable enthält fehlende Werte (NA)
+4. 3 Variablen ohne Varianz.
+
+Um diese Daten werden wir uns kümmern müssen.
+
+Es ist wichtig, die Datenklassen (data types) und ihrem Datensatz zu kennen, da sie die Art der Operationen und Analysen bestimmen, die mit diesen Daten durchgeführt werden können. 
+
+```{r}
+data_classes <- data.frame(Variable = names(HR_Analytics),
+                           Class = sapply(HR_Analytics, class))
+print(data_classes)
+```
+These1: JobSatisfaktion
+These2: Attrition
+
+```{r}
+describe(HR_Analytics)
+```
+Die describe()-Funktion aus dem psych-Paket liefert eine Vielzahl von deskriptiven Statistiken für jede Variable im Datensatz. 
+
+
+
+```{r}
+summary(HR_Analytics)
+```
+#```{r}
+#na_positions <- which(apply(is.na(HR_Analytics), 1:2, any), arr.ind = TRUE)
+#na_positions_with_EmpID <- cbind(na_positions, EmpID = HR_Analytics[na_positions[, #"row"], "EmpID"])
+#
+#```
+#
+#```{r}
+#knitr::kable(na_positions_with_EmpID, caption = "Positionen der NA-Werte mit Employee #ID")
+#
+#```
+
+Durch die Funktion summary() bekommen wir schnell einen Überblik über die wichtigsten statistischen Kennzahlen. 
+Dabei fällt auf, dass es nur bei der Variable "YearsWithCurrManager" 57 NA-Eintrage gibt.
+
+Nutzen wir noch eine andere Möglichkeit, schnell einen Eindruck von den Daten zu erhalten.
+Wir können für jedes numerische Merkmal ein Histogramm plotten:
+
+
+```{r}
+# Filtern Sie die numerischen Spalten
+numeric_columns <- HR_Analytics %>% select_if(is.numeric)
+
+# Wandle den Datensatz in ein langes Format um
+long_data <- numeric_columns %>% pivot_longer(everything(), names_to = "Variable", values_to = "Value")
+
+# Erstelle ein Histogramm für jede Variable mit facet_wrap
+ggplot(long_data, aes(x = Value)) +
+  geom_histogram(bins = 30, fill = "skyblue", color = "black") +
+  facet_wrap(~ Variable, scales = "free") +
+  labs(x = "Value", y = "Count") +
+  theme_minimal() +
+  theme(strip.text = element_text(size = 5),
+        axis.title.x = element_text(size = 1),
+        axis.title.y = element_text(size = 1))
+
+
+
+
+```
+
+
+In diesen Histogrammen gibt es einiges zu sehen:
+
+* Viele Histogramme sind rechtsschief. Für einige ML-Modelle wird hier ggf. eine Transformation erforderlich.
+* Bei rechtsschiefen Histogrammen sind die meisten Werte relativ niedrig und es gibt einige höhere Ausreißerwerte.
+* Viele ML-Modelle machen Annahmenüber die Verteilung der Daten, oft dass die Daten normalverteilt sind oder zumindest symmetrisch.  
+  Eine schiefe Verteilung kann diese Annahmen verletzen und die Leistung des Modells beeinträchtigen.
+* Die Skalierung der Merkmale kann auch beeinträchtigt werden.  
+  In einer rechtsschiefen Verteilung könnten Ausreißer einen unverhältnismäßig großen Einfluss auf die Skalierung haben,  
+  wodurch das Modell überempfindlich gegenüber diesen Ausreißern wird.
+* Die Wertebereiche sind sehr unterschiedlich. Wir werden skalieren müssen.
+* Die Überstunden (Overtime) sind nur mit ja oder nein angegeben worden.
+* Alle Mitarbeiter arbeiten acht Stunden am Tag (StandardHours), was aber hier mit der Zahl 80 angegeben wurde.  
+  Das muß korrigiert werden und auf 8 gesetzt werden.
+  
+Es wird ermittelt, wie viele Mitarbeiter Überstunden machen.
+
+```{r}
+# Zusammenfassungstabelle erstellen
+overtime_count <- HR_Analytics %>%
+  group_by(OverTime) %>%
+  summarise(count = n())
+
+print(overtime_count)
+
+# Säulendiagramm plotten
+ggplot(overtime_count, aes(x = OverTime, y = count, fill = OverTime)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("Yes" = "red", "No" = "blue")) +
+  labs(title = "Verteilung von Überstunden",
+       x = "Überstunden",
+       y = "Anzahl") +
+  theme_minimal()
+
+
+```
+
+```{r}
+overtime_count
+```
+
+
+```{r}
+#explore(HR_Analytics)
+```
+
+## 2 Daten aufbereiten
+
+Da der Datensatz hier geändert wird, wird ein neuer Datensatz vorher erstellt, welcher "HR_Analytics_final" heißt.
+
+```{r}
+# Erstellen einer Kopie des HR_Analytics-Datensatzes
+HR_Analytics_final <- HR_Analytics
+```
+
+Für die These 1 werden die relevanten Variablen in einen neuen Datensatz selektiert.
+
+
+```{r}
+# Erstellen Sie den neuen Dataframes
+HR_Analytics_selected <- HR_Analytics %>%
+  select(MonthlyIncome, HourlyRate, DailyRate, OverTime, WorkLifeBalance, 
+         EnvironmentSatisfaction, JobInvolvement, JobLevel, 
+         RelationshipSatisfaction, PerformanceRating, 
+         JobInvolvement, PercentSalaryHike, JobSatisfaction)
+
+
+```
+
+```{r}
+view(HR_Analytics_selected)
+```
+
+
+
+```{r}
+# Für jede Variable im Datensatz erstellen Sie ein Histogramm
+for (var in names(HR_Analytics_selected)) {
+  # Überspringen Sie nicht-numerische Variablen
+  if(is.numeric(HR_Analytics_selected[[var]])) {
+    print(
+      ggplot(HR_Analytics_selected, aes(!!sym(var))) +
+      geom_histogram(bins = 30, fill = "skyblue", color = "black") +
+      labs(x = var, y = "Count") +
+      theme_minimal()
+    )
+  }
+}
+
+```
+
+Vorab wird ein Testdatensatz erstellt.
+
+### 2.1 Erstelle einen Testdatensatz
+
+Zuerst wird ein Testdatensatz mit dem vermeidlich signifikantesten Zusammenhang erstellt. Der Testdatensatz soll den Datensatz "HR_Analytics" auf Robustheit von Analysen und Modellen testen. Damit kann man sicherstellen, dass der Code unter diesen spezifischen Bedingungen korrekt funktioniert.
+Der Testdatensatz soll sich auf das Monatliche Gehalt konzentrieren. Das kann wertvolle Einblicke in den spezifischen Zusammenhang zwischen Gehalt und Jobzufriedenheit im Datensatz geben und die These stützen.
+
+Der "MonthlyIncome" wird in vier gleiche Intervalle eingeteilt:
+
+1. Intervall: Gehälter zwischen 1009 und 5523,5.
+2. Intervall: Gehälter zwischen 5523,5 und 10038, also alle Gehälter im zweiten Viertel dieses Bereichs.
+3. Intervall: Gehälter zwischen 10038 und 14552,5, also alle Gehälter im dritten Viertel dieses Bereichs.
+4. Intervall: Gehälter zwischen 14552,5 und 19999, also alle Gehälter im letzten Viertel dieses Bereichs.
+
+Die Intervalle wurden berechnet, indem der gesamte Bereich der Gehälter von 1009 bis 19999 in vier gleich große Teile aufgeteilt wurde. Der Code benutzt die cut-Funktion, um die "MonthlyIncome"-Werte in diese vier Kategorien einzuteilen. Dabei wird das erste Intervall einschließlich des untersten Werts definiert (include.lowest = TRUE).
+
+```{r}
+# Definieren der Intervalle
+intervals <- 4
+range_width <- (19999 - 1009) / intervals
+breaks <- seq(1009, 19999, by = range_width)
+
+# Zuordnung der Intervalle zur IncomeCategory Variable
+HR_Analytics_final$IncomeCategory <- cut(HR_Analytics_final$MonthlyIncome, breaks = breaks, include.lowest = TRUE)
+
+# Definieren der Labels für die Achse
+income_labels <- c("1009 - 5523.5", "5523.5 - 10038", "10038 - 14552.5", "14552.5 - 19999")
+
+# Zuordnung der Labels zur IncomeCategory Variable
+HR_Analytics_final$IncomeLabel <- factor(HR_Analytics_final$IncomeCategory, labels = income_labels)
+
+# Erstellen des Plots
+ggplot(HR_Analytics_final, aes(x = IncomeLabel)) +
+  geom_bar(fill = c("lightblue", "blue", "royalblue", "darkblue")) +
+  labs(title = "Anzahl der Mitarbeiter pro Einkommenskategorie",
+       x = "Einkommenskategorie",
+       y = "Anzahl") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Drehen der x-Achsen-Labels für bessere Lesbarkeit
+
+
+```
+
+
+Eine stratifizierte Stichprobe ist in diesem Zusammenhang durchaus sinnvoll sein, besonders wenn Sie eine repräsentative Analyse durchführt, oder wenn es erhebliche Unterschiede in der Verteilung der Gehaltsintervalle oder der Jobzufriedenheitskategorien in der Gesamtbevölkerung gibt.
+
+Eine stratifizierte Stichprobe bedeutet, dass Sie aus jeder Kategorie (z.B. Gehaltsintervall oder Jobzufriedenheitsstufe) eine proportionale Anzahl von Beobachtungen auswählen. Dies stellt sicher, dass Ihre Stichprobe die Gesamtpopulation in Bezug auf die kategorialen Variablen genau widerspiegelt.
+
+
+
+```{r}
+selected_columns <- data.frame(
+  EmpID = HR_Analytics_final$EmpID,
+  IncomeLabel = HR_Analytics_final$IncomeLabel,
+  JobSatisfaction = HR_Analytics_final$JobSatisfaction
+)
+
+# Um die ersten paar Zeilen der Tabelle anzuzeigen
+head(selected_columns)
+
+```
+
+Eine stratifizierte Stichprobe ist eine Methode, bei der die Population in verschiedene Strata oder Gruppen unterteilt wird, und dann werden aus jedem Stratum zufällige Stichproben gezogen. Diese Methode kann nützlich sein, wenn Sie sicherstellen möchten, dass die Stichprobe alle Ebenen oder Kategorien einer bestimmten Variable repräsentiert.
+
+Wenn Sie eine stratifizierte Stichprobe aus der Tabelle selected_columns auf der Grundlage von IncomeLabel erstellen möchten, könnte dies sinnvoll sein, wenn Sie sicherstellen möchten, dass die Stichprobe alle Einkommenskategorien repräsentiert. Dies kann besonders nützlich sein, wenn Sie die Beziehung zwischen Einkommen und Arbeitszufriedenheit untersuchen möchten.
+
+Hier ist ein Beispiel, wie Sie eine stratifizierte Stichprobe mit der caret-Bibliothek erstellen können, wobei 70% der Daten für das Training verwendet werden:
+
+```{r}
+# Erstellen einer 70-30-Aufteilung für Training und Test, stratifiziert nach IncomeLabel
+splitIndex <- createDataPartition(selected_columns$IncomeLabel, p = .7, list = FALSE, times = 1)
+
+# Teilen Sie die Daten entsprechend auf
+trainData <- selected_columns[splitIndex, ]
+testData <- selected_columns[-splitIndex, ]
+
+```
+
+```{r}
+ggplot(trainData, aes(x = IncomeLabel, fill = as.factor(JobSatisfaction))) +
+  geom_bar(position = "dodge") +
+  scale_fill_manual(values = c("lightblue", "skyblue", "royalblue", "darkblue")) +
+  labs(
+    x = "Einkommenskategorie",
+    y = "Anzahl",
+    fill = "Job-Zufriedenheit",
+    title = "Verteilung der Job-Zufriedenheit nach Einkommenskategorien"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+### 2.2 Fehlende Daten
+
+Die meisten ML-Modelle können mit fehlenden Daten nicht umgehen. Wir haben gesehen, dass es nur bei der Variable "YearsWithCurrManager" 57 NA-Eintrage gibt. Wir ersetzen diese WErte mit dem Median.
+
+```{r}
+# Berechnen des Medians für die Spalte YearsWithCurrManager, ohne NA-Werte zu berücksichtigen
+median_YearsWithCurrManager <- median(HR_Analytics_final$YearsWithCurrManager, na.rm = TRUE)
+
+# Ersetzen der NA-Werte in der Spalte YearsWithCurrManager durch den berechneten Median
+HR_Analytics_final$YearsWithCurrManager[is.na(HR_Analytics_final$YearsWithCurrManager)] <- median_YearsWithCurrManager
+
+```
+
+
+* Alle fehlenden Werte in der Variable "YearsWithCurrManager" werden durch den Median dieser Variablen ersetzt. 
+
+
+```{r}
+summary(HR_Analytics_final)
+```
+
+### 2.3 Kategorische Daten
+
+Untersucht wird der Dataframe HR_Analytics_final. Dieser wird nach kategorischen Daten untersucht.
+
+```{r}
+# Identifizieren der kategorischen Variablen (ausschließen der numerischen)
+categorical_vars <- names(HR_Analytics_final)[sapply(HR_Analytics_final, function(x) !is.numeric(x))]
+
+# Anzeigen der kategorischen Variablen
+categorical_vars
+
+```
+
+Die EmpID ist eine eindeutige Kennung für jeden Mitarbeiter. Es ist nicht sinnvoll, diese in der Analyse zu verwenden,  
+da sie wahrscheinlich keine nützlichen Informationen enthält.
+
+AgeGroup ist in Altersgruppen unterteilt. Diese werden in Dummy-Variablen umgewandelt.  
+Damti wir den Datensatz AgeGroup auch in eine numerische Variable umwandeln können  
+wird die mapping()-Funktion verwendet, um die Umwandlung durchzuführen.
+
+
+```{r}
+# Erstellen eines Vektors, der die Zuordnung der Altersgruppen zu den numerischen Werten definiert
+age_mapping <- c("18-25" = 1, "26-35" = 2, "36-45" = 3, "46-55" = 4, "55+" = 5)
+
+# Anwendung der Zuordnung auf die "AgeGroup"-Spalte
+HR_Analytics_final$AgeGroup <- age_mapping[HR_Analytics_final$AgeGroup]
+
+
+```
+
+Dann wird die Einzigartigkeit der Spalte angeschaut, um sicherzustellen, das sie genau den angegebenen Ebenen entspricht.
+
+```{r}
+unique(HR_Analytics_final$AgeGroup)
+
+```
+
+Attrition: Da es sich um eine binäre Variable handelt, kannst du sie in 0 und 1 umwandeln, wobei Yes durch 1 und No durch 0 ersetzt wird.
+
+```{r}
+HR_Analytics_final$Attrition <- ifelse(HR_Analytics_final$Attrition == "Yes", 1, 0)
+
+```
+
+Over18: Da alle Werte Y sind, kann diese Spalte möglicherweise entfernt werden, da sie keine nützliche Information enthält. Wenn du sie jedoch als numerische Variable behalten möchtest, kannst du sie in 1 umwandeln.
+
+```{r}
+HR_Analytics_final$Over18 <- 1
+
+```
+
+Gender: Du kannst diese Spalte in eine binäre Variable umwandeln, indem du Male durch 1 und Female durch 0 ersetzt.
+
+```{r}
+HR_Analytics_final$Gender <- ifelse(HR_Analytics_final$Gender == "Male", 1, 0)
+
+```
+
+MaritalStatus: Da es sich um eine kategoriale Variable mit drei Werten handelt, kannst du sie in numerische Werte umwandeln,  
+z. B. Single als 1, Married als 2 und Divorced als 3.  
+
+```{r}
+MaritalStatus_mapping <- c('Single' = 1, 'Married' = 2, 'Divorced' = 3)
+HR_Analytics_final$MaritalStatus <- MaritalStatus_mapping[HR_Analytics_final$MaritalStatus]
+
+```
+
+Die Variable "OverTime" in unserem Datensatz ist eine Zeichenkette, welche die Werte "Yes" oder "No" enthält.  
+Deshalb möchten wir diese Werte in nominale Werte umwandeln. Yes steht dabei für 1 und No für 0.
+
+```{r}
+# Umwandlung der Overtime-Variable in eine nominale Variable (1 für "Yes" und 0 für "No")
+HR_Analytics_final$OverTime <- ifelse(HR_Analytics_final$OverTime == "Yes", 1, 0)
+
+```
+
+```{r}
+head(HR_Analytics_final)
+```
+
+
+Es wird ein neuer Datensatz erstellt, welcher die gewünschten Variablen enthält:
+
+```{r}
+HR_Analytics_thesis1 <- HR_Analytics_final %>%
+  select(MonthlyIncome, HourlyRate, DailyRate, OverTime, WorkLifeBalance, 
+         EnvironmentSatisfaction, JobInvolvement, JobLevel, 
+         RelationshipSatisfaction, PerformanceRating, PercentSalaryHike)
+
+head(HR_Analytics_thesis1)
+
+```
+
