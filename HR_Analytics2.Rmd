@@ -6,6 +6,7 @@ output:
   html_document:
     css: styles.css
     toc: yes
+    toc_float: true
     toc_depth: 3
     df_print: paged
 bibliography: meine_referenzen.bib
