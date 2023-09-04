@@ -1,5 +1,15 @@
+/* Stile für den <body> und Schriftart */
 body {
     font-family: Arial, sans-serif;
+    background-color: #ffffff;
 }
-h1 {
-    color: blue;
+
+/* Stile für Überschriften */
+h1, h2, h3, h4, h5, h6 {
+    color: #000000;
+}
+
+/* Stile für das schwebende Inhaltsverzeichnis */
+#TOC {
+    width: 300px; 
+}

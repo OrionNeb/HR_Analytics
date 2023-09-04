@@ -7,7 +7,7 @@ output:
     css: styles.css
     toc: yes
     toc_float: true
-    toc_depth: 3
+    toc_depth: 6
     df_print: paged
 bibliography: meine_referenzen.bib
 csl: apa.csl
