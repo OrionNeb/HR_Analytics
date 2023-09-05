@@ -7,80 +7,16 @@ output:
     keep_md: true
     css: styles.css
     toc: yes
-    toc_float: true
+    toc_float: false
     toc_depth: 3
     df_print: paged
 bibliography: meine_referenzen.bib
 csl: apa.csl
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
-```{r, message=FALSE, include=FALSE}
-if(!require("tidyverse")) {install.packages("tidyverse");library("tidyverse")}
-#zur einfachen Speicherung und Bearbeitung von 'Tibbles' (Alternative zu den herkömmlichen Dataframes)
 
-if(!require("ggplot2")) {install.packages("ggplot2");library("ggplot2")}
-#zur Visualisierung
 
-if(!require("lubridate")) {install.packages("lubridate");library("lubridate")}
-#macht es einfacher, mit Datums- und Zeitangaben zu arbeiten
-
-if(!require("explore")) {install.packages("explore");library("explore")}
-#zur grafischen Erkundung einer Variable oder Tabelle
-
-if(!require("rpart")) {install.packages("rpart");library("rpart")}
-#wird verwendet für die Erstellung von Erstellung von Entscheidungsbaum-Modellensowohl für Klassifikations- als auch für Regressionsanalysen
-
-if(!require("caret")) {install.packages("caret");library("caret")}
-# wird für maschinelles Lernen, Modelltraining, Evaluierung und Auswahl von Modellen verwendet
-
-if(!require("rpart.plot")) {install.packages("rpart.plot");library("rpart.plot")}
-#um die Darstellung und Visualisierung von Entscheidungsbaum-Modellen zu verbessern, die mit dem rpart-Paket erstellt wurden
-
-if(!require("randomForest")) {install.packages("randomForest");library("randomForest")}
-#steht für die Implementierung des Random Forest Algorithmus, welches eine leistungsstarke Methode für maschinelles Lernen ist, die für Klassifikations- und Regressionsaufgaben verwendet wird
-
-if(!require("psych")) {install.packages("psych");library("psych")}
-#wird für die Durchführung von psychometrischen Analysen und psychologischen Tests in der Psychologie und verwandten Bereichen verwendet
-
-library(readr)
-#ist Teil des tidyverse und liest den Datensatz ein
-
-library("viridis")
-#zum Erstellen von farbigen Grafiken und Plots
-
-library("corrplot")
-#bietet Funktionen zur Visualisierung von Korrelationsmatrizen
-
-library("GGally")
-#ermöglicht die Erstellung von Paardiagrammen und anderen komplexen Diagrammen
-
-library("Metrics")
-#Sammlung von Funktionen zur Bewertung von Modellen, insb. Machine-Learning-Umgebungen
-
-library("neuralnet")
-#ermöglicht das Training und die Erstellung von künstlichen neuralen Netzwerken
-
-library("purrr")
-#bietet Funktionen zur Arbeit mit Funktionen und Vektoren, um den Umgang mit Daten zu erleichtern
-
-library("dplyr")
-#bietet eine Reihe von Funktionen, die speziell dafür entwickelt wurden, um Datenmanipulationen zu vereinfachen
-
-library("tidyr")
-#wird verwendet, um "unordentliche" Daten zu bereinigen
-
-library("rlang")
-#zentrale Sammlung von Funktionen und Werkzeugen, die in R für die Programmierung mit Tidyverse-Paketen entwickelt wurden
-library(tibble)
-#ist Teil des "tidyverse"-Ökosystems in R und bietet eine moderne Repräsentation von Dataframes
-
-rm(list = ls())
-
-```
 
 # 1. Business Understanding
 
@@ -131,9 +67,9 @@ Der zur Verfügung stehende Datensatz umfasst 38 Spalten und 1481 Zeilen. Es ste
 
 Zunächst importieren wir die Daten in R und nutzen die readr-Bibliothek:
 
-```{r, message=FALSE}
-HR_Analytics <-read_csv("HR_Analytics.csv")
 
+```r
+HR_Analytics <-read_csv("HR_Analytics.csv")
 ```
 
 Es ist wichtig zu erwähnen, dass der Datensatz zunächst einer explorativen Datenanalyse (EDA) unterzogen wurde. Dabei wurde festgestellt, dass 57 Einträge in der letzten Spalte Nullwerte aufweisen und dass es einige doppelte Einträge in der Spalte "employeeID" gibt. Diese Unregelmäßigkeiten wurden in der Datenaufbereitungsphase bereinigt.

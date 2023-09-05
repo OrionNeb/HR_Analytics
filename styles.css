@@ -1,6 +1,6 @@
 /* Stile für den <body> und Schriftart */
 body {
-    font-family: Arial, sans-serif;
+      font-family: Arial, sans-serif;
     background-color: #ffffff;
 }
 
@@ -10,6 +10,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Stile für das schwebende Inhaltsverzeichnis */
-#TOC {
+#toc {
+    margin: 100px 100px 100px 100px;
+    color: purple;
     width: 300px; 
+    position: relative;
+    width: 100%;
 }
+
+p {
+  text-align: justify;
+}
+
