@@ -1,6 +1,8 @@
 /* Stile für den <body> und Schriftart */
 body {
-      font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-family: ADLaM Display, sans-serif;
+    line-height: 1.5;
     background-color: #ffffff;
 }
 
@@ -9,14 +11,41 @@ h1, h2, h3, h4, h5, h6 {
     color: #000000;
 }
 
-/* Stile für das schwebende Inhaltsverzeichnis */
-#toc {
-    margin: 100px 100px 100px 100px;
-    color: purple;
-    width: 300px; 
-    position: relative;
-    width: 100%;
+/* Ändert die Schriftgröße für Überschriften erster Ebene (H1) */
+h1 {
+  font-size: 36px; 
 }
+
+/* Ändert die Schriftgröße für Überschriften zweiter Ebene (H2) */
+h2 {
+  font-size: 30px; 
+}
+
+h3 {
+  font-size: 30px; 
+}
+
+/* Stile für das schwebende Inhaltsverzeichnis */
+#TOC {
+    margin: 25px 0px 20px 0px;
+    width: 100%;
+  }
+  
+/* Ändert die Breite des schwebenden Inhaltsverzeichnisses */
+div.tocify {
+  width: 300px;  /* Setzt die gewünschte Breite */
+}
+
+/* Ändert die maximale Höhe des schwebenden Inhaltsverzeichnisses */
+div.tocify {
+  max-height: 100%;  /* Setzt die gewünschte Höhe */
+}
+
+/* Ändert die Schriftgröße des schwebenden Inhaltsverzeichnisses */
+.tocify ul, .tocify li {
+  font-size: 11px;  /* Setzen Sie die gewünschte Schriftgröße */
+}
+
 
 p {
   text-align: justify;

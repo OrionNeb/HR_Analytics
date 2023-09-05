@@ -6,8 +6,8 @@ output:
   html_document:
     keep_md: true
     css: styles.css
-    toc: yes
-    toc_float: false
+    toc: true
+    toc_float: true
     toc_depth: 3
     df_print: paged
 bibliography: meine_referenzen.bib
@@ -56,6 +56,7 @@ Der CRISP-DM-Leitfaden ist in sechs Phasen unterteilt:
 Dieser Leitfaden hat sich als sehr nützlich und anwendungsorientiert erwiesen und wird häufig in der Industrie sowie im akademischen Bereich verwendet. Er bietet eine strukturierte Herangehensweise, um Data-Mining-Projekte effizient und effektiv zu managen.
 
 Jede dieser Phasen wird in diesem Bericht ausführlich behandelt, um einen ganzheitlichen Überblick und fundierte Schlussfolgerungen zu ermöglichen.
+
 
 # 2. Data Understanding
 
