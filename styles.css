@@ -13,16 +13,16 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Ändert die Schriftgröße für Überschriften erster Ebene (H1) */
 h1 {
-  font-size: 36px; 
+  font-size: 20px; 
 }
 
 /* Ändert die Schriftgröße für Überschriften zweiter Ebene (H2) */
 h2 {
-  font-size: 30px; 
+  font-size: 16px; 
 }
 
 h3 {
-  font-size: 30px; 
+  font-size: 16px; 
 }
 
 /* Stile für das schwebende Inhaltsverzeichnis */
@@ -43,7 +43,7 @@ div.tocify {
 
 /* Ändert die Schriftgröße des schwebenden Inhaltsverzeichnisses */
 .tocify ul, .tocify li {
-  font-size: 11px;  /* Setzen Sie die gewünschte Schriftgröße */
+  font-size: 9px;  /* Setzen Sie die gewünschte Schriftgröße */
 }
 
 

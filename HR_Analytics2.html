@@ -2593,7 +2593,7 @@ if (window.hljs) {
 
 
 
-<style type="text/css">body {font-size: 11px;font-family: ADLaM Display, sans-serif;line-height: 1.5;background-color: #ffffff;}h1, h2, h3, h4, h5, h6 {color: #000000;}h1 {font-size: 36px; }h2 {font-size: 30px; }h3 {font-size: 30px; }#TOC {margin: 25px 0px 20px 0px;width: 100%;}div.tocify {width: 300px; }div.tocify {max-height: 100%; }.tocify ul, .tocify li {font-size: 11px; }p {text-align: justify;}</style>
+<style type="text/css">body {font-size: 11px;font-family: ADLaM Display, sans-serif;line-height: 1.5;background-color: #ffffff;}h1, h2, h3, h4, h5, h6 {color: #000000;}h1 {font-size: 20px; }h2 {font-size: 16px; }h3 {font-size: 16px; }#TOC {margin: 25px 0px 20px 0px;width: 100%;}div.tocify {width: 300px; }div.tocify {max-height: 100%; }.tocify ul, .tocify li {font-size: 9px; }p {text-align: justify;}</style>
 
 
 
@@ -2798,10 +2798,10 @@ und analysiert.</p>
 </div>
 <div id="methodik" class="section level2">
 <h2>1.4 Methodik</h2>
-<p>Dieser Bericht wird nach dem Cross-Industry Standard Process for Data
-Mining (CRISP-DM) entwickelt. Dieses standardisierte Vorgehensmodell
-ermöglicht eine strukturierte und effiziente Analyse von Datensätzen und
-ist branchenübergreifend anerkannt.</p>
+<p>Dieser Bericht wird nach dem <strong>Cross-Industry Standard Process
+for Data Mining (CRISP-DM)</strong> entwickelt. Dieses standardisierte
+Vorgehensmodell ermöglicht eine strukturierte und effiziente Analyse von
+Datensätzen und ist branchenübergreifend anerkannt.</p>
 <p>Der CRISP-DM-Leitfaden (Cross-Industry Standard Process for Data
 Mining) wurde ursprünglich im Jahr 1999 veröffentlicht. Dieser Leitfaden
 stellt ein Rahmenwerk für den Prozess der Datenanalyse und des Data
@@ -2809,7 +2809,8 @@ Mining vor und hat zum Ziel, den gesamten Lebenszyklus eines
 Data-Mining-Projekts zu strukturieren. Der Leitfaden wurde von einem
 Konsortium entwickelt, das Unternehmen wie IBM, NCR Corporation und
 DaimlerChrysler AG umfasste.</p>
-<p>Der CRISP-DM-Leitfaden ist in sechs Phasen unterteilt:</p>
+<p><strong>Der CRISP-DM-Leitfaden ist in sechs Phasen
+unterteilt:</strong></p>
 <ol style="list-style-type: decimal">
 <li>Business Understanding: Verständnis für die geschäftlichen
 Anforderungen und Ziele<br />
@@ -2852,11 +2853,51 @@ und Geschlecht (“Gender”) bis hin zu komplexeren Metriken wie die
 Zufriedenheit mit der Arbeitsumgebung (“EnvironmentSatisfaction) und der
 Anzahl der Jahre im Unternehmen(”YearsAtCompany”).</p>
 <p>Der zur Verfügung stehende Datensatz umfasst 38 Spalten und 1481
-Zeilen. Es steht unter: <a href="https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download" class="uri">https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download</a>
-zur Verfügung. Benutzt wird die CSV-Datei HR_Analytics unter: <a href="https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download&amp;select=HR_Analytics.csv" class="uri">https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download&amp;select=HR_Analytics.csv</a>.</p>
+Zeilen.</p>
+<p>Es steht unter:<br />
+<a href="https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download" class="uri">https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download</a>
+zur Verfügung.</p>
+<p>Benutzt wird die CSV-Datei HR_Analytics unter:<br />
+<a href="https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download&amp;select=HR_Analytics.csv" class="uri">https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download&amp;select=HR_Analytics.csv</a>.</p>
+<p>Der Datensatz dient als Grundlage für eine breite Palette von
+Analysen, mit dem Ziel, die innerbetrieblichen Dynamiken besser zu
+verstehen. Zum Beispiel können die Daten genutzt werden, um
+herauszufinden, welche Faktoren die Fluktuation (“Attrition”)
+beeinflussen oder wie sich die Entfernung zum Heim (“DistanceFromHome”)
+auf die Zufriedenheit der Mitarbeiter auswirkt. Solche Erkenntnisse sind
+nicht nur für die akademische Forschung wertvoll, sondern auch für
+praktizierende HR-Manager, die darauf angewiesen sind, fundierte
+Entscheidungen auf der Grundlage solider Daten zu treffen.</p>
+<p>Die Datenquelle könnte aus einem unternehmensinternen
+HR-Management-System stammen oder durch spezialisierte Umfragen und
+Mitarbeiterbefragungen erhoben worden sein. Die Strukturierung dieser
+Daten erfolgt in der Regel so, dass sie für maschinelles Lernen und
+fortgeschrittene statistische Analysen geeignet sind.</p>
 <p>Zunächst importieren wir die Daten in R und nutzen die
 readr-Bibliothek:</p>
 <pre class="r"><code>HR_Analytics &lt;-read_csv(&quot;HR_Analytics.csv&quot;)</code></pre>
+<p>Um die Daten zu betrachten, verwenden wir die head()-Funktion:</p>
+<pre class="r"><code>head(HR_Analytics)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["EmpID"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Age"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["AgeGroup"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Attrition"],"name":[4],"type":["chr"],"align":["left"]},{"label":["BusinessTravel"],"name":[5],"type":["chr"],"align":["left"]},{"label":["DailyRate"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["Department"],"name":[7],"type":["chr"],"align":["left"]},{"label":["DistanceFromHome"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["Education"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["EducationField"],"name":[10],"type":["chr"],"align":["left"]},{"label":["EmployeeCount"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["EmployeeNumber"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["EnvironmentSatisfaction"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["Gender"],"name":[14],"type":["chr"],"align":["left"]},{"label":["HourlyRate"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["JobInvolvement"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["JobLevel"],"name":[17],"type":["dbl"],"align":["right"]},{"label":["JobRole"],"name":[18],"type":["chr"],"align":["left"]},{"label":["JobSatisfaction"],"name":[19],"type":["dbl"],"align":["right"]},{"label":["MaritalStatus"],"name":[20],"type":["chr"],"align":["left"]},{"label":["MonthlyIncome"],"name":[21],"type":["dbl"],"align":["right"]},{"label":["SalarySlab"],"name":[22],"type":["chr"],"align":["left"]},{"label":["MonthlyRate"],"name":[23],"type":["dbl"],"align":["right"]},{"label":["NumCompaniesWorked"],"name":[24],"type":["dbl"],"align":["right"]},{"label":["Over18"],"name":[25],"type":["chr"],"align":["left"]},{"label":["OverTime"],"name":[26],"type":["chr"],"align":["left"]},{"label":["PercentSalaryHike"],"name":[27],"type":["dbl"],"align":["right"]},{"label":["PerformanceRating"],"name":[28],"type":["dbl"],"align":["right"]},{"label":["RelationshipSatisfaction"],"name":[29],"type":["dbl"],"align":["right"]},{"label":["StandardHours"],"name":[30],"type":["dbl"],"align":["right"]},{"label":["StockOptionLevel"],"name":[31],"type":["dbl"],"align":["right"]},{"label":["TotalWorkingYears"],"name":[32],"type":["dbl"],"align":["right"]},{"label":["TrainingTimesLastYear"],"name":[33],"type":["dbl"],"align":["right"]},{"label":["WorkLifeBalance"],"name":[34],"type":["dbl"],"align":["right"]},{"label":["YearsAtCompany"],"name":[35],"type":["dbl"],"align":["right"]},{"label":["YearsInCurrentRole"],"name":[36],"type":["dbl"],"align":["right"]},{"label":["YearsSinceLastPromotion"],"name":[37],"type":["dbl"],"align":["right"]},{"label":["YearsWithCurrManager"],"name":[38],"type":["dbl"],"align":["right"]}],"data":[{"1":"RM297","2":"18","3":"18-25","4":"Yes","5":"Travel_Rarely","6":"230","7":"Research & Development","8":"3","9":"3","10":"Life Sciences","11":"1","12":"405","13":"3","14":"Male","15":"54","16":"3","17":"1","18":"Laboratory Technician","19":"3","20":"Single","21":"1420","22":"Upto 5k","23":"25233","24":"1","25":"Y","26":"No","27":"13","28":"3","29":"3","30":"80","31":"0","32":"0","33":"2","34":"3","35":"0","36":"0","37":"0","38":"0"},{"1":"RM302","2":"18","3":"18-25","4":"No","5":"Travel_Rarely","6":"812","7":"Sales","8":"10","9":"3","10":"Medical","11":"1","12":"411","13":"4","14":"Female","15":"69","16":"2","17":"1","18":"Sales Representative","19":"3","20":"Single","21":"1200","22":"Upto 5k","23":"9724","24":"1","25":"Y","26":"No","27":"12","28":"3","29":"1","30":"80","31":"0","32":"0","33":"2","34":"3","35":"0","36":"0","37":"0","38":"0"},{"1":"RM458","2":"18","3":"18-25","4":"Yes","5":"Travel_Frequently","6":"1306","7":"Sales","8":"5","9":"3","10":"Marketing","11":"1","12":"614","13":"2","14":"Male","15":"69","16":"3","17":"1","18":"Sales Representative","19":"2","20":"Single","21":"1878","22":"Upto 5k","23":"8059","24":"1","25":"Y","26":"Yes","27":"14","28":"3","29":"4","30":"80","31":"0","32":"0","33":"3","34":"3","35":"0","36":"0","37":"0","38":"0"},{"1":"RM728","2":"18","3":"18-25","4":"No","5":"Non-Travel","6":"287","7":"Research & Development","8":"5","9":"2","10":"Life Sciences","11":"1","12":"1012","13":"2","14":"Male","15":"73","16":"3","17":"1","18":"Research Scientist","19":"4","20":"Single","21":"1051","22":"Upto 5k","23":"13493","24":"1","25":"Y","26":"No","27":"15","28":"3","29":"4","30":"80","31":"0","32":"0","33":"2","34":"3","35":"0","36":"0","37":"0","38":"0"},{"1":"RM829","2":"18","3":"18-25","4":"Yes","5":"Non-Travel","6":"247","7":"Research & Development","8":"8","9":"1","10":"Medical","11":"1","12":"1156","13":"3","14":"Male","15":"80","16":"3","17":"1","18":"Laboratory Technician","19":"3","20":"Single","21":"1904","22":"Upto 5k","23":"13556","24":"1","25":"Y","26":"No","27":"12","28":"3","29":"4","30":"80","31":"0","32":"0","33":"0","34":"3","35":"0","36":"0","37":"0","38":"0"},{"1":"RM973","2":"18","3":"18-25","4":"No","5":"Non-Travel","6":"1124","7":"Research & Development","8":"1","9":"3","10":"Life Sciences","11":"1","12":"1368","13":"4","14":"Female","15":"97","16":"3","17":"1","18":"Laboratory Technician","19":"4","20":"Single","21":"1611","22":"Upto 5k","23":"19305","24":"1","25":"Y","26":"No","27":"15","28":"3","29":"3","30":"80","31":"0","32":"0","33":"5","34":"4","35":"0","36":"0","37":"0","38":"0"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Das Ergebnis liefert eine formatierte Tabelle der ersten sechs Zeilen
+des “HR_Analytics”-Datensatzes. Dadurch bekommen wir einen ersten
+Eindruck von den Daten bevor man die eigentliche Analyse beginnt.</p>
+<p>Der Datensatz hat <strong>1480</strong> Zeilen und
+<strong>38</strong> Spalten. Die Daten sind bereits <em>tidy</em>, das
+bedeutet:</p>
+<ol style="list-style-type: decimal">
+<li>Jede Variable bildet eine Spalte.</li>
+<li>Jede Beobachtung bildet eine Zeile.</li>
+<li>Jeder Zellwert repräsentiert eine Messung oder ein Merkmal.</li>
+</ol>
+<p>Jede Zeile in der <strong>HR_Analytics</strong>-Tabelle repräsentiert
+einen individuellen Mitarbeiter innerhalb der Organisation, aus der die
+Daten stammen. Die Werte in den Spalten für jede Zeile bieten
+spezifische Informationen über den jeweiligen Mitarbeiter.</p>
 <p>Es ist wichtig zu erwähnen, dass der Datensatz zunächst einer
 explorativen Datenanalyse (EDA) unterzogen wurde. Dabei wurde
 festgestellt, dass 57 Einträge in der letzten Spalte Nullwerte aufweisen
@@ -2882,11 +2923,376 @@ Methode, um Daten systematisch zu verstehen und zu nutzen. Besonders in
 der Phase, in der wir die Daten erst verstehen müssen, hilft uns dieser
 Datensatz dabei, das Problem, das wir lösen wollen, besser zu
 begreifen.</p>
-<p>In den nächsten Teilen dieser Arbeit schauen wir uns die Daten
-genauer an. Wir bereiten sie so vor, dass wir sie gut für unsere Fragen
-nutzen können. Dabei entfernen wir zum Beispiel Fehler oder überflüssige
-Informationen. So legen wir die Basis, um unsere Fragen mit dem
-PowerBI-Dashboard gut beantworten zu können.</p>
+</div>
+<div id="beschreibung-der-daten" class="section level2">
+<h2>2.3 Beschreibung der Daten</h2>
+<p>Die Variablen im Datensatz bieten die Möglichkeit, komplexe
+Beziehungen und Muster zu erkennen, die für das Personalmanagement von
+entscheidender Bedeutung sein kann. Beispielsweise könnte eine gute
+Work-Life-Balance mit einer hohen Arbeitszufriedenheit korrelieren, was
+wiederum Auswirkungen auf die Mitarbeiterfluktuation haben könnte.</p>
+<p>In der zweiten Phase “Data Understanding” soll ein tiefes Verständnis
+der Variablen und ihrer Bedeutung gelegt werden, um den Grundstein für
+die späteren Schritte des Data-Mining-Prozesses, insbesondere für die
+Datenaufbereitung und Modellierung, behandelt werden.</p>
+<p>Die Variablen haben folgende Bedeutungen:</p>
+<pre class="r"><code>print(variable_definitions, n = Inf)</code></pre>
+<pre><code>## # A tibble: 38 × 3
+##    Variable                 Typ             Bedeutung                           
+##    &lt;chr&gt;                    &lt;chr&gt;           &lt;chr&gt;                               
+##  1 EmpID                    integer (int)   Mitarbeiter-ID                      
+##  2 Age                      double (dbl)    Alter                               
+##  3 AgeGroup                 character (chr) Altersgruppe                        
+##  4 Attrition                character (chr) Fluktuation                         
+##  5 BusinessTravel           character (chr) Geschäftsreisen                     
+##  6 DailyRate                double (dbl)    Tagesrate                           
+##  7 Department               character (chr) Abteilung                           
+##  8 DistanceFromHome         double (dbl)    Entfernung zum Heim                 
+##  9 Education                integer (int)   Bildungsgrad                        
+## 10 EducationField           character (chr) Bildungsfeld                        
+## 11 EmployeeCount            integer (int)   Mitarbeiteranzahl                   
+## 12 EmployeeNumber           integer (int)   Mitarbeiternummer                   
+## 13 EnvironmentSatisfaction  integer (int)   Zufriedenheit mit der Arbeitsumgebu…
+## 14 Gender                   character (chr) Geschlecht                          
+## 15 HourlyRate               double (dbl)    Stundenlohn                         
+## 16 JobInvolvement           integer (int)   Arbeitsbeteiligung                  
+## 17 JobLevel                 integer (int)   Joblevel                            
+## 18 JobRole                  character (chr) Jobrolle                            
+## 19 JobSatisfaction          integer (int)   Jobzufriedenheit                    
+## 20 MaritalStatus            character (chr) Familienstand                       
+## 21 MonthlyIncome            double (dbl)    Monatliches Einkommen               
+## 22 SalarySlab               character (chr) Gehaltsstufe                        
+## 23 MonthlyRate              double (dbl)    Monatliche Rate                     
+## 24 NumCompanies             integer (int)   Anzahl der Unternehmen              
+## 25 Over18                   character (chr) Über 18                             
+## 26 OverTime                 character (chr) Überstunden                         
+## 27 PercentSalaryHike        double (dbl)    Prozentuale Gehaltserhöhung         
+## 28 PerformanceRating        integer (int)   Leistungsbewertung                  
+## 29 RelationshipSatisfaction integer (int)   Zufriedenheit in der Beziehung      
+## 30 StandardHours            integer (int)   Standardarbeitsstunden              
+## 31 StockOptionLevel         integer (int)   Aktienoptionslevel                  
+## 32 TotalWorkingYears        double (dbl)    Gesamtzahl der Arbeitsjahre         
+## 33 TrainingTimesLastYear    integer (int)   Trainingszeiten im letzten Jahr     
+## 34 WorkLifeBalance          integer (int)   Work-Life-Balance                   
+## 35 YearsAtCompany           double (dbl)    Jahre im Unternehmen                
+## 36 YearsInCurrentRole       double (dbl)    Jahre in aktueller Rolle            
+## 37 YearsSinceLastPromotion  double (dbl)    Jahre seit letzter Beförderung      
+## 38 YearsWithCurrManager     double (dbl)    Jahre mit aktuellem Manager</code></pre>
+<p>Zunächst verschaffen wir uns einen Überblick über die Daten.</p>
+<pre class="r"><code>HR_Analytics %&gt;% describe_tbl()</code></pre>
+<pre><code>## 1 480 (1.5k) observations with 38 variables
+## 57 observations containing missings (NA)
+## 1 variables containing missings (NA)
+## 3 variables with no variance</code></pre>
+<ol style="list-style-type: decimal">
+<li>Im Datensatz gibt es 1480 Instanzen (Beobachtungen) mit 38
+Variablen.</li>
+<li>57 Beobachtungen enthalten fehlende Werte (NA).</li>
+<li>1 Variable enthält fehlende Werte (NA)</li>
+<li>3 Variablen ohne Varianz.</li>
+</ol>
+<p>Um diese Daten werden wir uns kümmern müssen.</p>
+<p>Es ist wichtig, die Datenklassen (data types) und ihrem Datensatz zu
+kennen, da sie die Art der Operationen und Analysen bestimmen, die mit
+diesen Daten durchgeführt werden können. Obwohl die Datenklappsen
+bereits durch die head-Funktion sichtbar gemacht wurden, werden sie hier
+noch einmal hier explizit dargestellt:</p>
+<pre class="r"><code>data_classes &lt;- data.frame(Variable = names(HR_Analytics),
+                           Class = sapply(HR_Analytics, class))
+print(data_classes)</code></pre>
+<pre><code>##                                          Variable     Class
+## EmpID                                       EmpID character
+## Age                                           Age   numeric
+## AgeGroup                                 AgeGroup character
+## Attrition                               Attrition character
+## BusinessTravel                     BusinessTravel character
+## DailyRate                               DailyRate   numeric
+## Department                             Department character
+## DistanceFromHome                 DistanceFromHome   numeric
+## Education                               Education   numeric
+## EducationField                     EducationField character
+## EmployeeCount                       EmployeeCount   numeric
+## EmployeeNumber                     EmployeeNumber   numeric
+## EnvironmentSatisfaction   EnvironmentSatisfaction   numeric
+## Gender                                     Gender character
+## HourlyRate                             HourlyRate   numeric
+## JobInvolvement                     JobInvolvement   numeric
+## JobLevel                                 JobLevel   numeric
+## JobRole                                   JobRole character
+## JobSatisfaction                   JobSatisfaction   numeric
+## MaritalStatus                       MaritalStatus character
+## MonthlyIncome                       MonthlyIncome   numeric
+## SalarySlab                             SalarySlab character
+## MonthlyRate                           MonthlyRate   numeric
+## NumCompaniesWorked             NumCompaniesWorked   numeric
+## Over18                                     Over18 character
+## OverTime                                 OverTime character
+## PercentSalaryHike               PercentSalaryHike   numeric
+## PerformanceRating               PerformanceRating   numeric
+## RelationshipSatisfaction RelationshipSatisfaction   numeric
+## StandardHours                       StandardHours   numeric
+## StockOptionLevel                 StockOptionLevel   numeric
+## TotalWorkingYears               TotalWorkingYears   numeric
+## TrainingTimesLastYear       TrainingTimesLastYear   numeric
+## WorkLifeBalance                   WorkLifeBalance   numeric
+## YearsAtCompany                     YearsAtCompany   numeric
+## YearsInCurrentRole             YearsInCurrentRole   numeric
+## YearsSinceLastPromotion   YearsSinceLastPromotion   numeric
+## YearsWithCurrManager         YearsWithCurrManager   numeric</code></pre>
+<p>Für eine detailliertere Analyse des Datensatzes, um Datentypen zu
+erkunden und zu kategorisieren wird der Datensatz mit der Funktion str()
+dargestellt. Sie bietet eine kompakte Darstellung der internen Struktur
+an:</p>
+<pre class="r"><code>str(HR_Analytics)</code></pre>
+<pre><code>## spc_tbl_ [1,480 × 38] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+##  $ EmpID                   : chr [1:1480] &quot;RM297&quot; &quot;RM302&quot; &quot;RM458&quot; &quot;RM728&quot; ...
+##  $ Age                     : num [1:1480] 18 18 18 18 18 18 18 18 19 19 ...
+##  $ AgeGroup                : chr [1:1480] &quot;18-25&quot; &quot;18-25&quot; &quot;18-25&quot; &quot;18-25&quot; ...
+##  $ Attrition               : chr [1:1480] &quot;Yes&quot; &quot;No&quot; &quot;Yes&quot; &quot;No&quot; ...
+##  $ BusinessTravel          : chr [1:1480] &quot;Travel_Rarely&quot; &quot;Travel_Rarely&quot; &quot;Travel_Frequently&quot; &quot;Non-Travel&quot; ...
+##  $ DailyRate               : num [1:1480] 230 812 1306 287 247 ...
+##  $ Department              : chr [1:1480] &quot;Research &amp; Development&quot; &quot;Sales&quot; &quot;Sales&quot; &quot;Research &amp; Development&quot; ...
+##  $ DistanceFromHome        : num [1:1480] 3 10 5 5 8 1 3 14 22 3 ...
+##  $ Education               : num [1:1480] 3 3 3 2 1 3 2 3 1 1 ...
+##  $ EducationField          : chr [1:1480] &quot;Life Sciences&quot; &quot;Medical&quot; &quot;Marketing&quot; &quot;Life Sciences&quot; ...
+##  $ EmployeeCount           : num [1:1480] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ EmployeeNumber          : num [1:1480] 405 411 614 1012 1156 ...
+##  $ EnvironmentSatisfaction : num [1:1480] 3 4 2 2 3 4 2 2 4 2 ...
+##  $ Gender                  : chr [1:1480] &quot;Male&quot; &quot;Female&quot; &quot;Male&quot; &quot;Male&quot; ...
+##  $ HourlyRate              : num [1:1480] 54 69 69 73 80 97 70 33 50 79 ...
+##  $ JobInvolvement          : num [1:1480] 3 2 3 3 3 3 3 3 3 3 ...
+##  $ JobLevel                : num [1:1480] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ JobRole                 : chr [1:1480] &quot;Laboratory Technician&quot; &quot;Sales Representative&quot; &quot;Sales Representative&quot; &quot;Research Scientist&quot; ...
+##  $ JobSatisfaction         : num [1:1480] 3 3 2 4 3 4 4 3 3 2 ...
+##  $ MaritalStatus           : chr [1:1480] &quot;Single&quot; &quot;Single&quot; &quot;Single&quot; &quot;Single&quot; ...
+##  $ MonthlyIncome           : num [1:1480] 1420 1200 1878 1051 1904 ...
+##  $ SalarySlab              : chr [1:1480] &quot;Upto 5k&quot; &quot;Upto 5k&quot; &quot;Upto 5k&quot; &quot;Upto 5k&quot; ...
+##  $ MonthlyRate             : num [1:1480] 25233 9724 8059 13493 13556 ...
+##  $ NumCompaniesWorked      : num [1:1480] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Over18                  : chr [1:1480] &quot;Y&quot; &quot;Y&quot; &quot;Y&quot; &quot;Y&quot; ...
+##  $ OverTime                : chr [1:1480] &quot;No&quot; &quot;No&quot; &quot;Yes&quot; &quot;No&quot; ...
+##  $ PercentSalaryHike       : num [1:1480] 13 12 14 15 12 15 12 16 19 14 ...
+##  $ PerformanceRating       : num [1:1480] 3 3 3 3 3 3 3 3 3 3 ...
+##  $ RelationshipSatisfaction: num [1:1480] 3 1 4 4 4 3 3 3 4 4 ...
+##  $ StandardHours           : num [1:1480] 80 80 80 80 80 80 80 80 80 80 ...
+##  $ StockOptionLevel        : num [1:1480] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ TotalWorkingYears       : num [1:1480] 0 0 0 0 0 0 0 0 0 1 ...
+##  $ TrainingTimesLastYear   : num [1:1480] 2 2 3 2 0 5 2 4 2 3 ...
+##  $ WorkLifeBalance         : num [1:1480] 3 3 3 3 3 4 4 1 2 3 ...
+##  $ YearsAtCompany          : num [1:1480] 0 0 0 0 0 0 0 0 0 1 ...
+##  $ YearsInCurrentRole      : num [1:1480] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ YearsSinceLastPromotion : num [1:1480] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ YearsWithCurrManager    : num [1:1480] 0 0 0 0 0 0 0 0 0 0 ...
+##  - attr(*, &quot;spec&quot;)=
+##   .. cols(
+##   ..   EmpID = col_character(),
+##   ..   Age = col_double(),
+##   ..   AgeGroup = col_character(),
+##   ..   Attrition = col_character(),
+##   ..   BusinessTravel = col_character(),
+##   ..   DailyRate = col_double(),
+##   ..   Department = col_character(),
+##   ..   DistanceFromHome = col_double(),
+##   ..   Education = col_double(),
+##   ..   EducationField = col_character(),
+##   ..   EmployeeCount = col_double(),
+##   ..   EmployeeNumber = col_double(),
+##   ..   EnvironmentSatisfaction = col_double(),
+##   ..   Gender = col_character(),
+##   ..   HourlyRate = col_double(),
+##   ..   JobInvolvement = col_double(),
+##   ..   JobLevel = col_double(),
+##   ..   JobRole = col_character(),
+##   ..   JobSatisfaction = col_double(),
+##   ..   MaritalStatus = col_character(),
+##   ..   MonthlyIncome = col_double(),
+##   ..   SalarySlab = col_character(),
+##   ..   MonthlyRate = col_double(),
+##   ..   NumCompaniesWorked = col_double(),
+##   ..   Over18 = col_character(),
+##   ..   OverTime = col_character(),
+##   ..   PercentSalaryHike = col_double(),
+##   ..   PerformanceRating = col_double(),
+##   ..   RelationshipSatisfaction = col_double(),
+##   ..   StandardHours = col_double(),
+##   ..   StockOptionLevel = col_double(),
+##   ..   TotalWorkingYears = col_double(),
+##   ..   TrainingTimesLastYear = col_double(),
+##   ..   WorkLifeBalance = col_double(),
+##   ..   YearsAtCompany = col_double(),
+##   ..   YearsInCurrentRole = col_double(),
+##   ..   YearsSinceLastPromotion = col_double(),
+##   ..   YearsWithCurrManager = col_double()
+##   .. )
+##  - attr(*, &quot;problems&quot;)=&lt;externalptr&gt;</code></pre>
+<ul>
+<li>“spec_tbl_ [1,480 x 38]” bedeutet, dass der Datensatz 1480 Zeilen
+und 38 Spalten besitzt.</li>
+<li>“(S3: spec_tbl_df/tbl_df/tbl/data.frame)” zeigt die
+Klassenhierarchie des Objekts an.</li>
+<li>Spalten und ihre Datentypen</li>
+<li>In “attr(*, ‘spec’)=” steht, welche Art von Information in jeder
+Spalte der Tabelle steckt.<br />
+Es hilft dem Computer zu verstehen, wie er die Daten behandeln
+soll.</li>
+<li>“attr(*, “problems”)=<externalptr>” ist wie ein Hinweis, dass es
+vielleicht Probleme gab, als die Daten in den Computer geladen
+wurden.<br />
+Es sagt aber nicht, welche Probleme das sind. Es ist wie ein
+Ausrufezeichen, aber ohne weitere Erklärung.</li>
+</ul>
+</div>
+<div id="erstellen-einer-kopie-der-rohdaten" class="section level2">
+<h2>2.4 Erstellen einer Kopie der Rohdaten</h2>
+<p>Bevor wir mit der detaillierten Datenanalyse beginnen, ist es
+wichtig, eine Kopie der Rohdaten zu erstellen. Dieser Schritt wird zu
+Beginn der “Data Understanding”-Phase durchgeführt, um sicherzustellen,
+dass die ursprünglichen Daten unverändert bleiben. Durch das Anfertigen
+dieser Kopie erhalten wir ein Backup und einen Referenzpunkt, auf den
+wir im weiteren Verlauf des Projekts zurückgreifen können.</p>
+<pre class="r"><code>HR_Analytics_final &lt;- HR_Analytics</code></pre>
+</div>
+<div id="fehlende-daten" class="section level2">
+<h2>2.5 Fehlende Daten</h2>
+<p>Um Fehlende Daten bzw. NAs zu finden, wird die Funktion colSums() mit
+der Funktion is.na() kombiniert:</p>
+<pre class="r"><code>colSums(is.na(HR_Analytics_final))</code></pre>
+<pre><code>##                    EmpID                      Age                 AgeGroup 
+##                        0                        0                        0 
+##                Attrition           BusinessTravel                DailyRate 
+##                        0                        0                        0 
+##               Department         DistanceFromHome                Education 
+##                        0                        0                        0 
+##           EducationField            EmployeeCount           EmployeeNumber 
+##                        0                        0                        0 
+##  EnvironmentSatisfaction                   Gender               HourlyRate 
+##                        0                        0                        0 
+##           JobInvolvement                 JobLevel                  JobRole 
+##                        0                        0                        0 
+##          JobSatisfaction            MaritalStatus            MonthlyIncome 
+##                        0                        0                        0 
+##               SalarySlab              MonthlyRate       NumCompaniesWorked 
+##                        0                        0                        0 
+##                   Over18                 OverTime        PercentSalaryHike 
+##                        0                        0                        0 
+##        PerformanceRating RelationshipSatisfaction            StandardHours 
+##                        0                        0                        0 
+##         StockOptionLevel        TotalWorkingYears    TrainingTimesLastYear 
+##                        0                        0                        0 
+##          WorkLifeBalance           YearsAtCompany       YearsInCurrentRole 
+##                        0                        0                        0 
+##  YearsSinceLastPromotion     YearsWithCurrManager 
+##                        0                       57</code></pre>
+<p>Es wird angezeigt, wie viele fehlende Werte (NAs) es in jeder Spalte
+des Datensatzes gibt. In diesem Fall sind für falst alle Spalten die
+Werte 0, was bedeutet, dass in diesen Spalten keine fehlenden Werte
+vorhanden sind. Die einzige Ausnahme ist die Spalte
+“YearsWithCurrManager”, in der 57 fehlende Werte angezeigt werden.</p>
+<p>Ein solches Ergebnis ist wichtig, um die Qualität des Datensatzes zu
+beurteilen. Fehlende Werte können die Genauigkeit statistischer Analysen
+beeinflussen und die Interpretierbarkeit der Ergebnisse erschweren. Hier
+sind ein paar Punkte, die aus diesem Ergebnis hervorgehen:</p>
+<div id="keine-fehlenden-werte-in-den-meisten-spalten" class="section level3">
+<h3>2.5.2 Keine fehlenden Werte in den meisten Spalten</h3>
+<p>Fast alle Spalten haben 0 fehlende Werte, was darauf hindeutet, dass
+der Datensatz ziemlich vollständig ist. Das ist in der Regel ein gutes
+Zeichen, da es bedeutet, dass keine Imputation (das Ausfüllen fehlender
+Werte) oder andere Techniken zur Behandlung fehlender Daten erforderlich
+sind.</p>
+</div>
+<div id="fehlende-werte-in-einer-spezifischen-spalte" class="section level3">
+<h3>2.5.3 Fehlende Werte in einer spezifischen Spalte</h3>
+<p>Die Spalte “YearsWithCurrManager” hat 57 fehlende Werte. Dies könnte
+bedeuten, dass die Daten für diese Spalte für einige Beobachtungen nicht
+verfügbar sind. Dies kann je nach dem Kontext des Datensatzes und dem
+Ziel der Analyse problematisch sein.</p>
+<p>Im Kontext Ihrer ersten Theorie zur Jobzufriedenheit wäre die Spalte
+“YearsWithCurrManager” eventuell relevant, da die Dauer der
+Zusammenarbeit mit dem aktuellen Manager ein Indikator für
+Arbeitsbedingungen und Mitarbeiterbeziehungen sein könnte. Fehlende
+Werte in dieser Spalte könnten daher die Analyse beeinträchtigen, indem
+sie ein unvollständiges Bild der Jobzufriedenheit zeichnen.</p>
+<p>Fehlende Werte in der Spalte könnten bedeuten, dass einige
+Mitarbeiter vielleicht noch keinen festen Manager haben oder es eine
+hohe Fluktuation in der Managerposition gibt. Beides könnte sich auf die
+Jobzufriedenheit auswirken und sollte in der Analyse berücksichtigt
+werden.</p>
+<p><strong>Fehlende Werte behandeln</strong></p>
+<p>Das Ersetzen der fehlenden Werte durch den Median oder den Mittelwert
+kann sinnvoll sein, um ein umfassenderes Bild der Jobzufriedenheit zu
+erhalten. Ob der Median oder der Mittelwert verwendet werden sollte,
+hängt von der Verteilung der Daten ab:</p>
+<p>Mittelwert: Wenn die Daten ziemlich gleichmäßig verteilt sind und
+keine extremen Ausreißer vorhanden sind, wäre der Mittelwert eine
+geeignete Methode.</p>
+<p>Median: Wenn es extreme Werte oder eine schiefe Verteilung in der
+Spalte gibt, wäre der Median vorzuziehen.</p>
+<p>Bevor Sie sich für eine Methode entscheiden, sollten die Daten
+genauer analysiert werden. Ein Histogramm oder ein Boxplot könnte
+hilfreich sein, um die Datenverteilung besser zu verstehen.</p>
+<p><strong>Boxplot erstellen</strong></p>
+<pre class="r"><code>ggplot(data = HR_Analytics_final, aes(x = 1, y = YearsWithCurrManager)) +
+  geom_boxplot() +
+  xlab(&quot;&quot;) +
+  ylab(&quot;Jahre mit aktuellem Manager&quot;) +
+  ggtitle(&quot;Boxplot der Jahre mit aktuellem Manager&quot;)</code></pre>
+<pre><code>## Warning: Removed 57 rows containing non-finite values (`stat_boxplot()`).</code></pre>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Ein Boxplot ist ein grafisches Werkzeug, das die Verteilung einer
+Datenserie darstellt. Es zeigt den Median, die Quartile und mögliche
+Ausreißer im Datensatz. In unserem Fall untersuchten wir eine spezielle
+Spalte, in der die “YearsWithCurrManager” verzeichnet sind. Der Boxplot
+zeigte, dass der Mittelwert bei 3 Jahren und der Median bei 4 Jahren
+liegt. Zudem gab es drei Ausreißer bei 15, 16 und 17 Jahren, und der
+obere Schnurrbart des Boxplots reichte bis zu 13 Jahren.</p>
+<p>Die Abzissenwerte zwischen 0.6 und 1.4 sind eine konventionelle
+Möglichkeit, die Breite der Box darzustellen und nicht mit den
+eigentlichen Datenwerten zu verwechseln.</p>
+<p>Wenn es darum geht, fehlende Daten zu ersetzen, ist es wichtig, den
+am besten geeigneten Wert zu wählen. Der Mittelwert ist anfällig für
+Verzerrungen durch Ausreißer, während der Median eine robustere Metrik
+ist, insbesondere wenn der Datensatz Ausreißer enthält. Im Kontext der
+vorliegenden Daten und der Ausreißer wäre es daher angebrachter, den
+Median als Ersatz für fehlende Werte zu verwenden.</p>
+<p>Aufgrund der Robustheit gegenüber Ausreißern und der besseren
+Darstellung der zentralen Tendenz der Daten, wird der Median von 4
+Jahren als der geeignetste Wert für die Ersetzung fehlender Daten
+eingesetzt.</p>
+<p>Mit der mutate()-Funktion aus dem dplyr-Paket werden die Daten
+modifiziert. Mit der Bedingung “is.na(YearsWithCurrManager)” wird
+festgestellt, ob ein Wert fehlt. Falls er fehlt, wird er durch den
+Medianwert “4” ersetzt. Andernfalls bleibt der Wert unverändert.</p>
+<pre class="r"><code>HR_Analytics_final &lt;- HR_Analytics_final %&gt;%
+  mutate(YearsWithCurrManager = ifelse(is.na(YearsWithCurrManager), 4, YearsWithCurrManager))</code></pre>
+<p>Mit colSums() überprüfen wir noch einmal die Ergebnisse:</p>
+<pre class="r"><code>colSums(is.na(HR_Analytics_final))</code></pre>
+<pre><code>##                    EmpID                      Age                 AgeGroup 
+##                        0                        0                        0 
+##                Attrition           BusinessTravel                DailyRate 
+##                        0                        0                        0 
+##               Department         DistanceFromHome                Education 
+##                        0                        0                        0 
+##           EducationField            EmployeeCount           EmployeeNumber 
+##                        0                        0                        0 
+##  EnvironmentSatisfaction                   Gender               HourlyRate 
+##                        0                        0                        0 
+##           JobInvolvement                 JobLevel                  JobRole 
+##                        0                        0                        0 
+##          JobSatisfaction            MaritalStatus            MonthlyIncome 
+##                        0                        0                        0 
+##               SalarySlab              MonthlyRate       NumCompaniesWorked 
+##                        0                        0                        0 
+##                   Over18                 OverTime        PercentSalaryHike 
+##                        0                        0                        0 
+##        PerformanceRating RelationshipSatisfaction            StandardHours 
+##                        0                        0                        0 
+##         StockOptionLevel        TotalWorkingYears    TrainingTimesLastYear 
+##                        0                        0                        0 
+##          WorkLifeBalance           YearsAtCompany       YearsInCurrentRole 
+##                        0                        0                        0 
+##  YearsSinceLastPromotion     YearsWithCurrManager 
+##                        0                        0</code></pre>
+</div>
 </div>
 </div>
 

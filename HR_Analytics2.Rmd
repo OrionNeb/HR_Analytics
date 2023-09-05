@@ -6,6 +6,7 @@ output:
   html_document:
     keep_md: true
     css: styles.css
+    #code_folding: hide
     toc: true
     toc_float: true
     toc_depth: 3
@@ -82,6 +83,7 @@ rm(list = ls())
 
 ```
 
+
 # 1. Business Understanding
 
 ## 1.1 Zielsetzung
@@ -104,11 +106,11 @@ In diesem Zusammenhang werden spezifische Variablen wie **"MonthlyIncome"**, **"
 
 ## 1.4 Methodik
 
-Dieser Bericht wird nach dem Cross-Industry Standard Process for Data Mining (CRISP-DM) entwickelt. Dieses standardisierte Vorgehensmodell ermöglicht eine strukturierte und effiziente Analyse von Datensätzen und ist branchenübergreifend anerkannt. 
+Dieser Bericht wird nach dem **Cross-Industry Standard Process for Data Mining (CRISP-DM)** entwickelt. Dieses standardisierte Vorgehensmodell ermöglicht eine strukturierte und effiziente Analyse von Datensätzen und ist branchenübergreifend anerkannt. 
 
 Der CRISP-DM-Leitfaden (Cross-Industry Standard Process for Data Mining) wurde ursprünglich im Jahr 1999 veröffentlicht. Dieser Leitfaden stellt ein Rahmenwerk für den Prozess der Datenanalyse und des Data Mining vor und hat zum Ziel, den gesamten Lebenszyklus eines Data-Mining-Projekts zu strukturieren. Der Leitfaden wurde von einem Konsortium entwickelt, das Unternehmen wie IBM, NCR Corporation und DaimlerChrysler AG umfasste.
 
-Der CRISP-DM-Leitfaden ist in sechs Phasen unterteilt:
+**Der CRISP-DM-Leitfaden ist in sechs Phasen unterteilt:**
 
 1. Business Understanding: Verständnis für die geschäftlichen Anforderungen und Ziele  
 2. Data Understanding: Verständnis für die verfügbaren Daten und ihre Qualität  
@@ -128,7 +130,17 @@ Jede dieser Phasen wird in diesem Bericht ausführlich behandelt, um einen ganzh
 
 Der HR_Analytics-Datensatz ist eine reichhaltige Informationsquelle, welcher eine Vielzahl von Datenpunkten zur Belegschaft eines Unternehmens enthält. Dieser Datensatz ist für das Human Resource Management wichtig, da er einen detaillierten Einblick in verschiedene Aspekte des Mitarbeiterlebenszyklus gewährt. Das Spektrum der Variablen reicht von grundlegenden demografischen Informationen wie Alter ("Age") und Geschlecht ("Gender") bis hin zu komplexeren Metriken wie die Zufriedenheit mit der Arbeitsumgebung ("EnvironmentSatisfaction) und der Anzahl der Jahre im Unternehmen("YearsAtCompany").
 
-Der zur Verfügung stehende Datensatz umfasst 38 Spalten und 1481 Zeilen. Es steht unter: <https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download>  zur Verfügung. Benutzt wird die CSV-Datei HR_Analytics unter: <https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download&select=HR_Analytics.csv>.
+Der zur Verfügung stehende Datensatz umfasst 38 Spalten und 1481 Zeilen.  
+  
+Es steht unter:  
+<https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download> zur Verfügung.  
+
+Benutzt wird die CSV-Datei HR_Analytics unter:  
+<https://www.kaggle.com/datasets/paramitasen/powerbiproject?resource=download&select=HR_Analytics.csv>.
+
+Der Datensatz dient als Grundlage für eine breite Palette von Analysen, mit dem Ziel, die innerbetrieblichen Dynamiken besser zu verstehen. Zum Beispiel können die Daten genutzt werden, um herauszufinden, welche Faktoren die Fluktuation ("Attrition") beeinflussen oder wie sich die Entfernung zum Heim ("DistanceFromHome") auf die Zufriedenheit der Mitarbeiter auswirkt. Solche Erkenntnisse sind nicht nur für die akademische Forschung wertvoll, sondern auch für praktizierende HR-Manager, die darauf angewiesen sind, fundierte Entscheidungen auf der Grundlage solider Daten zu treffen.
+
+Die Datenquelle könnte aus einem unternehmensinternen HR-Management-System stammen oder durch spezialisierte Umfragen und Mitarbeiterbefragungen erhoben worden sein. Die Strukturierung dieser Daten erfolgt in der Regel so, dass sie für maschinelles Lernen und fortgeschrittene statistische Analysen geeignet sind.
 
 Zunächst importieren wir die Daten in R und nutzen die readr-Bibliothek:
 
@@ -137,7 +149,27 @@ HR_Analytics <-read_csv("HR_Analytics.csv")
 
 ```
 
+Um die Daten zu betrachten, verwenden wir die head()-Funktion:
+
+```{r}
+head(HR_Analytics)
+
+```
+
+Das Ergebnis liefert eine formatierte Tabelle der ersten sechs Zeilen des "HR_Analytics"-Datensatzes. Dadurch bekommen wir einen ersten Eindruck von den Daten bevor man die eigentliche Analyse beginnt. 
+
+
+Der Datensatz hat **`r nrow(HR_Analytics)`** Zeilen und **`r ncol(HR_Analytics)`** Spalten. Die Daten sind bereits *tidy*, das bedeutet:
+
+1. Jede Variable bildet eine Spalte.
+2. Jede Beobachtung bildet eine Zeile.
+3. Jeder Zellwert repräsentiert eine Messung oder ein Merkmal.
+
+Jede Zeile in der **HR_Analytics**-Tabelle repräsentiert einen individuellen Mitarbeiter innerhalb der Organisation, aus der die Daten stammen. Die Werte in den Spalten für jede Zeile bieten spezifische Informationen über den jeweiligen Mitarbeiter. 
+
 Es ist wichtig zu erwähnen, dass der Datensatz zunächst einer explorativen Datenanalyse (EDA) unterzogen wurde. Dabei wurde festgestellt, dass 57 Einträge in der letzten Spalte Nullwerte aufweisen und dass es einige doppelte Einträge in der Spalte "employeeID" gibt. Diese Unregelmäßigkeiten wurden in der Datenaufbereitungsphase bereinigt.
+
+
 
 ## 2.2 Bezug zu PowerBI
 
@@ -147,7 +179,172 @@ Die Daten können von der Personalabteilung des Unternehmens oder aus Mitarbeite
 
 Auch wenn wir den Datensatz hauptsächlich für ein PowerBI-Dashboard verwenden, passt er gut in den Ablauf des CRISP-DM-Modells. Das ist eine Methode, um Daten systematisch zu verstehen und zu nutzen. Besonders in der Phase, in der wir die Daten erst verstehen müssen, hilft uns dieser Datensatz dabei, das Problem, das wir lösen wollen, besser zu begreifen.
 
-In den nächsten Teilen dieser Arbeit schauen wir uns die Daten genauer an. Wir bereiten sie so vor, dass wir sie gut für unsere Fragen nutzen können. Dabei entfernen wir zum Beispiel Fehler oder überflüssige Informationen. So legen wir die Basis, um unsere Fragen mit dem PowerBI-Dashboard gut beantworten zu können.
 
 
+## 2.3 Beschreibung der Daten
 
+Die Variablen im Datensatz bieten die Möglichkeit, komplexe Beziehungen und Muster zu erkennen, die für das Personalmanagement von entscheidender Bedeutung sein kann. Beispielsweise könnte eine gute Work-Life-Balance mit einer hohen Arbeitszufriedenheit korrelieren, was wiederum Auswirkungen auf die Mitarbeiterfluktuation haben könnte.
+
+In der zweiten Phase "Data Understanding" soll ein tiefes Verständnis der Variablen und ihrer Bedeutung gelegt werden, um den Grundstein für die späteren Schritte des Data-Mining-Prozesses, insbesondere für die Datenaufbereitung und Modellierung, behandelt werden. 
+
+Die Variablen haben folgende Bedeutungen:
+
+```{r, echo=FALSE} 
+variable_definitions <- tribble(
+  ~Variable, ~Typ, ~Bedeutung,
+  "EmpID", "integer (int)", "Mitarbeiter-ID",
+  "Age", "double (dbl)", "Alter",
+  "AgeGroup", "character (chr)", "Altersgruppe",
+  "Attrition", "character (chr)", "Fluktuation",
+  "BusinessTravel", "character (chr)", "Geschäftsreisen",
+  "DailyRate", "double (dbl)", "Tagesrate",
+  "Department", "character (chr)", "Abteilung",
+  "DistanceFromHome", "double (dbl)", "Entfernung zum Heim",
+  "Education", "integer (int)", "Bildungsgrad",
+  "EducationField", "character (chr)", "Bildungsfeld",
+  "EmployeeCount", "integer (int)", "Mitarbeiteranzahl",
+  "EmployeeNumber", "integer (int)", "Mitarbeiternummer",
+  "EnvironmentSatisfaction", "integer (int)", "Zufriedenheit mit der Arbeitsumgebung",
+  "Gender", "character (chr)", "Geschlecht",
+  "HourlyRate", "double (dbl)", "Stundenlohn",
+  "JobInvolvement", "integer (int)", "Arbeitsbeteiligung",
+  "JobLevel", "integer (int)", "Joblevel",
+  "JobRole", "character (chr)", "Jobrolle",
+  "JobSatisfaction", "integer (int)", "Jobzufriedenheit",
+  "MaritalStatus", "character (chr)", "Familienstand",
+  "MonthlyIncome", "double (dbl)", "Monatliches Einkommen",
+  "SalarySlab", "character (chr)", "Gehaltsstufe",
+  "MonthlyRate", "double (dbl)", "Monatliche Rate",
+  "NumCompanies", "integer (int)", "Anzahl der Unternehmen",
+  "Over18", "character (chr)", "Über 18",
+  "OverTime", "character (chr)", "Überstunden",
+  "PercentSalaryHike", "double (dbl)", "Prozentuale Gehaltserhöhung",
+  "PerformanceRating", "integer (int)", "Leistungsbewertung",
+  "RelationshipSatisfaction", "integer (int)", "Zufriedenheit in der Beziehung",
+  "StandardHours", "integer (int)", "Standardarbeitsstunden",
+  "StockOptionLevel", "integer (int)", "Aktienoptionslevel",
+  "TotalWorkingYears", "double (dbl)", "Gesamtzahl der Arbeitsjahre",
+  "TrainingTimesLastYear", "integer (int)", "Trainingszeiten im letzten Jahr",
+  "WorkLifeBalance", "integer (int)", "Work-Life-Balance",
+  "YearsAtCompany", "double (dbl)", "Jahre im Unternehmen",
+  "YearsInCurrentRole", "double (dbl)", "Jahre in aktueller Rolle",
+  "YearsSinceLastPromotion", "double (dbl)", "Jahre seit letzter Beförderung",
+  "YearsWithCurrManager", "double (dbl)", "Jahre mit aktuellem Manager"
+)
+```
+
+
+```{r} 
+print(variable_definitions, n = Inf)
+```
+
+
+Zunächst verschaffen wir uns einen Überblick über die Daten.
+
+```{r}
+HR_Analytics %>% describe_tbl()
+```
+1. Im Datensatz gibt es 1480 Instanzen (Beobachtungen) mit 38 Variablen.
+2. 57 Beobachtungen enthalten fehlende Werte (NA).
+3. 1 Variable enthält fehlende Werte (NA)
+4. 3 Variablen ohne Varianz.
+
+Um diese Daten werden wir uns kümmern müssen.
+
+Es ist wichtig, die Datenklassen (data types) und ihrem Datensatz zu kennen, da sie die Art der Operationen und Analysen bestimmen, die mit diesen Daten durchgeführt werden können. 
+Obwohl die Datenklappsen bereits durch die head-Funktion sichtbar gemacht wurden, werden sie hier noch einmal hier explizit dargestellt:
+
+```{r}
+data_classes <- data.frame(Variable = names(HR_Analytics),
+                           Class = sapply(HR_Analytics, class))
+print(data_classes)
+```
+
+Für eine detailliertere Analyse des Datensatzes, um Datentypen zu erkunden und zu kategorisieren wird der Datensatz mit der Funktion str() dargestellt. Sie bietet eine kompakte Darstellung der internen Struktur an:
+
+```{r}
+str(HR_Analytics)
+```
+
+* "spec_tbl_ [1,480 x 38]" bedeutet, dass der Datensatz 1480 Zeilen und 38 Spalten besitzt.
+* "(S3: spec_tbl_df/tbl_df/tbl/data.frame)" zeigt die Klassenhierarchie des Objekts an.
+* Spalten und ihre Datentypen
+* In "attr(*, 'spec')=" steht, welche Art von Information in jeder Spalte der Tabelle steckt.   
+  Es hilft dem Computer zu verstehen, wie er die Daten behandeln soll.
+* "attr(*, "problems")=<externalptr>" ist wie ein Hinweis, dass es vielleicht Probleme gab, als die      Daten in den Computer geladen wurden.   
+  Es sagt aber nicht, welche Probleme das sind. Es ist wie ein Ausrufezeichen, aber ohne weitere         Erklärung.
+
+## 2.4 Erstellen einer Kopie der Rohdaten
+
+Bevor wir mit der detaillierten Datenanalyse beginnen, ist es wichtig, eine Kopie der Rohdaten zu erstellen. Dieser Schritt wird zu Beginn der "Data Understanding"-Phase durchgeführt, um sicherzustellen, dass die ursprünglichen Daten unverändert bleiben. Durch das Anfertigen dieser Kopie erhalten wir ein Backup und einen Referenzpunkt, auf den wir im weiteren Verlauf des Projekts zurückgreifen können.
+
+```{r, message=FALSE}
+HR_Analytics_final <- HR_Analytics
+```
+
+## 2.5 Fehlende Daten
+
+Um Fehlende Daten bzw. NAs zu finden, wird die Funktion colSums() mit der Funktion is.na() kombiniert:
+
+```{r}
+colSums(is.na(HR_Analytics_final))
+```
+
+Es wird angezeigt, wie viele fehlende Werte (NAs) es in jeder Spalte des Datensatzes gibt. In diesem Fall sind für falst alle Spalten die Werte 0, was bedeutet, dass in diesen Spalten keine fehlenden Werte vorhanden sind. Die einzige Ausnahme ist die Spalte "YearsWithCurrManager", in der 57 fehlende Werte angezeigt werden.
+
+Ein solches Ergebnis ist wichtig, um die Qualität des Datensatzes zu beurteilen. Fehlende Werte können die Genauigkeit statistischer Analysen beeinflussen und die Interpretierbarkeit der Ergebnisse erschweren. Hier sind ein paar Punkte, die aus diesem Ergebnis hervorgehen:
+
+### 2.5.2 Keine fehlenden Werte in den meisten Spalten
+
+Fast alle Spalten haben 0 fehlende Werte, was darauf hindeutet, dass der Datensatz ziemlich vollständig ist. Das ist in der Regel ein gutes Zeichen, da es bedeutet, dass keine Imputation (das Ausfüllen fehlender Werte) oder andere Techniken zur Behandlung fehlender Daten erforderlich sind.
+
+### 2.5.3 Fehlende Werte in einer spezifischen Spalte
+
+Die Spalte "YearsWithCurrManager" hat 57 fehlende Werte. Dies könnte bedeuten, dass die Daten für diese Spalte für einige Beobachtungen nicht verfügbar sind. Dies kann je nach dem Kontext des Datensatzes und dem Ziel der Analyse problematisch sein.
+
+Im Kontext Ihrer ersten Theorie zur Jobzufriedenheit wäre die Spalte "YearsWithCurrManager" eventuell relevant, da die Dauer der Zusammenarbeit mit dem aktuellen Manager ein Indikator für Arbeitsbedingungen und Mitarbeiterbeziehungen sein könnte. Fehlende Werte in dieser Spalte könnten daher die Analyse beeinträchtigen, indem sie ein unvollständiges Bild der Jobzufriedenheit zeichnen.
+
+Fehlende Werte in der Spalte könnten bedeuten, dass einige Mitarbeiter vielleicht noch keinen festen Manager haben oder es eine hohe Fluktuation in der Managerposition gibt. Beides könnte sich auf die Jobzufriedenheit auswirken und sollte in der Analyse berücksichtigt werden.
+
+**Fehlende Werte behandeln**
+
+Das Ersetzen der fehlenden Werte durch den Median oder den Mittelwert kann sinnvoll sein, um ein umfassenderes Bild der Jobzufriedenheit zu erhalten. Ob der Median oder der Mittelwert verwendet werden sollte, hängt von der Verteilung der Daten ab:
+
+Mittelwert: Wenn die Daten ziemlich gleichmäßig verteilt sind und keine extremen Ausreißer vorhanden sind, wäre der Mittelwert eine geeignete Methode.
+
+Median: Wenn es extreme Werte oder eine schiefe Verteilung in der Spalte gibt, wäre der Median vorzuziehen.
+
+Bevor Sie sich für eine Methode entscheiden, sollten die Daten genauer analysiert werden. Ein Histogramm oder ein Boxplot könnte hilfreich sein, um die Datenverteilung besser zu verstehen.
+
+**Boxplot erstellen**
+
+```{r}
+
+ggplot(data = HR_Analytics_final, aes(x = 1, y = YearsWithCurrManager)) +
+  geom_boxplot() +
+  xlab("") +
+  ylab("Jahre mit aktuellem Manager") +
+  ggtitle("Boxplot der Jahre mit aktuellem Manager")
+
+```
+
+Ein Boxplot ist ein grafisches Werkzeug, das die Verteilung einer Datenserie darstellt. Es zeigt den Median, die Quartile und mögliche Ausreißer im Datensatz. In unserem Fall untersuchten wir eine spezielle Spalte, in der die "YearsWithCurrManager" verzeichnet sind. Der Boxplot zeigte, dass der Mittelwert bei 3 Jahren und der Median bei 4 Jahren liegt. Zudem gab es drei Ausreißer bei 15, 16 und 17 Jahren, und der obere Schnurrbart des Boxplots reichte bis zu 13 Jahren.
+
+Die Abzissenwerte zwischen 0.6 und 1.4 sind eine konventionelle Möglichkeit, die Breite der Box darzustellen und nicht mit den eigentlichen Datenwerten zu verwechseln.
+
+Wenn es darum geht, fehlende Daten zu ersetzen, ist es wichtig, den am besten geeigneten Wert zu wählen. Der Mittelwert ist anfällig für Verzerrungen durch Ausreißer, während der Median eine robustere Metrik ist, insbesondere wenn der Datensatz Ausreißer enthält. Im Kontext der vorliegenden Daten und der Ausreißer wäre es daher angebrachter, den Median als Ersatz für fehlende Werte zu verwenden.
+
+Aufgrund der Robustheit gegenüber Ausreißern und der besseren Darstellung der zentralen Tendenz der Daten, wird der Median von 4 Jahren als der geeignetste Wert für die Ersetzung fehlender Daten eingesetzt.
+
+Mit der mutate()-Funktion aus dem dplyr-Paket werden die Daten modifiziert. Mit der Bedingung "is.na(YearsWithCurrManager)" wird festgestellt, ob ein Wert fehlt. Falls er fehlt, wird er durch den Medianwert "4" ersetzt. Andernfalls bleibt der Wert unverändert.
+
+```{r}
+HR_Analytics_final <- HR_Analytics_final %>%
+  mutate(YearsWithCurrManager = ifelse(is.na(YearsWithCurrManager), 4, YearsWithCurrManager))
+```
+
+Mit colSums() überprüfen wir noch einmal die Ergebnisse:
+
+```{r}
+colSums(is.na(HR_Analytics_final))
+```
