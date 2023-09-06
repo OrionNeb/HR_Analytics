@@ -432,11 +432,21 @@ Bevor Sie sich für eine Methode entscheiden, sollten die Daten genauer analysie
 
 
 ```r
-ggplot(data = HR_Analytics_final, aes(x = 1, y = YearsWithCurrManager)) +
+ggplot(data = HR_Analytics_final, aes(x = 1, y = YearsWithCurrManager, fill = "skyblue")) +
   geom_boxplot() +
   xlab("") +
   ylab("Jahre mit aktuellem Manager") +
-  ggtitle("Boxplot der Jahre mit aktuellem Manager")
+  ggtitle("Boxplot der Jahre mit aktuellem Manager") +
+  scale_fill_manual(values = "skyblue") +
+  guides(fill = FALSE)
+```
+
+```
+## Warning: The `<scale>` argument of `guides()` cannot be `FALSE`. Use "none" instead as
+## of ggplot2 3.3.4.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.
 ```
 
 ```
@@ -697,11 +707,279 @@ Die anfängliche Kategorisierung der Daten dient als Ausgangspunkt, der je nach 
 * **"MonthlyRate"**: Monatsrate ist metrisch.
 * **"NumCompaniesWorked"**: Anzahl der gearbeiteten Unternehmen ist metrisch.
 * **"PercentSalaryHike"**: Prozentsatz der Gehaltserhöhung ist metrisch.
-* **"StandardHours"**: Standardstunden können als metrisch betrachtet werden. Jeder arbeitet 8,0 Stunden.
+* **"StandardHours"**: Standardstunden können als metrisch betrachtet werden. Jeder arbeitet 8 Stunden am Tag.
 * **"StockOptionLevel"**: Aktienoptionslevel ist metrisch.
 * **"TotalWorkingYears"**: Gesamte Berufsjahre ist metrisch.
-* **"TrainingTimesLastYear"**: Triningszeiten im letzten Jahr ist metrisch.
+* **"TrainingTimesLastYear"**: Trainingszeiten im letzten Jahr ist metrisch.
 * **"YearsAtCompany"**: Jahre im Unternehmen ist metrisch.
 * **"YearsInCurrentRole"**: Jahre in der aktuellen Rolle ist metrisch.
 * **"YearsSinceLastPromotion"**: Jahre seit der letzten Beförderung ist metrisch.
 * **"YearsWithCurrManager"**: Jahre mit aktuellem Manager ist metrisch.
+
+## 2.7 Datenqualitätsprüfung
+
+### 2.7.1 Fehlende Werte
+
+Fehlende Daten bzw. NAs oder Nullen sind in Kapitel 2.5 behandelt worden.
+
+### 2.7.2 Dubletten
+
+Der Datensatz kann mit der Funktion duplicated() überprüft werden. Sie gibt einen logischen Vektor zurück, der True für jede Zeile im Datensatz ist, die eine Duplikat der vorhergehenden Zeile ist.
+
+
+```r
+# Überprüfung auf doppelte Zeilen
+duplikate <- duplicated(HR_Analytics_final)
+
+# Anzahl der doppelten Zeilen ermitteln
+anzahl_duplikate <- sum(duplikate)
+
+# Ausgabe der Anzahl der doppelten Zeilen
+print(paste("Anzahl der doppelten Zeilen: ", anzahl_duplikate))
+```
+
+```
+## [1] "Anzahl der doppelten Zeilen:  7"
+```
+Die Anzahl der doppelten Zeilen ist 7. 
+
+Mit dem Ausdruck HR_Analytics_final <-[!dublicated(HR_Analytics_final),] wird der Datensatz gefiltert. Nur die Zeilen, für die der logische Vektor "TRUE" ist, bleiben im Datensatz erhalten. 
+
+
+```r
+# Entfernen der doppelten Zeilen
+HR_Analytics_final <- HR_Analytics_final[!duplicated(HR_Analytics_final), ]
+```
+
+Nun wird noch einmal auf Dubletten überprüft:
+
+
+```r
+# Überprüfung auf doppelte Zeilen
+duplikate <- duplicated(HR_Analytics_final)
+
+# Anzahl der doppelten Zeilen ermitteln
+anzahl_duplikate <- sum(duplikate)
+
+# Ausgabe der Anzahl der doppelten Zeilen
+print(paste("Anzahl der doppelten Zeilen: ", anzahl_duplikate))
+```
+
+```
+## [1] "Anzahl der doppelten Zeilen:  0"
+```
+
+Keine Dubletten mehr vorhanden.
+
+### 2.7.3 Outliers (Ausreißer)
+
+Die Identifizierung und Behandlung von Ausreißern ist ein wichtiger Schritt in der Datenanalyse. Es soll entschieden werden, ob diese entfernt, transformiert oder beibehalten werden sollen. In R gibt es verschiedene Methoden, um Ausßreißer zu identifizieren und zu behandeln.
+
+Um Ausreißer zu identifizieren können Boxplots oder Scatterplots erstellt werden.
+
+**Warum ein Boxplot weniger hilfreich ist**
+
+Ein Boxplot kann zwar Ausreißer in den Daten anzeigen, jedoch nur im Kontext der Variable selbst. Er zeigt nicht, wie diese Ausreißer im Kontext anderer Variablen stehen. Deshalb könnte es weniger informativ sein, wenn die Beziehungen zwischen mehreren Variablen untersucht werden sollen. Hier könnten Scatterplots, die zwei Variablen miteinander vergleichen, nützlicher sein.
+
+Für den Vergleich wurde sich für die Variable **"MonthlyIncome"** aus mehreren Gründen entschieden:
+
+* Durch die **Variabilität** der Gehälter können sie eine große Bandbreite abdecken. Von Einsteigerpositionen bis hin zu Führungspositionen. Diese große Bandbreite kann dazu führen, dass extreme Werte eher auftreten. 
+* Gehälter sind oft eng mit anderen Variablen verbunden und haben daher **Einfluss auf andere Variablen**. Die Variablen wie "JobLevel", "YearsAtCompany", oder "Age" korrelieren. Ausreißer bei "MonthlyIncome" könnten also auf Ausreißer oder Besonderheiten bei anderen Varablen hinweisen.
+* Es gibt eine **wirtschaftliche Bedeutung**. Hohe oder niedrige Gehälter können die Interpretation anderer Variablen, wie z. B. "JobSatisfaction". beeinflussen. Ein ungewöhnlich hohes Gehalt könnte beispielsweise eine niedrige Jobzufriedenheit kompensieren.
+* Das Gehalt kann durch seine **Komplexität** durch viele verschiedene Faktoren beeinflusst werden, einschließlich Bildung, Erfahrung, Standort, Abteilung usw. Dies macht es zu einer komplexen Variable, die sich gut für die Erkennung von Ausreißern eignet.
+
+
+**Scatterplots der numerischen Werte**
+
+Die fünf Variablen EmployeeCount, Over18, StandardHours, JobRole und OverTime sollten aus folgenden Gründen ausgeschlossen werden:  
+  
+  * Eine **geringe Varianz** der Variablen für alle Beobachtungen. Da sie nur einen Wert haben, fügen sie wenig bis keine Information zur Analyse hinzu. Deshalb zeigen die Scatterplots eine Linie oder einen Punkt, was nicht hilfreich ist.
+  * Die fünf Variablen sind **irrelevant für die Datenqualitätsprüfung**. Die Variablen haben keinen Einfluss auf die Frage, ob es Ausreißer gibt und ob man sie entfernen oder transformieren sollte.
+  * Durch das Entfernen unwichtiger Variabeln wird der Datensatz übersichtlicher und einfacher zu interpretieren, besonders wenn viele Scatterplots erzeugt werden.
+
+
+
+```r
+# Daten einfügen 
+data <- HR_Analytics_final
+
+# Liste der Variablen, die ausgeschlossen werden sollen
+exclude_vars <- c("EmployeeCount", "Over18", "StandardHours", "JobRole", "OverTime")
+
+# Liste der numerischen Variablen (ohne MonthlyIncome und ohne auszuschließende Variablen)
+numerical_vars <- setdiff(names(data), c("MonthlyIncome", exclude_vars))
+numerical_vars <- numerical_vars[sapply(data[, numerical_vars], is.numeric)]
+
+# Entfernen von NA-Werten aus numerical_vars
+numerical_vars <- numerical_vars[!is.na(numerical_vars)]
+
+# Teilen Sie die numerischen Variablen in Gruppen zu je zwei Plots auf
+groups <- split(numerical_vars, ceiling(seq_along(numerical_vars)/2))
+
+# Erstellen und speichern Sie die Scatterplots
+plots <- lapply(groups, function(vars) {
+  scatterplots <- lapply(vars, function(var) {
+    if (!is.na(var) && !is.null(var) && var != "") { # Bedingung hinzugefügt
+      ggplot(data, aes(x = !!sym(var), y = MonthlyIncome)) +
+        geom_point(color = "skyblue") +
+        labs(x = var, y = "MonthlyIncome") +
+        theme_minimal() +
+        theme(legend.position = "none")  
+    }
+  })
+  # Entfernen Sie NULL-Elemente aus der Liste
+  scatterplots <- Filter(Negate(is.null), scatterplots)
+  
+  do.call(grid.arrange, c(scatterplots, ncol = 2))
+})
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-20-1.png)<!-- -->![](HR_Analytics2_files/figure-html/unnamed-chunk-20-2.png)<!-- -->![](HR_Analytics2_files/figure-html/unnamed-chunk-20-3.png)<!-- -->![](HR_Analytics2_files/figure-html/unnamed-chunk-20-4.png)<!-- -->![](HR_Analytics2_files/figure-html/unnamed-chunk-20-5.png)<!-- -->![](HR_Analytics2_files/figure-html/unnamed-chunk-20-6.png)<!-- -->![](HR_Analytics2_files/figure-html/unnamed-chunk-20-7.png)<!-- -->![](HR_Analytics2_files/figure-html/unnamed-chunk-20-8.png)<!-- -->![](HR_Analytics2_files/figure-html/unnamed-chunk-20-9.png)<!-- -->![](HR_Analytics2_files/figure-html/unnamed-chunk-20-10.png)<!-- -->![](HR_Analytics2_files/figure-html/unnamed-chunk-20-11.png)<!-- -->![](HR_Analytics2_files/figure-html/unnamed-chunk-20-12.png)<!-- -->
+
+
+### 2.7.4 Inkonsistente Daten
+
+Nach folgenden Sachen wurde bereits überprüft oder ist obsolet:
+
+* Es gibt keine fehlenden Daten mehr in dem Datensatz HR_Analytics_final. Die Daten sind valide.
+* Es gibt keine NAs mehr im Datensatz HR_Analytics_final.
+* Es gibt keine Variable mit Datumsangaben. Das Überprüfen ist obsolet.
+* Es gibt keine unerwarteten Kategorien. Die Daten sind bereinigt.
+* Alle numerischen Variablen liegen in einem sinnvollen Bereich.
+* Es gibt keine Dubletten.
+* Die Datentypen passen zum Datensatz. Dies wurde mit der Funktion str(HR_Analytics_final) überprüft.
+
+**Prüfen auf Texteinheitlichkeit**
+
+Die Überprüfung der Texteinheitlichkeit ist entscheidend für die Qualität und Genauigkeit von Datenanalysen. Inkonsistenzen in Textdaten können zu doppelten Kategorien, ungenauen Aggregationen und fehlerhaften Analysen führen. Text sollte in einem einheitlichen Format sein, um sicherzustellen, dass die Datenanalyse genau ist.
+
+Es werden alle Zeichenketten-Spalten(char_cols) des Datensatzes HR_Analytics_final auf Texteinheitlichkeit überprüft. Dafür wird die Funktion tolower() auf alle Zeichenketten-Variablen angewendet und zeigt die einzigartigen Werte jeder Spalte an.
+
+Die Spalte "EmpID" wird dabei ausgeschlossen. 
+
+
+```r
+# Finden Sie alle charakter-Variablen
+char_cols <- names(HR_Analytics_final)[sapply(HR_Analytics_final, is.character)]
+
+# Entfernen Sie 'EmpID' aus der Liste der charakter-Variablen
+char_cols <- setdiff(char_cols, "EmpID")
+
+# Wenden Sie 'tolower()' auf alle verbleibenden charakter-Variablen an
+HR_Analytics_final[char_cols] <- lapply(HR_Analytics_final[char_cols], tolower)
+
+# Zeigen Sie die einzigartigen Werte jeder verbleibenden charakter-Variablen an
+lapply(HR_Analytics_final[char_cols], unique)
+```
+
+```
+## $AgeGroup
+## [1] "18-25" "26-35" "36-45" "46-55" "55+"  
+## 
+## $Attrition
+## [1] "yes" "no" 
+## 
+## $BusinessTravel
+## [1] "travel_rarely"     "travel_frequently" "non-travel"       
+## [4] "travelrarely"     
+## 
+## $Department
+## [1] "research & development" "sales"                  "human resources"       
+## 
+## $EducationField
+## [1] "life sciences"    "medical"          "marketing"        "technical degree"
+## [5] "other"            "human resources" 
+## 
+## $Gender
+## [1] "male"   "female"
+## 
+## $JobRole
+## [1] "laboratory technician"     "sales representative"     
+## [3] "research scientist"        "human resources"          
+## [5] "manufacturing director"    "sales executive"          
+## [7] "healthcare representative" "research director"        
+## [9] "manager"                  
+## 
+## $MaritalStatus
+## [1] "single"   "divorced" "married" 
+## 
+## $SalarySlab
+## [1] "upto 5k" "5k-10k"  "10k-15k" "15k+"   
+## 
+## $Over18
+## [1] "y"
+## 
+## $OverTime
+## [1] "no"  "yes"
+```
+Durch das Ausschließen von "EmpID" wird sichergestellt, dass die Eindeutigkeit dieser Identifikator-Spalte erhalten bleibt, während der Rest des Datensatzes auf Textkonsistenz überprüft wird.
+
+Die Daten sind standardisiert. Es müssen keine zusätzlichen Zeichen hinzugefügt, oder entfernt werden.
+
+### 2.7.5 Kardinalität
+
+Die Überprüfung der Kardinalität in einem Datensatz bezieht sich auf die Anzahl der einzigartigen Werte, die in jeder Spalte vorhanden sind. Kardinalität ist in vielen Aspekten der Datenanalyse und des Maschinenlernens wichtig:
+
+* Wenn eine Spalte nur wenige einzigartige Werte enthält (z.B. Geschlecht, mit nur den Werten "männlich" und "weiblich"), dann könnte sie als kategorische Variable betrachtet werden. Diese Informationen könnten für die Datenanalyse nützlich sein. Man spricht von einer **geringen Kardinalität**.
+* Eine **hohe Kardinalität** ist dann gegeben, wenn eine Spalte eine hohe Anzahl von einzigartigen Werten enthält (z. B. "EmpID"). Diese könnte dann als Identifikator fungieren. Solche Spalten sind oft weniger nützlich für Modelle, die Vorhersagen treffen, aber wichtig für die Datenverknüpfungen oder -identifikation.
+* Spalten, welche kategorische als auch kontinuierliche Eigenschaften haben, besitzen eine **mittelgroße Kardinalität** und erfordern eine genauere Untersuchung, um ihre Bedeutung zu verstehen. 
+
+Spalten mit sehr höher Kardinalität können die Leistung von Algorithmen für das Maschinenlernen beeinträchtigen und sind oft schwer interpretierbar. Die Kardinalität kann dazu verwendet werden, um neue Merkmale zu erstellen, die das Modell verbessern können.
+
+
+
+```r
+# Entfernen Sie 'EmpID' aus der Liste der Spalten
+cols_to_check <- setdiff(names(HR_Analytics_final), "EmpID")
+
+# Überprüfen Sie die Kardinalität jeder Spalte
+kardinalitaet <- sapply(HR_Analytics_final[cols_to_check], function(col) length(unique(col)))
+
+# Anzeigen der Kardinalität jeder Spalte
+print(kardinalitaet)
+```
+
+```
+##                      Age                 AgeGroup                Attrition 
+##                       43                        5                        2 
+##           BusinessTravel                DailyRate               Department 
+##                        4                      886                        3 
+##         DistanceFromHome                Education           EducationField 
+##                       29                        5                        6 
+##            EmployeeCount           EmployeeNumber  EnvironmentSatisfaction 
+##                        1                     1470                        4 
+##                   Gender               HourlyRate           JobInvolvement 
+##                        2                       71                        4 
+##                 JobLevel                  JobRole          JobSatisfaction 
+##                        5                        9                        4 
+##            MaritalStatus            MonthlyIncome               SalarySlab 
+##                        3                     1349                        4 
+##              MonthlyRate       NumCompaniesWorked                   Over18 
+##                     1427                       10                        1 
+##                 OverTime        PercentSalaryHike        PerformanceRating 
+##                        2                       15                        2 
+## RelationshipSatisfaction            StandardHours         StockOptionLevel 
+##                        4                        1                        4 
+##        TotalWorkingYears    TrainingTimesLastYear          WorkLifeBalance 
+##                       40                        7                        4 
+##           YearsAtCompany       YearsInCurrentRole  YearsSinceLastPromotion 
+##                       37                       19                       16 
+##     YearsWithCurrManager 
+##                       18
+```
+
+Die Überprüfung der Kardinalität ist ein wichtiger Schritt, um die Struktur des Datensatzes zu verstehen. Sie kann helfen, informierte Entscheidungen über die Datenvorbereitung, das Feature Engineering und die Modellierung zu treffen. Sie sollte auch im Kontext der erwarteten Daten betrachtet werden; eine Kardinalität, die viel höher oder niedriger ist als erwartet, könnte ein Anzeichen für ein Datenqualitätsproblem sein.
+
+Die Kardinalität eines Datensatzes bietet Einblick in die Vielfalt der Werte in jeder Spalte. Beispielsweise zeigt eine Kardinalität von 43 für das Alter an, dass es 43 verschiedene Altersgruppen in diesem Datensatz gibt, was als mittlere Kardinalität betrachtet werden kann. Ebenso weisen Variablen wie Attrition und PerformanceRating mit nur zwei einzigartigen Werten sehr niedrige Kardinalitäten auf und sind wahrscheinlich binäre Merkmale.
+
+Im Gegensatz dazu weisen DailyRate und MonthlyIncome hohe Kardinalitäten auf, was darauf hinweist, dass diese Werte stark variieren und daher als numerische Variablen mit hoher Kardinalität betrachtet werden können. Auf der anderen Seite haben Variablen wie EmployeeCount und Over18 eine Kardinalität von 1, was bedeutet, dass sie für die Analyse möglicherweise nicht sehr informativ. Diese beiden Variablen werden aus HR_Analytics_final entfernt:
+
+
+```r
+# Entfernen der Spalten Over18 und EmployeeCount
+HR_Analytics_final <- HR_Analytics_final %>% 
+  select(-Over18, -EmployeeCount)
+```
+
+
+Es gibt auch Variablen mit niedriger Kardinalität wie BusinessTravel oder NumCompaniesWorked, die als kategorische Variablen betrachtet werden könnten und möglicherweise durch Techniken wie One-Hot-Encoding in ein format umgewandelt werden könnten, das für maschinelles Lernen besser geeignet ist. Variablen mit hoher Kardinalität, insbesondere Identifikationsvariablen wie EmployeeNumber, könnten nützlich für die Identifikation sein, bieten jedoch für die meisten Arten der statistischen Analyse wahrscheinlich keinen Mehrwert.
