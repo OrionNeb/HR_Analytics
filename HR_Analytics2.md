@@ -496,3 +496,212 @@ colSums(is.na(HR_Analytics_final))
 ##  YearsSinceLastPromotion     YearsWithCurrManager 
 ##                        0                        0
 ```
+
+### 2.5.4 Falsche Werte in spezifischer Spalte
+
+Alle Mitarbeiter arbeiten acht Stunden am Tag (StandardHours), was aber hier mit der Zahl 80 angegeben wurde. Das muß korrigiert werden und auf 8,0 gesetzt werden.
+
+Eine andere Lösung würde keinen Sinn ergeben. 80 Stunden wären zu viel in einer Woche und zu wenig in einem Monat. 
+
+
+```r
+HR_Analytics_final$StandardHours <- 8
+```
+
+Um die Änderungen anzuzeigen, wird noch einmal die Spalte mit der head-Funktion angezeigt.
+
+
+```r
+head(HR_Analytics_final$StandardHours)
+```
+
+```
+## [1] 8 8 8 8 8 8
+```
+
+
+## 2.6 Erste Datenexploration
+
+**Einleitung**
+
+Die Phase des Data Understanding ist ein kritischer Schritt im Datenanalyseprozess. Sie hilft uns, die Qulaität und Struktur unserer Daten zu verstehen und bereitet uns darauf vor, fundierte Entscheidungen für die nachfolgenden Phasen zu treffen. Die erste Datenexploration bietet einen umfassenden Einblick in die Daten und identifiziert potenzielle Herausforderungen, wie fehlende Werte und Ausreißer.
+
+**Warum im Data Understanding?**
+
+Bevor man in tiefgehende Analysen eintaucht, ist es entscheidend, ein klares Verständnis für die Daten zu haben. Eine vorläufige Untersuchung kann uns wesentliche Informtationen liefern, die uns bei der Entscheidung helfen, welche Methoden und Techniken in späteren Phasen angewendet werden sollten. 
+
+### 2.6.1 Die Grundgesamtheit
+
+**Ziel**
+
+Das Ziel dieses ersten Schrittes ist es, einen groben Überblick über den geamten Datensatzu zu erhalten. Dies ist nützlich, um ein erstes Verständnis für die Daten zu bekommen und mögliche Probleme frühzeitig zu erkennen.  
+
+**Vorgehen**
+
+Es wird die "summary"-Funktion auf den gesamten Datensatz "HR_Analytics_final" angewendet. 
+
+
+```r
+summary(HR_Analytics_final)
+```
+
+```
+##     EmpID                Age          AgeGroup          Attrition        
+##  Length:1480        Min.   :18.00   Length:1480        Length:1480       
+##  Class :character   1st Qu.:30.00   Class :character   Class :character  
+##  Mode  :character   Median :36.00   Mode  :character   Mode  :character  
+##                     Mean   :36.92                                        
+##                     3rd Qu.:43.00                                        
+##                     Max.   :60.00                                        
+##  BusinessTravel       DailyRate       Department        DistanceFromHome
+##  Length:1480        Min.   : 102.0   Length:1480        Min.   : 1.00   
+##  Class :character   1st Qu.: 465.0   Class :character   1st Qu.: 2.00   
+##  Mode  :character   Median : 800.0   Mode  :character   Median : 7.00   
+##                     Mean   : 801.4                      Mean   : 9.22   
+##                     3rd Qu.:1157.0                      3rd Qu.:14.00   
+##                     Max.   :1499.0                      Max.   :29.00   
+##    Education     EducationField     EmployeeCount EmployeeNumber  
+##  Min.   :1.000   Length:1480        Min.   :1     Min.   :   1.0  
+##  1st Qu.:2.000   Class :character   1st Qu.:1     1st Qu.: 493.8  
+##  Median :3.000   Mode  :character   Median :1     Median :1027.5  
+##  Mean   :2.911                      Mean   :1     Mean   :1031.9  
+##  3rd Qu.:4.000                      3rd Qu.:1     3rd Qu.:1568.2  
+##  Max.   :5.000                      Max.   :1     Max.   :2068.0  
+##  EnvironmentSatisfaction    Gender            HourlyRate     JobInvolvement
+##  Min.   :1.000           Length:1480        Min.   : 30.00   Min.   :1.00  
+##  1st Qu.:2.000           Class :character   1st Qu.: 48.00   1st Qu.:2.00  
+##  Median :3.000           Mode  :character   Median : 66.00   Median :3.00  
+##  Mean   :2.724                              Mean   : 65.85   Mean   :2.73  
+##  3rd Qu.:4.000                              3rd Qu.: 83.00   3rd Qu.:3.00  
+##  Max.   :4.000                              Max.   :100.00   Max.   :4.00  
+##     JobLevel       JobRole          JobSatisfaction MaritalStatus     
+##  Min.   :1.000   Length:1480        Min.   :1.000   Length:1480       
+##  1st Qu.:1.000   Class :character   1st Qu.:2.000   Class :character  
+##  Median :2.000   Mode  :character   Median :3.000   Mode  :character  
+##  Mean   :2.065                      Mean   :2.725                     
+##  3rd Qu.:3.000                      3rd Qu.:4.000                     
+##  Max.   :5.000                      Max.   :4.000                     
+##  MonthlyIncome    SalarySlab         MonthlyRate    NumCompaniesWorked
+##  Min.   : 1009   Length:1480        Min.   : 2094   Min.   :0.000     
+##  1st Qu.: 2922   Class :character   1st Qu.: 8051   1st Qu.:1.000     
+##  Median : 4933   Mode  :character   Median :14220   Median :2.000     
+##  Mean   : 6505                      Mean   :14298   Mean   :2.687     
+##  3rd Qu.: 8384                      3rd Qu.:20461   3rd Qu.:4.000     
+##  Max.   :19999                      Max.   :26999   Max.   :9.000     
+##     Over18            OverTime         PercentSalaryHike PerformanceRating
+##  Length:1480        Length:1480        Min.   :11.00     Min.   :3.000    
+##  Class :character   Class :character   1st Qu.:12.00     1st Qu.:3.000    
+##  Mode  :character   Mode  :character   Median :14.00     Median :3.000    
+##                                        Mean   :15.21     Mean   :3.153    
+##                                        3rd Qu.:18.00     3rd Qu.:3.000    
+##                                        Max.   :25.00     Max.   :4.000    
+##  RelationshipSatisfaction StandardHours StockOptionLevel TotalWorkingYears
+##  Min.   :1.000            Min.   :8     Min.   :0.0000   Min.   : 0.00    
+##  1st Qu.:2.000            1st Qu.:8     1st Qu.:0.0000   1st Qu.: 6.00    
+##  Median :3.000            Median :8     Median :1.0000   Median :10.00    
+##  Mean   :2.709            Mean   :8     Mean   :0.7919   Mean   :11.28    
+##  3rd Qu.:4.000            3rd Qu.:8     3rd Qu.:1.0000   3rd Qu.:15.00    
+##  Max.   :4.000            Max.   :8     Max.   :3.0000   Max.   :40.00    
+##  TrainingTimesLastYear WorkLifeBalance YearsAtCompany   YearsInCurrentRole
+##  Min.   :0.000         Min.   :1.000   Min.   : 0.000   Min.   : 0.000    
+##  1st Qu.:2.000         1st Qu.:2.000   1st Qu.: 3.000   1st Qu.: 2.000    
+##  Median :3.000         Median :3.000   Median : 5.000   Median : 3.000    
+##  Mean   :2.798         Mean   :2.761   Mean   : 7.009   Mean   : 4.228    
+##  3rd Qu.:3.000         3rd Qu.:3.000   3rd Qu.: 9.000   3rd Qu.: 7.000    
+##  Max.   :6.000         Max.   :4.000   Max.   :40.000   Max.   :18.000    
+##  YearsSinceLastPromotion YearsWithCurrManager
+##  Min.   : 0.000          Min.   : 0.000      
+##  1st Qu.: 0.000          1st Qu.: 2.000      
+##  Median : 1.000          Median : 3.000      
+##  Mean   : 2.182          Mean   : 4.114      
+##  3rd Qu.: 3.000          3rd Qu.: 7.000      
+##  Max.   :15.000          Max.   :17.000
+```
+
+**Interpretation**
+
+Die Ausgabe zeigt grundlegende statistische Kennzahlen für jede Variabe, wie das arithmetische Mittel, Median, Min- und Max-Werte und die Quartile an. Fehlende Daten und NAs sind nicht mehr vorhanden.
+
+**Diskrete Daten**
+
+Diskrete Daten sind oft das Ergebnis einer Zählung. Dadurch können sie nur bestimmte Werte annehmen und sind endlich oder zählbar unendlich. 
+
+Es gibt Variablen, welche nominale oder ordinale Eigenschaften haben. Auch metrische Daten sind dabei. 
+
+Darüber hinaus können für diskrete Daten auch die Häufigkeiten der verschiedenen einzigartigen Werte dargestellt werden.
+
+**Tidy Data**
+
+Der Datensatz hat **1480** Zeilen und **38** Spalten. Die Daten sind bereits *tidy*, das bedeutet:
+
+1. Jede Variable bildet eine Spalte.
+2. Jede Beobachtung bildet eine Zeile.
+3. Jeder Zellwert repräsentiert eine Messung oder ein Merkmal.
+
+Jede Zeile in der **HR_Analytics**-Tabelle repräsentiert einen individuellen Mitarbeiter innerhalb der Organisation, aus der die Daten stammen. Die Werte in den Spalten für jede Zeile bieten spezifische Informationen über den jeweiligen Mitarbeiter. 
+
+### 2.6.2 Kategorisierung der Daten
+
+Wenn man die Daten sortieren oder eine Rangfolge erstellen kann, sie aber nicht sinnvoll addieren oder subtrahieren kann, handelt es sich wahrscheinlich um ordinale Daten.
+
+Wenn die Daten nur kategorisiert werden können und keine Reihenfolge oder metrische Eigenschaften haben, sind sie nominale Daten.
+
+Wenn man sinnvolle arithmitische Operationen (wie Addition und Subtraktion) auf die Daten anwenden kann, handelt es sich wahrscheinlich um metrische Daten.
+
+Sicherlich kann die Einteilung je nach Kontext variieren, um manchmal können Daten als entweder metrisch oder ordinal betrachtet werden, abhängig von der Forschungsfrage oder Analysemethode.  
+
+Die Kategorisierung von Daten ist nicht immer strikt festgelegt. Sie hängt oft vom Kontext ab. Man könnte das Bildungsniveau als ordinal betrachten, wenn man lediglich daran interessiert ist, ob höhere Bildung mit einem höheren Einkommen korreliert. In einer anderen Analyse könnte man jedoch die Anzahl der Schuljahre als metrische Daten betrachten, wenn man eine genauere Quantifizierung des Zusammenhangs zwischen Bildung und Einkommen anstrebt.  
+
+**Einfachheit oder Genauigkeit**
+
+Für den Anfang könnte man eine vereinfachte Einteilung wählen, um den Analyseprozess zu erleichtern und erste Einblicke zu gewinnen. Die Kategorisierung ist oft eine Frage des praktischen Vorgehens und dient der Einfachheit halber. 
+
+Es ist wichtig zu betonen, dass die anfängliche Entscheidung für eine bestimmt Datenkategorisierung nicht endgültig ist. Je nachdem, welche spezifischen Fragen in späteren Phasen des Projekts aufkommen oder welche spezifischen Analysemethoden angewendet werden sollen, kann eine Neubewertung der Datenart notwendig sein. Dies ist im Laufe der Explorativen Datenanalyse durchaus möglich, insbesondere wenn neue Thesen entwickelt werden.
+
+Die anfängliche Kategorisierung der Daten dient als Ausgangspunkt, der je nach den Bedürfnissen der Thesen flexibel angepasst erden kann. 
+
+**Ordinale Daten**
+
+* **"AgeGroup"**: Altergruppen sind ordinal, da es eine klare und sinnvolle Reihenfolge gibt.
+* **"Education"**: Das Bildungsniveau scheint in numerischer Form kategorisiert zu sein, könnte aber eine Reichenfolge haben (z. B. 1 = keine Ausbildung, 2 = Grundschule, usw.).
+* **"EnvironmentSatisfaction"**: Zufriedenheit mit der Arbeitsumgebung scheint ordinal zu sein, da sich numerisch kategorisiert und wahrscheinlich sortierbar ist. 
+* **"JobInvolvement"**: wird ebenfalls numerisch kategorisiert und ist wahrscheinlich sortierbar.
+* **"JobLevel"**: Joblevel könnte auch ordinal sein, da es eine Rangfolge darstellt. 
+* **"JobSatisfaction"**: wird ebenfalls numerisch kategorisiert und ist wahrscheinlich sortierbar.
+* **"PerformanceRating"**: wird ebenfalls numerisch kategorisiert und ist wahrscheinlich sortierbar.
+* **"RelationshipSatisfaction"**: wird ebenfalls numerisch kategorisiert und ist wahrscheinlich sortierbar.
+* **"WorkLifeBalance"**: wird ebenfalls numerisch kategorisiert und ist wahrscheinlich sortierbar.
+
+**Nominale Daten**
+
+* **"EmpID"**: Mirarbeiter-ID ist nominal, da sie eine individuelle Kennung oder Reihenfolge ist.
+* **"Attrition"**: Abwanderung (ja/Nein) ist eine nominale Kategorie.
+* **"BusinessTravel"**: Art der Geschäftsreise ist nominal.
+* **"Department"**: Abteilungen sind in der Regel nominal.
+* **"Gender"**: Geschlecht ist nominal. 
+* **"JobRole"**: Job-Rollen sind nominal.
+* **"MaritalStatus"**: Familienstand ist nominal.
+* **"Over18"**: Über 18 (Ja/Nein) ist nominal. 
+* **"OverTime"**: Überstunden (Ja/Nein) ist nominal.
+* **"SalarySlab"**: Gehaltsklasse ist nominal. 
+
+**Metrische Daten**
+
+* **"Age"**: Alter ist ein metrisches Merkmal.
+* **"DailyRate"**: Tagesrate ist metrisch.
+* **"DistanceFromHome"**: Entfernung von Zuhause ist metrisch.
+* **"EmployeeCount"**: Anzahl der Mitarbeiter könnte als metrisch betrachtet werden, obwohl es in diesem Datensatz wahrscheinlich immer 1 ist.
+* **"EmployeeNumber"**: Mitarbeiter-Nummer ist eigentlich nominal, da es aber in einer bestimmten Weise vergeben ist, wird es als metrisch betrachtet.
+* **"HourlyRate"**: Stundenrate ist metrisch.
+* **"MonthlyIncome"**: Monatseinkommen ist metrisch.
+* **"MonthlyRate"**: Monatsrate ist metrisch.
+* **"NumCompaniesWorked"**: Anzahl der gearbeiteten Unternehmen ist metrisch.
+* **"PercentSalaryHike"**: Prozentsatz der Gehaltserhöhung ist metrisch.
+* **"StandardHours"**: Standardstunden können als metrisch betrachtet werden. Jeder arbeitet 8,0 Stunden.
+* **"StockOptionLevel"**: Aktienoptionslevel ist metrisch.
+* **"TotalWorkingYears"**: Gesamte Berufsjahre ist metrisch.
+* **"TrainingTimesLastYear"**: Triningszeiten im letzten Jahr ist metrisch.
+* **"YearsAtCompany"**: Jahre im Unternehmen ist metrisch.
+* **"YearsInCurrentRole"**: Jahre in der aktuellen Rolle ist metrisch.
+* **"YearsSinceLastPromotion"**: Jahre seit der letzten Beförderung ist metrisch.
+* **"YearsWithCurrManager"**: Jahre mit aktuellem Manager ist metrisch.
