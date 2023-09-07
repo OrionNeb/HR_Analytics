@@ -9,7 +9,7 @@ output:
     #code_folding: hide
     toc: true
     toc_float: true
-    toc_depth: 3
+    toc_depth: 4
     df_print: paged
 bibliography: meine_referenzen.bib
 csl: apa.csl
@@ -813,10 +813,10 @@ numerical_vars <- numerical_vars[sapply(data[, numerical_vars], is.numeric)]
 # Entfernen von NA-Werten aus numerical_vars
 numerical_vars <- numerical_vars[!is.na(numerical_vars)]
 
-# Teilen Sie die numerischen Variablen in Gruppen zu je zwei Plots auf
+# Teilen der numerischen Variablen in Gruppen zu je zwei Plots
 groups <- split(numerical_vars, ceiling(seq_along(numerical_vars)/2))
 
-# Erstellen und speichern Sie die Scatterplots
+# Erstellen und speichern der Scatterplots
 plots <- lapply(groups, function(vars) {
   scatterplots <- lapply(vars, function(var) {
     if (!is.na(var) && !is.null(var) && var != "") { # Bedingung hinzugefügt
@@ -827,7 +827,7 @@ plots <- lapply(groups, function(vars) {
         theme(legend.position = "none")  
     }
   })
-  # Entfernen Sie NULL-Elemente aus der Liste
+  # Entfernen der NULL-Elemente aus der Liste
   scatterplots <- Filter(Negate(is.null), scatterplots)
   
   do.call(grid.arrange, c(scatterplots, ncol = 2))
@@ -859,16 +859,16 @@ Die Spalte "EmpID" wird dabei ausgeschlossen.
 
 
 ```r
-# Finden Sie alle charakter-Variablen
+# Finden aller charakter-Variablen
 char_cols <- names(HR_Analytics_final)[sapply(HR_Analytics_final, is.character)]
 
-# Entfernen Sie 'EmpID' aus der Liste der charakter-Variablen
+# Entfernen der 'EmpID' aus der Liste der charakter-Variablen
 char_cols <- setdiff(char_cols, "EmpID")
 
-# Wenden Sie 'tolower()' auf alle verbleibenden charakter-Variablen an
+# Wenden der 'tolower()'-Funktion auf alle verbleibenden charakter-Variablen an
 HR_Analytics_final[char_cols] <- lapply(HR_Analytics_final[char_cols], tolower)
 
-# Zeigen Sie die einzigartigen Werte jeder verbleibenden charakter-Variablen an
+# Zeigt die einzigartigen Werte jeder verbleibenden charakter-Variablen an
 lapply(HR_Analytics_final[char_cols], unique)
 ```
 
@@ -929,10 +929,10 @@ Spalten mit sehr höher Kardinalität können die Leistung von Algorithmen für 
 
 
 ```r
-# Entfernen Sie 'EmpID' aus der Liste der Spalten
+# Entfernen der 'EmpID' aus der Liste der Spalten
 cols_to_check <- setdiff(names(HR_Analytics_final), "EmpID")
 
-# Überprüfen Sie die Kardinalität jeder Spalte
+# Überprüfen der Kardinalität jeder Spalte
 kardinalitaet <- sapply(HR_Analytics_final[cols_to_check], function(col) length(unique(col)))
 
 # Anzeigen der Kardinalität jeder Spalte
@@ -983,3 +983,708 @@ HR_Analytics_final <- HR_Analytics_final %>%
 
 
 Es gibt auch Variablen mit niedriger Kardinalität wie BusinessTravel oder NumCompaniesWorked, die als kategorische Variablen betrachtet werden könnten und möglicherweise durch Techniken wie One-Hot-Encoding in ein format umgewandelt werden könnten, das für maschinelles Lernen besser geeignet ist. Variablen mit hoher Kardinalität, insbesondere Identifikationsvariablen wie EmployeeNumber, könnten nützlich für die Identifikation sein, bieten jedoch für die meisten Arten der statistischen Analyse wahrscheinlich keinen Mehrwert.
+
+
+## 2.8 Exporative Datenanalyse (EDA)
+
+Die explorative Datenanalyse, kurz EDA, stellt einen initialen Prozess in der umfassenden Datenanalyse dar. Sie zielt darauf ab, die zentralen Charakteristika eines Datensatzes visuell oder statistisch zu erfassen. Anstatt sich auf formelle Modelle oder Hypothesenprüfungen zu konzentrieren, versucht die EDA, die Struktur und die Beziehungen in den Daten intuitiv greifbar zu machen. Grundlegende statistische Kennzahlen wie der Durchschnitt, der Median und die Standardabweichung werden oft als erste Anlaufstellen genutzt, um ein grundlegendes Verständnis der Daten zu gewinnen.
+
+Visualisierungen wie Histogramme oder Boxplots sind weit verbreitet und ermöglichen eine rasche Einschätzung der Verteilung der Daten. Darüber hinaus können Korrelationsanalysen und Streudiagramme aufzeigen, wie verschiedene Variablen miteinander verknüpft sind. 
+
+Der Prozess der EDA ist flexibel und anpassbar, abhängig von den spezifischen Anforderungen des jeweiligen Analyseprojekts. Sie dient als solide Grundlage für weitere, tiefgreifende Analysen und Modellierungen und kann wegweisende Erkenntnisse für die folgenden Untersuchungsschritte liefern.
+
+Es ist wichtig zu betonen, wie die EDA durchgeführt wird. Laut Benndorf wird:
+
+>"Zur Beschreibung der statistischen Eigenschaften der Zielvariable(n) innerhalb des betrachteten Gebietes wird nicht das gesamte Objekt, oder statistisch gesprochen die Grundgesamtheit, analysiert. Aus Effzienzgründen erfolgt eine repräsentative Probenahme, wobei die Anzahl der Probewerte sich nach den Anforderungen der Anwendung richtet. Die resultierende Stichprobe wird einer EDA unterzogen, um so Rückschlüsse auf die statistischen Eigenschaften der Zielvariablen im Zielobjekt zu ziehen (siehe Abb. 2.1 im Original). Es sollte sich immer vor Augen gehalten werden, dass sich die statistischen Kennwerte auf die Stichprobe beziehen. Erst die Annahme, dass diese Stichprobe repräsentativ für die Grundgesamtheit ist, erlaubt es, Ergebnisse der EDA auf letztere zu beziehen." [@Geostatistik]  
+  
+  
+
+```r
+knitr::include_graphics("Angewandte_Geodatenanalyse.png")
+```
+
+![](Angewandte_Geodatenanalyse.png)<!-- -->
+Aus Effizienzgründen wird aus der gesamten Datengrundlage eine repräsentative Stichprobe analysiert, um statistische Eigenschaften einer Zielvariablen in einem bestimmten Bereich zu untersuchen. Die Ergebnisse der Stichprobe werden dann auf die Gesamtheit übertragen, vorausgesetzt, die Stichprobe ist repräsentativ. 
+
+**Erstellen der Stichprobe**
+
+Die Stichprobe wird aus dem endgültigen Datensatz HR_Analytics_final genommen, da dies der bereinigte Datensatz ist, um nur die für die These relevanten Variablen zu behalten. Das vereinfacht den Analyseprozess und man konzentriert sich nur auf die wichtigen Variablen. 
+
+
+```r
+# Auswahl der relevanten Variablen für die These
+HR_Analytics_selected <- HR_Analytics_final %>%
+  select(EmpID, MonthlyIncome, HourlyRate, DailyRate, OverTime,
+         WorkLifeBalance, EnvironmentSatisfaction, JobInvolvement, JobLevel, JobSatisfaction, 
+         RelationshipSatisfaction, PerformanceRating, JobRole, PercentSalaryHike)
+```
+
+
+### 2.8.1 Deskriptive Statistik
+
+Die deskriptive Statistik ist der erste Schritt in der explorativen Datenanalyse, da sie einen ersten Überblick über die Datenstruktur und -eigenschaften bietet. Folgende Fragen können damit beantwortet werden:
+
+* Wie sieht die Datenverteilung aus?
+* Gibt es Ausreißer?
+* Wie variabel sind die Daten?
+
+Diese Informationen sind wertvoll, um zu entscheiden, welche Art von Datenbereinigung oder -transformation erforderlich ist und welche Art von statistischen Tests oder Modellen später angewendet werden könnten.
+
+Die Auswahl der Variablen basiert auf der These, die beantwortet werden soll. In diesem Fall sind wir besonders an Themen wie Gehalt, Arbeitsbedingungen, Mitarbeiterbeziehungen und Arbeitsleistung interessiert. Die ausgewhälten Variablen: "MonthlyIncome", "HourlyRate", "WorkLifeBalance", "EnvironmentSatisfaction" etc.) sind direkt relevant für diese Themen.
+
+Insbesondere die Kennzahlen **Mittelwert**, **Median** und **Modus** bieten eine solide Grundlage, um ein erstes Verständnis für die Daten zu entwickeln.
+
+Der Mittelwert dient als ein erster Anhaltspunkt, um zu verstehen, wo die Mehrheit der Datenpunkte in einer bestimmten Variable liegt. Allerdings sollte man beachten, dass der Mittelwert anfällig für Ausreißer ist. Deshalb wird häufig auch der Median herangezogen, der als mittlerer Wert einer sortierten Datenserie dient und wesentlich robuster gegenüber Ausreißern ist.  
+
+Um das am häufigsten vorkommende Merkmal in einer Datenreihe zu identifizieren, eignet sich der Modus. Dies ist besonders bei der Analyse kategorischer Variablen hilfreich, da er aufzeigt, welche Kategorie am vorherrschenden ist.  
+
+Ergänzend dazu ist die **Frequenzverteilung** ein weiteres mächtiges Werkzeug in der deskriptiven Statistik. Sie zeigt die Häufigkeit der einzelnen Kategorien einer kategorischen Variable und ist somit besonders wichtig, um das Verständnis für die Verteilung von Variablen wie "WorkLifeBalance" und "EnvironmentSatisfaction" zu vertiefen. Durch das Verständnis dieser grundlegenden statistischen Eigenschaften können wir die Daten besser aufbereiten, für weitere Analysen auswählen und letztendlich fundiertere Entscheidungen treffen.
+
+
+#### 2.8.1.1 Mittelwert, Median und Quartile
+
+Durch die aufgestellte These und der zugehörigen explorativen Datenanalyse werden bestimmte Variablen spezifisch und themenorientiert untersucht. Folgende Schritte werden für die numerischen Variaben durchgeführt:  
+
+1. Monatliches Einkommen ("MonthlyIncome")
+
+
+```r
+summary(HR_Analytics_selected$MonthlyIncome)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    1009    2911    4908    6500    8380   19999
+```
+
+
+```r
+ggplot(HR_Analytics_selected, aes(y=MonthlyIncome)) +
+  geom_boxplot(fill="skyblue") +
+  ggtitle("Boxplot für MonthlyIncome") +
+  ylab("MonthlyIncome")
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
+
+
+
+2. Stündlicher Tarif ("HourlyRate")
+
+
+```r
+summary(HR_Analytics_selected$HourlyRate)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   30.00   48.00   66.00   65.83   83.00  100.00
+```
+
+
+```r
+ggplot(HR_Analytics_selected, aes(y=HourlyRate)) +
+  geom_boxplot(fill="skyblue") +
+  ggtitle("Boxplot für HourlyRate") +
+  ylab("HourlyRate")
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
+
+
+3. Tagesrate(DailyRate)
+
+
+```r
+summary(HR_Analytics_selected$DailyRate)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   102.0   465.0   802.0   802.7  1157.0  1499.0
+```
+
+
+```r
+ggplot(HR_Analytics_selected, aes(y=DailyRate)) +
+  geom_boxplot(fill="skyblue") +
+  ggtitle("Boxplot für DailyRate") +
+  ylab("DailyRate")
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
+
+
+4. Gehaltserhöhung(PercentSalaryHike)
+
+
+```r
+summary(HR_Analytics_selected$PercentSalaryHike)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   11.00   12.00   14.00   15.21   18.00   25.00
+```
+
+
+```r
+ggplot(HR_Analytics_selected, aes(y=PercentSalaryHike)) +
+  geom_boxplot(fill="skyblue") +
+  ggtitle("Boxplot für PercentSalaryHike") +
+  ylab("PercentSalaryHike")
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
+
+
+#### 2.8.1.2 Frequenzverteilung
+
+Eine Frequenzverteilung ist eine Tabelle oder ein Diagramm, das die Häufigkeit der verschiedenen Kategorien einer kategorischen Variable anzeigt. Dadurch bekommt man einen schnellen Überblick über die Verteilung von kategorischen Variabelen, was hilft, die Analyse fokussiert und zielgerichteter zu gestalten. 
+
+**OverTime**
+
+Im Fall der Variable Überstunden (OverTime) würde man sehen, wie viele Mitarbeiter angegeben haben, Überstunden zu machen und wie viele das nicht tun.  
+
+Wenn eine überwältigende Mehrheit der Mitarbeiter Überstunden macht, könnte das ein Indikator für ein Arbeitsklima sein, in dem Überstunden als notwendig oder sogar erwartet angesehen werden. Wenn dies im Widerspruch zu anderen Varablen wie "WorkLifeBalance" oder "JobSatisfaction" steht, könnte das ein interessanter Punkt für eine tiefere Untersuchung sein.  
+
+Andererseits könnte es auch der Fall sein, dass nur eine Minderheit der Mitarbeiter Überstunden macht. Dies könnte wiederum bedeuten, dass Überstunden in dieser speziellen Arbeitsumgebung nicht die Norm sind, oder dass sie vielleicht besser vergütet werden und deshalb nicht als problematisch angesehen werden.  
+
+In speziellen Fall, wo die These lautet: **"Mitarbeiter, die ein höheres Gehalt erhalten, bessere Arbeitsbedingungen vorfinden, positive Mitarbeiterbeziehungen pflegen und deren Arbeitsleistung anerkannt wird bzw. deren Arbeitsanforderungen erfüllbar sind, haben eine höhere Jobzufriedenheit."** kann die Information über Überstunden nützlich sein. Zum Beispiel, wenn Überstunden häufig vorkommen, aber nicht extra vergütet werden, könnte das die Jobzufriedenheit negativ beeinflussen.
+
+
+```r
+table(HR_Analytics_selected$OverTime)
+```
+
+```
+## 
+##   no  yes 
+## 1057  416
+```
+
+
+```r
+ggplot(HR_Analytics_selected, aes(x=OverTime)) +
+  geom_histogram(stat="count", fill="skyblue") +
+  ggtitle("Histogramm für Overtime") +
+  xlab("Overtime") +
+  ylab("Anzahl der Mitarbeiter")
+```
+
+```
+## Warning in geom_histogram(stat = "count", fill = "skyblue"): Ignoring unknown
+## parameters: `binwidth`, `bins`, and `pad`
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
+
+Das Ergebnis für die Variable "OverTime" zeigt, dass von den erfassten Mitarbeitern 1057 Personen keine Überstunden machen, während 416 Personen angegeben haben, Überstunden zu leisten. Diese Daten könnten darauf hindeuten, dass ein signifikanter Anteil der Belegschaft keine Überstunden macht, was je nach Kontext und Unternehmenskultur als positiv oder negativ interpretiert werden könnte.
+
+**WorkLifeBalance**
+
+Eine Frequenzverteilung dieser Variable würde zeigen, wie die Mitarbeiter ihre Work-Life-Balance einschätzen. Wenn eine große Mehrheit der Mitarbeiter eine gute Work-Life-Balance angibt, könnte das ein Indikator für eine Arbeitsumgebung sein, die auf das Wohl der Mitarbeiter achtet. Im Gegensatz dazu könnte eine schlechte Work-Life-Balance auf Probleme wie Überstunden, Stress oder mangelnde Flexibilität hinweisen, die alle die Jobzufriedenheit negativ beeinflussen können.
+
+
+```r
+table(HR_Analytics_selected$WorkLifeBalance)
+```
+
+```
+## 
+##   1   2   3   4 
+##  80 344 896 153
+```
+
+
+
+```r
+ggplot(HR_Analytics_selected, aes(x=WorkLifeBalance)) +
+  geom_histogram(stat="count", fill="skyblue") +
+  ggtitle("Histogramm für WorkLifeBalance") +
+  xlab("WorkLifeBalance") +
+  ylab("Anzahl der Mitarbeiter")
+```
+
+```
+## Warning in geom_histogram(stat = "count", fill = "skyblue"): Ignoring unknown
+## parameters: `binwidth`, `bins`, and `pad`
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+Die Verteilung der Work-Life-Balance-Bewertungen unter den Mitarbeitern zeigt, dass die Mehrheit (896 Mitarbeiter) eine mittlere Bewertung hat, was auf generelle Zufriedenheit hindeuten könnte. Es gibt jedoch auch eine signifikante Gruppe (344 Mitarbeiter) mit einer niedrigen Bewertung, die Anlass zur Sorge geben könnte. Nur eine kleine Anzahl von Mitarbeitern (153) erreicht die höchste Bewertung, was auf Verbesserungspotenzial hinweist. Eine weitere Analyse könnte diese Ergebnisse in Bezug auf Jobzufriedenheit und andere Faktoren vertiefen.
+
+**EnvironmentSatisfaction**
+
+Das Ergebnis liefert, wie zufrieden die Mitarbeiter mit ihrer Arbeitsumgebung sind. Ein hoher Grad an Zufriedenheit könnte auf eine angenehme, sichere und unterstützende Arbeitsumgebung hinweisen. Wenn jedoch viele Mitarbeiter unzufrieden sind, könnte das ein Signal für Probleme sein, die direkt oder indirekt die Jobzufriedenheit beeinflussen, wie zum Beispiel schlechte Teamdynamik, mangelhafte Einrichtungen oder unzureichende Ressourcen.
+
+
+```r
+table(HR_Analytics_selected$WorkLifeBalance)
+```
+
+```
+## 
+##   1   2   3   4 
+##  80 344 896 153
+```
+
+
+```r
+ggplot(HR_Analytics_selected, aes(x=EnvironmentSatisfaction)) +
+  geom_histogram(stat="count", fill="skyblue") +
+  ggtitle("Histogramm für EnvironmentSatisfaction") +
+  xlab("EnvironmentSatisfaction") +
+  ylab("Anzahl der Mitarbeiter")
+```
+
+```
+## Warning in geom_histogram(stat = "count", fill = "skyblue"): Ignoring unknown
+## parameters: `binwidth`, `bins`, and `pad`
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
+
+Die Verteilung der Bewertungen für die Work-Life-Balance zeigt, dass der Großteil der Mitarbeiter (896 Personen) eine mittlere Zufriedenheit aufweist. Es gibt jedoch eine beachtliche Anzahl von Mitarbeitern (344 Personen), die niedrige Werte angaben, was auf mögliche Probleme hinweisen könnte. Nur eine relativ kleine Gruppe (153 Personen) gab die höchste Zufriedenheitsstufe an. Es gibt ebenfalls eine kleine Gruppe (80 Personen), die die niedrigste Stufe der Work-Life-Balance angibt, was Anlass zur Sorge sein könnte. Insgesamt scheint die Work-Life-Balance für viele Mitarbeiter akzeptabel zu sein, aber es gibt Raum für Verbesserungen.
+
+**JobInvolvement**
+
+Diese Variable zeigt, wie engagiert oder involviert die Mitarbeiter in ihrer Arbeit sind. Ein hohes Maß an Jobinvolvement ist oft ein Zeichen für Motivation und Zufriedenheit im Job. Niedrige Werte könnten dagegen ein Zeichen für Demotivation oder eine Kluft zwischen den Fähigkeiten des Mitarbeiters und den Anforderungen des Jobs sein, was sich negativ auf die Jobzufriedenheit auswirken könnte.
+
+
+```r
+table(HR_Analytics_selected$JobInvolvement)
+```
+
+```
+## 
+##   1   2   3   4 
+##  83 377 868 145
+```
+
+
+```r
+ggplot(HR_Analytics_selected, aes(x=JobInvolvement)) +
+  geom_histogram(stat="count", fill="skyblue") +
+  ggtitle("Histogramm für JobInvolvement") +
+  xlab("JobInvolvement") +
+  ylab("Anzahl der Mitarbeiter")
+```
+
+```
+## Warning in geom_histogram(stat = "count", fill = "skyblue"): Ignoring unknown
+## parameters: `binwidth`, `bins`, and `pad`
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
+
+Die Daten für die Jobbeteiligung (JobInvolvement) zeigen, dass der Großteil der Mitarbeiter (868 Personen) eine mittlere Beteiligung am Arbeitsplatz hat. Eine kleinere Gruppe (377 Personen) weist eine geringere Beteiligung auf, während nur 145 Personen die höchste Beteiligungsstufe erreichen. Es gibt auch eine kleine Anzahl von Mitarbeitern (83 Personen), die die niedrigste Beteiligungsstufe angaben, was möglicherweise Anlass zur Besorgnis sein könnte. Insgesamt lässt sich sagen, dass die meisten Mitarbeiter eine moderate bis hohe Arbeitsbeteiligung haben, aber es gibt Verbesserungspotenzial.
+
+**RelationshipSatisfaction**
+
+RelationshipSatisfaction gibt an, wie zufrieden die Mitarbeiter mit ihren Beziehungen zu Kollegen und Vorgesetzten sind. Gute Beziehungen am Arbeitsplatz können die Jobzufriedenheit erheblich steigern. Wenn die Frequenzverteilung jedoch zeigt, dass viele Mitarbeiter unzufrieden sind, könnte das auf Probleme wie schlechte Kommunikation, Mobbing oder andere interpersonelle Konflikte hinweisen, die die Jobzufriedenheit mindern könnten.
+
+
+```r
+table(HR_Analytics_selected$RelationshipSatisfaction)
+```
+
+```
+## 
+##   1   2   3   4 
+## 277 303 460 433
+```
+
+
+```r
+ggplot(HR_Analytics_selected, aes(x=RelationshipSatisfaction)) +
+  geom_histogram(stat="count", fill="skyblue") +
+  ggtitle("Histogramm für RelationshipSatisfaction") +
+  xlab("RelationshipSatisfaction") +
+  ylab("Anzahl der Mitarbeiter")
+```
+
+```
+## Warning in geom_histogram(stat = "count", fill = "skyblue"): Ignoring unknown
+## parameters: `binwidth`, `bins`, and `pad`
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+
+Die Daten für die Beziehungszufriedenheit (RelationshipSatisfaction) zeigen eine recht ausgeglichene Verteilung über die verschiedenen Zufriedenheitsstufen. Die meisten Mitarbeiter (460 Personen) geben an, eine mittlere Beziehungszufriedenheit zu haben. Eine ähnlich hohe Anzahl von Mitarbeitern (433 Personen) sind sehr zufrieden mit ihren Beziehungen am Arbeitsplatz. Dagegen gibt es 277 Personen mit niedriger und 303 mit geringfügig höherer Beziehungszufriedenheit. Insgesamt deutet die Verteilung darauf hin, dass die Mehrheit der Mitarbeiter zumindest moderate bis hohe Beziehungszufriedenheit erlebt, aber es gibt auch Raum für Verbesserungen.
+
+#### 2.8.1.3 weitere Variablen
+
+**JobLevel**
+
+JobRole bezieht sich auf die spezifische Rolle oder Position, die ein Mitarbeiter innerhalb des Unternehmens einnimmt. Diese Rolle kann einen erheblichen Einfluss auf die Jobzufriedenheit haben, da sie oft mit Verantwortlichkeiten, Gehalt und Karriereentwicklungsmöglichkeiten verknüpft ist. Ein Histogramm dieser Variable kann Einblicke in die Verteilung der Rollen im Unternehmen bieten. Wenn zum Beispiel eine bestimmte Rolle besonders häufig vorkommt und mit niedriger Jobzufriedenheit korreliert, könnte dies ein Hinweis darauf sein, dass diese spezifische Rolle innerhalb des Unternehmens überarbeitet werden sollte.
+
+
+```r
+ggplot(HR_Analytics_selected, aes(x=JobRole)) +
+  geom_histogram(stat="count", fill="skyblue") +
+  theme(axis.text.x=element_text(angle=45, hjust=1)) +
+  ggtitle("Histogramm für JobRole")
+```
+
+```
+## Warning in geom_histogram(stat = "count", fill = "skyblue"): Ignoring unknown
+## parameters: `binwidth`, `bins`, and `pad`
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
+
+
+```r
+# Zählt die Anzahl der Mitarbeiter für jedes JobLevel
+table(HR_Analytics_final$JobLevel)
+```
+
+```
+## 
+##   1   2   3   4   5 
+## 544 535 219 106  69
+```
+Dies deutet auf eine relativ hohe Konzentration von Mitarbeitern in den unteren JobLevels (1 und 2) hin. Die Anzahl der Mitarbeiter nimmt mit steigendem JobLevel ab, was typisch für viele Organisationsstrukturen ist. Nur eine kleinere Gruppe hat es zu den höheren JobLevels (4 und 5) geschafft, was auf eine höhere Verantwortung und möglicherweise auch auf ein höheres Gehalt für diese Mitarbeiter hindeutet.
+
+**PercentSalaryHike**
+
+PercentSalaryHike gibt an, um wie viel Prozent das Gehalt eines Mitarbeiters im Vergleich zum Vorjahr gestiegen ist. Dieser Wert kann als Indikator für die finanzielle Anerkennung und Wertschätzung dienen, die ein Mitarbeiter im Unternehmen erfährt. Zusätzlich zur finanziellen Anerkennung kann ein höherer PercentSalaryHike auch als Ausdruck der anerkannten Arbeitsleistung eines Mitarbeiters interpretiert werden. In anderen Worten, wenn ein Mitarbeiter eine Gehaltserhöhung erhält, kann dies ein Zeichen dafür sein, dass seine Arbeitsleistung nicht nur bemerkt, sondern auch wertgeschätzt und belohnt wird. Daher kann der PercentSalaryHike als eine Art Proxy für die Qualität der Arbeitsleistung sowie der Zufriedenheit des Arbeitgebers mit dieser Leistung gesehen werden. In diesem Kontext könnte eine höhere Erhöhung des Gehalts mit einer höheren Jobzufriedenheit korrelieren, da der Mitarbeiter sich in seiner Arbeit anerkannt und geschätzt fühlt. 
+
+
+```r
+table(HR_Analytics_selected$PercentSalaryHike)
+```
+
+```
+## 
+##  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25 
+## 210 198 209 201 102  78  83  90  76  55  48  56  28  21  18
+```
+
+```r
+summary(HR_Analytics_selected$PercentSalaryHike)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   11.00   12.00   14.00   15.21   18.00   25.00
+```
+
+```r
+ggplot(data = HR_Analytics_final, aes(x = "", y = PercentSalaryHike)) +
+  geom_boxplot(fill = "skyblue") +
+  theme_minimal() +
+  labs(title = "Boxplot von PercentSalaryHike",
+       x = "",
+       y = "PercentSalaryHike")
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
+
+Die statistische Auswertung der Variablen PercentSalaryHike zeigt, dass die Gehaltserhöhungen zwischen 11% und 25% variieren. Der Median von 14% deutet darauf hin, dass die Hälfte der Mitarbeiter eine Erhöhung von diesem Wert oder darunter erhalten hat. Mit einem Durchschnitt von etwa 15,21% liegen die meisten Gehaltserhöhungen in einem moderaten Bereich, wobei die obere Quartilsgrenze bei 18% liegt. Diese Zahlen bieten einen Einblick in die Gehaltspolitik des Unternehmens und könnten Grundlage für weitere Analysen sein. Dies könnte darauf hindeuten, dass das Unternehmen in der Regel moderatere Gehaltserhöhungen anbietet, wobei Ausnahmen eher selten sind.
+
+**JobLevel**
+
+JobLevel stellt den Hierarchiegrad oder die Ebene der beruflichen Position eines Mitarbeiters im Unternehmen dar. Höhere Joblevel sind oft mit mehr Verantwortung, höherem Gehalt und besseren Karrierechancen verbunden, können aber auch mehr Stress und höhere Erwartungen mit sich bringen. Ein Histogramm dieser Variable könnte Aufschluss darüber geben, wie Joblevel mit der Jobzufriedenheit korrelieren.  
+
+Beispielsweise könnte eine Konzentration von Unzufriedenheit auf einem bestimmten Joblevel darauf hindeuten, dass die Erwartungen oder der Arbeitsaufwand für diese Ebene nicht angemessen sind.
+
+
+
+```r
+# Aggregiere die Daten, um den Median des MonthlyIncome für jedes JobLevel zu finden
+agg_data <- HR_Analytics_final %>%
+  group_by(JobLevel) %>%
+  summarise(Median_MonthlyIncome = median(MonthlyIncome))
+
+# Erstelle ein Histogramm
+ggplot(agg_data, aes(x = JobLevel, y = Median_MonthlyIncome)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  xlab("Job Level") +
+  ylab("Median des Monatseinkommens") +
+  ggtitle("Zusammenhang zwischen JobLevel und Monatseinkommen") +
+  theme_minimal()
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+
+Dieses Histogramm würde die Mediane der Monatseinkommen für die verschiedenen Joblevel zeigen. Ein steigender Trend würde bestätigen, dass höhere Joblevel mit höheren Einkommen assoziiert sind, was für die meisten Organisationen zu erwarten wäre. 
+
+
+```r
+# Durchschnittliche Jobzufriedenheit pro JobLevel
+agg_data <- HR_Analytics_final %>%
+  group_by(JobLevel) %>%
+  summarise(Avg_JobSatisfaction = mean(JobSatisfaction))
+
+print(agg_data)
+```
+
+```
+## # A tibble: 5 × 2
+##   JobLevel Avg_JobSatisfaction
+##      <dbl>               <dbl>
+## 1        1                2.72
+## 2        2                2.76
+## 3        3                2.67
+## 4        4                2.73
+## 5        5                2.74
+```
+
+```r
+# Boxplot zur Darstellung der Verteilung der Jobzufriedenheit pro JobLevel
+ggplot(HR_Analytics_final, aes(x = as.factor(JobLevel), y = JobSatisfaction)) +
+  geom_boxplot(fill = "skyblue") +
+  xlab("Job Level") +
+  ylab("Jobzufriedenheit") +
+  ggtitle("Verteilung der Jobzufriedenheit nach JobLevel") +
+  theme_minimal()
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
+
+```r
+# Spearman's Rho Korrelationstest
+cor.test(HR_Analytics_final$JobLevel, HR_Analytics_final$JobSatisfaction, method = "spearman")
+```
+
+```
+## Warning in cor.test.default(HR_Analytics_final$JobLevel,
+## HR_Analytics_final$JobSatisfaction, : Kann exakten p-Wert bei Bindungen nicht
+## berechnen
+```
+
+```
+## 
+## 	Spearman's rank correlation rho
+## 
+## data:  HR_Analytics_final$JobLevel and HR_Analytics_final$JobSatisfaction
+## S = 533682123, p-value = 0.9418
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##          rho 
+## -0.001903434
+```
+Die Boxplot-Visualisierung soll die Verteilung der Jobzufriedenheit über verschiedene Joblevel darstellen, bietet jedoch ohne konkrete Grafik wenig Einblick. Der Spearman's Rho Korrelationstest zeigt mit einem Wert von -0.0019 und einem hohen p-Wert von 0.9418, dass es keinen statistisch signifikanten Zusammenhang zwischen Joblevel und Jobzufriedenheit gibt. Trotz einer Warnung über Bindungen in den Daten ist das Ergebnis klar: Jobzufriedenheit und Joblevel sind im untersuchten Datensatz nicht miteinander korreliert.
+
+Insgesamt deutet die Analyse darauf hin, dass im betrachteten Datensatz kein Zusammenhang zwischen Joblevel und Jobzufriedenheit zu finden ist, zumindest nicht einer, der statistisch signifikant wäre. Dies könnte für HR-Manager interessant sein, da es die Annahme in Frage stellt, dass höhere Joblevel automatisch zu höherer oder niedrigerer Jobzufriedenheit führen.
+
+
+### 2.8.2 Roadmap für die These
+
+
+
+---
+title: "HR_Analytics_Roadmap"
+output: html_document
+---
+
+<style type="text/css">
+
+body, html {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
+}
+.left, .right {
+  width: 45%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+</style>
+
+<div class="container">
+  <div class="left">
+    
+Die Roadmap zur Untersuchung Ihrer These ist in vier Hauptbereiche unterteilt, die jeweils durch spezifische Variablen repräsentiert werden. Erstens konzentrieren wir uns auf finanzielle Aspekte wie das monatliche Einkommen, den Stundenlohn, den Tagessatz und Überstunden, um den Einfluss des Gehalts auf die Jobzufriedenheit zu analysieren. Zweitens betrachten wir Variablen wie Work-Life-Balance, Zufriedenheit mit der Arbeitsumgebung, Jobeinbindung und Joblevel, um den Einfluss der Arbeitsbedingungen auf die Zufriedenheit zu untersuchen.
+
+Im dritten Bereich liegt der Fokus auf der Beziehungszufriedenheit, um die Wirkung positiver Mitarbeiterbeziehungen auf die Jobzufriedenheit zu bewerten. Schließlich konzentrieren wir uns im vierten Bereich auf Faktoren, die mit der Anerkennung der Arbeitsleistung und den erfüllbaren Arbeitsanforderungen in Verbindung stehen. Hierzu gehören Leistungsbewertungen, die jeweilige Jobrolle, Jobeinbindung, Überstunden und Gehaltserhöhungen. Jeder dieser Bereiche und die dazugehörigen Variablen werden systematisch analysiert, um ein umfassendes Bild der Faktoren zu erhalten, die die Jobzufriedenheit beeinflussen könnten.
+  </div>
+  <div class="right">
+  <html>
+<head>
+  <style>
+    body {
+      font-family: ADLaM Display, sans-serif;
+    }
+    .main-category {
+      font-size: 11px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .sub-category {
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 30px;
+      margin-top: 8px;
+    }
+    .variable {
+      font-size: 11px;
+      margin-left: 60px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-category">Fokus auf These-relevante Variablen</div>
+  
+  <div class="sub-category">Gehalt</div>
+  <div class="variable">MonthlyIncome</div>
+  <div class="variable">HourlyRate</div>
+  <div class="variable">DailyRate</div>
+  <div class="variable">Overtime</div>
+
+  <div class="sub-category">Bessere Arbeitsbedingungen</div>
+  <div class="variable">WorkLifeBalance</div>
+  <div class="variable">EnvironmentSatisfaction</div>
+  <div class="variable">JobInvolvement</div>
+  <div class="variable">JobLevel</div>
+
+  <div class="sub-category">Positive Mitarbeiterbeziehungen</div>
+  <div class="variable">RelationshipSatisfaction</div>
+
+  <div class="sub-category">Anerkannte Arbeitsleistung / erfüllbare Arbeitsanforderungen</div>
+  <div class="variable">PerformanceRating</div>
+  <div class="variable">JobRole</div>
+  <div class="variable">JobInvolvement</div>
+  <div class="variable">Overtime</div>
+  <div class="variable">PercentSalaryHike</div>
+
+</body>
+</html>
+  </div>
+</div>
+
+#### 2.8.2.1 Gehalt
+
+Der "MonthlyIncome" wird in vier gleiche Intervalle eingeteilt:
+
+1. Intervall: Gehälter zwischen 1009 und 5523,5.
+2. Intervall: Gehälter zwischen 5523,5 und 10038, also alle Gehälter im zweiten Viertel dieses Bereichs.
+3. Intervall: Gehälter zwischen 10038 und 14552,5, also alle Gehälter im dritten Viertel dieses Bereichs.
+4. Intervall: Gehälter zwischen 14552,5 und 19999, also alle Gehälter im letzten Viertel dieses Bereichs.
+
+Die Intervalle wurden berechnet, indem der gesamte Bereich der Gehälter von 1009 bis 19999 in vier gleich große Teile aufgeteilt wurde. Der Code benutzt die cut-Funktion, um die "MonthlyIncome"-Werte in diese vier Kategorien einzuteilen. Dabei wird das erste Intervall einschließlich des untersten Werts definiert (include.lowest = TRUE).
+
+
+```r
+# Definieren der Intervalle
+intervals <- 4
+range_width <- (19999 - 1009) / intervals
+breaks <- seq(1009, 19999, by = range_width)
+
+# Zuordnung der Intervalle zur IncomeCategory Variable
+HR_Analytics_selected$IncomeCategory <- cut(HR_Analytics_selected$MonthlyIncome, breaks = breaks, include.lowest = TRUE)
+
+# Definieren der Labels für die Achse
+income_labels <- c("1009 - 5523.5", "5523.5 - 10038", "10038 - 14552.5", "14552.5 - 19999")
+
+# Zuordnung der Labels zur IncomeCategory Variable
+HR_Analytics_selected$IncomeLabel <- factor(HR_Analytics_selected$IncomeCategory, labels = income_labels)
+
+# Erstellen des Plots
+ggplot(HR_Analytics_selected, aes(x = IncomeLabel)) +
+  geom_bar(fill = c("#ADD8E6", "#7EB9FF", "#4169E1", "#00008B")) +
+  labs(title = "Anzahl der Mitarbeiter pro Einkommenskategorie",
+       x = "Einkommenskategorie",
+       y = "Anzahl") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Drehen der x-Achsen-Labels für bessere Lesbarkeit
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
+
+```r
+# Anzahl der Mitarbeiter in jeder Einkommenskategorie
+table(HR_Analytics_selected$IncomeLabel)
+```
+
+```
+## 
+##   1009 - 5523.5  5523.5 - 10038 10038 - 14552.5 14552.5 - 19999 
+##             887             339             115             132
+```
+In der durchgeführten Analyse wurde das monatliche Einkommen der Mitarbeiter in vier unterschiedliche Kategorien eingeteilt. Die erste Kategorie, die Einkommen zwischen 1009 und 5523,5 umfasst, hat die höchste Anzahl an Mitarbeitern mit 887 Personen. Dies deutet darauf hin, dass ein großer Teil der Belegschaft in der niedrigeren Einkommensgruppe angesiedelt ist.
+
+Die zweite Kategorie, die Gehälter zwischen 5523,5 und 10.038 beinhaltet, umfasst 339 Mitarbeiter. Sie stellt eine merklich kleinere Gruppe im Vergleich zur ersten Kategorie dar.
+
+Noch kleiner sind die Gruppen in den höheren Einkommensklassen. In der dritten Kategorie, die Gehälter zwischen 10.038 und 14.552,5 umfasst, sind nur 115 Mitarbeiter. In der höchsten Einkommensgruppe, also zwischen 14.552,5 und 19.999, gibt es 132 Mitarbeiter.
+
+Die Verteilung zeigt, dass die Mehrheit der Mitarbeiter in der niedrigsten Einkommenskategorie liegt, während die höheren Einkommensklassen deutlich weniger Mitarbeiter umfassen.
+
+
+```r
+# Erstellen des Balkendiagramms
+ggplot(HR_Analytics_selected, aes(x = JobSatisfaction, fill = IncomeLabel)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Jobzufriedenheit nach Einkommenskategorien",
+       x = "Jobzufriedenheit",
+       y = "Anzahl der Mitarbeiter") +
+  scale_fill_manual(values = c("#ADD8E6", "#7EB9FF", "#4169E1", "#00008B")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1))
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
+
+
+```r
+# Erstellen der Zusammenfassungstabelle
+summary_table <- HR_Analytics_selected %>%
+  group_by(IncomeLabel, JobSatisfaction) %>%
+  summarise(Count = n()) %>%
+  arrange(IncomeLabel, JobSatisfaction)
+```
+
+```
+## `summarise()` has grouped output by 'IncomeLabel'. You can override using the
+## `.groups` argument.
+```
+
+```r
+# Anzeigen der Tabelle
+print(summary_table)
+```
+
+```
+## # A tibble: 16 × 3
+## # Groups:   IncomeLabel [4]
+##    IncomeLabel     JobSatisfaction Count
+##    <fct>                     <dbl> <int>
+##  1 1009 - 5523.5                 1   177
+##  2 1009 - 5523.5                 2   167
+##  3 1009 - 5523.5                 3   272
+##  4 1009 - 5523.5                 4   271
+##  5 5523.5 - 10038                1    66
+##  6 5523.5 - 10038                2    61
+##  7 5523.5 - 10038                3    94
+##  8 5523.5 - 10038                4   118
+##  9 10038 - 14552.5               1    20
+## 10 10038 - 14552.5               2    25
+## 11 10038 - 14552.5               3    38
+## 12 10038 - 14552.5               4    32
+## 13 14552.5 - 19999               1    27
+## 14 14552.5 - 19999               2    27
+## 15 14552.5 - 19999               3    39
+## 16 14552.5 - 19999               4    39
+```
+
+
+
+
+# 6. Literaturliste
+
+
+
+
+
+

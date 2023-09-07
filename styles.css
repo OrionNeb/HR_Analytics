@@ -25,6 +25,10 @@ h3 {
   font-size: 16px; 
 }
 
+h4 {
+  font-size: 16px; 
+}
+
 /* Stile für das schwebende Inhaltsverzeichnis */
 #TOC {
     margin: 25px 0px 20px 0px;
