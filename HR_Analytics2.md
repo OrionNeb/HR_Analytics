@@ -352,8 +352,8 @@ str(HR_Analytics)
 * Spalten und ihre Datentypen
 * In "attr(*, 'spec')=" steht, welche Art von Information in jeder Spalte der Tabelle steckt.   
   Es hilft dem Computer zu verstehen, wie er die Daten behandeln soll.
-* "attr(*, "problems")=<externalptr>" ist wie ein Hinweis, dass es vielleicht Probleme gab, als die      Daten in den Computer geladen wurden.   
-  Es sagt aber nicht, welche Probleme das sind. Es ist wie ein Ausrufezeichen, aber ohne weitere         Erklärung.
+* "attr(*, "problems")=<externalptr>" ist wie ein Hinweis, dass es vielleicht Probleme gab, als die Daten in den Computer geladen wurden.   
+  Es sagt aber nicht, welche Probleme das sind. Es ist wie ein Ausrufezeichen, aber ohne weitere Erklärung.
 
 ## 2.4 Erstellen einer Kopie der Rohdaten
 
@@ -1219,14 +1219,16 @@ Die Verteilung der Work-Life-Balance-Bewertungen unter den Mitarbeitern zeigt, d
 Das Ergebnis liefert, wie zufrieden die Mitarbeiter mit ihrer Arbeitsumgebung sind. Ein hoher Grad an Zufriedenheit könnte auf eine angenehme, sichere und unterstützende Arbeitsumgebung hinweisen. Wenn jedoch viele Mitarbeiter unzufrieden sind, könnte das ein Signal für Probleme sein, die direkt oder indirekt die Jobzufriedenheit beeinflussen, wie zum Beispiel schlechte Teamdynamik, mangelhafte Einrichtungen oder unzureichende Ressourcen.
 
 
+
+
 ```r
-table(HR_Analytics_selected$WorkLifeBalance)
+table(HR_Analytics_selected$EnvironmentSatisfaction)
 ```
 
 ```
 ## 
 ##   1   2   3   4 
-##  80 344 896 153
+## 284 287 454 448
 ```
 
 
@@ -1245,11 +1247,28 @@ ggplot(HR_Analytics_selected, aes(x=EnvironmentSatisfaction)) +
 
 ![](HR_Analytics2_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
 
-Die Verteilung der Bewertungen für die Work-Life-Balance zeigt, dass der Großteil der Mitarbeiter (896 Personen) eine mittlere Zufriedenheit aufweist. Es gibt jedoch eine beachtliche Anzahl von Mitarbeitern (344 Personen), die niedrige Werte angaben, was auf mögliche Probleme hinweisen könnte. Nur eine relativ kleine Gruppe (153 Personen) gab die höchste Zufriedenheitsstufe an. Es gibt ebenfalls eine kleine Gruppe (80 Personen), die die niedrigste Stufe der Work-Life-Balance angibt, was Anlass zur Sorge sein könnte. Insgesamt scheint die Work-Life-Balance für viele Mitarbeiter akzeptabel zu sein, aber es gibt Raum für Verbesserungen.
+Die Verteilung der Daten für "EnvironmentSatisfaction" zeigt, dass die meisten Mitarbeiter in den Kategorien 3 und 4 liegen, mit 454 bzw. 448 Personen. Das deutet darauf hin, dass ein großer Anteil der Belegschaft mit ihrer Arbeitsumgebung zufrieden oder sehr zufrieden ist. In den niedrigeren Zufriedenheitsstufen 1 und 2 befinden sich dagegen jeweils 284 und 287 Personen, was ebenfalls einen bedeutenden Anteil ausmacht, jedoch deutlich weniger als in den höheren Stufen.
+
 
 **JobInvolvement**
 
 Diese Variable zeigt, wie engagiert oder involviert die Mitarbeiter in ihrer Arbeit sind. Ein hohes Maß an Jobinvolvement ist oft ein Zeichen für Motivation und Zufriedenheit im Job. Niedrige Werte könnten dagegen ein Zeichen für Demotivation oder eine Kluft zwischen den Fähigkeiten des Mitarbeiters und den Anforderungen des Jobs sein, was sich negativ auf die Jobzufriedenheit auswirken könnte.
+
+
+```r
+ggplot(data = HR_Analytics_selected, aes(x = JobInvolvement)) +
+  geom_histogram(fill = "skyblue", alpha = 0.7) +
+  labs(title = "Histogramm für JobInvolvement",
+       x = "JobInvolvement",
+       y = "Häufigkeit")
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+
 
 
 ```r
@@ -1276,7 +1295,7 @@ ggplot(HR_Analytics_selected, aes(x=JobInvolvement)) +
 ## parameters: `binwidth`, `bins`, and `pad`
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
 
 Die Daten für die Jobbeteiligung (JobInvolvement) zeigen, dass der Großteil der Mitarbeiter (868 Personen) eine mittlere Beteiligung am Arbeitsplatz hat. Eine kleinere Gruppe (377 Personen) weist eine geringere Beteiligung auf, während nur 145 Personen die höchste Beteiligungsstufe erreichen. Es gibt auch eine kleine Anzahl von Mitarbeitern (83 Personen), die die niedrigste Beteiligungsstufe angaben, was möglicherweise Anlass zur Besorgnis sein könnte. Insgesamt lässt sich sagen, dass die meisten Mitarbeiter eine moderate bis hohe Arbeitsbeteiligung haben, aber es gibt Verbesserungspotenzial.
 
@@ -1309,22 +1328,22 @@ ggplot(HR_Analytics_selected, aes(x=RelationshipSatisfaction)) +
 ## parameters: `binwidth`, `bins`, and `pad`
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 Die Daten für die Beziehungszufriedenheit (RelationshipSatisfaction) zeigen eine recht ausgeglichene Verteilung über die verschiedenen Zufriedenheitsstufen. Die meisten Mitarbeiter (460 Personen) geben an, eine mittlere Beziehungszufriedenheit zu haben. Eine ähnlich hohe Anzahl von Mitarbeitern (433 Personen) sind sehr zufrieden mit ihren Beziehungen am Arbeitsplatz. Dagegen gibt es 277 Personen mit niedriger und 303 mit geringfügig höherer Beziehungszufriedenheit. Insgesamt deutet die Verteilung darauf hin, dass die Mehrheit der Mitarbeiter zumindest moderate bis hohe Beziehungszufriedenheit erlebt, aber es gibt auch Raum für Verbesserungen.
 
-#### 2.8.1.3 weitere Variablen
+
 
 **JobLevel**
 
-JobRole bezieht sich auf die spezifische Rolle oder Position, die ein Mitarbeiter innerhalb des Unternehmens einnimmt. Diese Rolle kann einen erheblichen Einfluss auf die Jobzufriedenheit haben, da sie oft mit Verantwortlichkeiten, Gehalt und Karriereentwicklungsmöglichkeiten verknüpft ist. Ein Histogramm dieser Variable kann Einblicke in die Verteilung der Rollen im Unternehmen bieten. Wenn zum Beispiel eine bestimmte Rolle besonders häufig vorkommt und mit niedriger Jobzufriedenheit korreliert, könnte dies ein Hinweis darauf sein, dass diese spezifische Rolle innerhalb des Unternehmens überarbeitet werden sollte.
+Der Begriff JobLevel bezieht sich in der Regel auf die hierarchische Position oder Ebene, auf der eine Person in einer Organisation arbeitet. JobLevel kann viele Aspekte des Arbeitslebens beeinflussen, darunter Gehalt, Verantwortlichkeiten, Entscheidungsbefugnisse und Karrierechancen. In einem Datensatz zu Personalanalysen (HR_Analytics) könnte JobLevel eine kategorische Variable sein, die numerische Werte von 1 bis 5 aufweist, wobei ein höherer Wert in der Regel eine höhere Position innerhalb der Organisation repräsentiert.
 
 
 ```r
-ggplot(HR_Analytics_selected, aes(x=JobRole)) +
+ggplot(HR_Analytics_selected, aes(x=JobLevel)) +
   geom_histogram(stat="count", fill="skyblue") +
   theme(axis.text.x=element_text(angle=45, hjust=1)) +
-  ggtitle("Histogramm für JobRole")
+  ggtitle("Histogramm für JobLevel")
 ```
 
 ```
@@ -1332,7 +1351,7 @@ ggplot(HR_Analytics_selected, aes(x=JobRole)) +
 ## parameters: `binwidth`, `bins`, and `pad`
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
 
 
 ```r
@@ -1346,6 +1365,10 @@ table(HR_Analytics_final$JobLevel)
 ## 544 535 219 106  69
 ```
 Dies deutet auf eine relativ hohe Konzentration von Mitarbeitern in den unteren JobLevels (1 und 2) hin. Die Anzahl der Mitarbeiter nimmt mit steigendem JobLevel ab, was typisch für viele Organisationsstrukturen ist. Nur eine kleinere Gruppe hat es zu den höheren JobLevels (4 und 5) geschafft, was auf eine höhere Verantwortung und möglicherweise auch auf ein höheres Gehalt für diese Mitarbeiter hindeutet.
+
+
+#### 2.8.1.3 weitere Variablen
+
 
 **PercentSalaryHike**
 
@@ -1380,7 +1403,7 @@ ggplot(data = HR_Analytics_final, aes(x = "", y = PercentSalaryHike)) +
        y = "PercentSalaryHike")
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
 
 Die statistische Auswertung der Variablen PercentSalaryHike zeigt, dass die Gehaltserhöhungen zwischen 11% und 25% variieren. Der Median von 14% deutet darauf hin, dass die Hälfte der Mitarbeiter eine Erhöhung von diesem Wert oder darunter erhalten hat. Mit einem Durchschnitt von etwa 15,21% liegen die meisten Gehaltserhöhungen in einem moderaten Bereich, wobei die obere Quartilsgrenze bei 18% liegt. Diese Zahlen bieten einen Einblick in die Gehaltspolitik des Unternehmens und könnten Grundlage für weitere Analysen sein. Dies könnte darauf hindeuten, dass das Unternehmen in der Regel moderatere Gehaltserhöhungen anbietet, wobei Ausnahmen eher selten sind.
 
@@ -1407,7 +1430,7 @@ ggplot(agg_data, aes(x = JobLevel, y = Median_MonthlyIncome)) +
   theme_minimal()
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
 
 Dieses Histogramm würde die Mediane der Monatseinkommen für die verschiedenen Joblevel zeigen. Ein steigender Trend würde bestätigen, dass höhere Joblevel mit höheren Einkommen assoziiert sind, was für die meisten Organisationen zu erwarten wäre. 
 
@@ -1442,7 +1465,7 @@ ggplot(HR_Analytics_final, aes(x = as.factor(JobLevel), y = JobSatisfaction)) +
   theme_minimal()
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
 
 ```r
 # Spearman's Rho Korrelationstest
@@ -1566,6 +1589,94 @@ Im dritten Bereich liegt der Fokus auf der Beziehungszufriedenheit, um die Wirku
 
 #### 2.8.2.1 Gehalt
 
+
+```r
+# Laden des ggplot2-Pakets
+library(ggplot2)
+
+# Histogramm für MonthlyIncome
+ggplot(HR_Analytics_selected, aes(x = MonthlyIncome)) +
+  geom_histogram(binwidth = 500, fill = "blue", alpha = 0.7) +
+  labs(title = "Verteilung von MonthlyIncome",
+       x = "Monthly Income",
+       y = "Anzahl der Mitarbeiter") +
+  theme_minimal()
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
+
+```r
+# Histogramm für HourlyRate
+ggplot(HR_Analytics_selected, aes(x = HourlyRate)) +
+  geom_histogram(binwidth = 5, fill = "green", alpha = 0.7) +
+  labs(title = "Verteilung von HourlyRate",
+       x = "Hourly Rate",
+       y = "Anzahl der Mitarbeiter") +
+  theme_minimal()
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-53-2.png)<!-- -->
+
+```r
+# Histogramm für DailyRate
+ggplot(HR_Analytics_selected, aes(x = DailyRate)) +
+  geom_histogram(binwidth = 50, fill = "red", alpha = 0.7) +
+  labs(title = "Verteilung von DailyRate",
+       x = "Daily Rate",
+       y = "Anzahl der Mitarbeiter") +
+  theme_minimal()
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-53-3.png)<!-- -->
+Um die Tages- und Stundensätze in Monatsraten umzurechnen, können Sie einige Annahmen treffen. Eine übliche Annahme ist, dass ein Arbeitsmonat aus etwa 22 Arbeitstagen besteht und eine Arbeitswoche etwa 40 Stunden hat.
+
+
+
+```r
+# Annahmen
+workdays_per_month = 22
+hours_per_week = 40
+weeks_per_month = 4
+
+# Umrechnung
+HR_Analytics_selected$ConvertedMonthlyFromDaily = HR_Analytics_selected$DailyRate * workdays_per_month
+HR_Analytics_selected$ConvertedMonthlyFromHourly = HR_Analytics_selected$HourlyRate * hours_per_week * weeks_per_month
+
+# Plots
+# Histogramm für umgerechnetes monatliches Einkommen aus dem Tageslohn
+ggplot(HR_Analytics_selected, aes(x = ConvertedMonthlyFromDaily)) +
+  geom_histogram(binwidth = 500, fill = "purple", alpha = 0.7) +
+  labs(title = "Verteilung des umgerechneten monatlichen Einkommens aus dem Tageslohn",
+       x = "Umgerechnetes monatliches Einkommen",
+       y = "Anzahl der Mitarbeiter") +
+  theme_minimal()
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
+
+```r
+# Histogramm für umgerechnetes monatliches Einkommen aus dem Stundenlohn
+ggplot(HR_Analytics_selected, aes(x = ConvertedMonthlyFromHourly)) +
+  geom_histogram(binwidth = 500, fill = "orange", alpha = 0.7) +
+  labs(title = "Verteilung des umgerechneten monatlichen Einkommens aus dem Stundenlohn",
+       x = "Umgerechnetes monatliches Einkommen",
+       y = "Anzahl der Mitarbeiter") +
+  theme_minimal()
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-54-2.png)<!-- -->
+
+Bei der genannten Annahme könnte es in der Realität andere Faktoren wie Überstunden, Zuschläge etc. geben. Diese werden hier nicht berücksichtigt.
+
+Erstens variieren die Einheiten und Skalen dieser Einkommensarten erheblich, was einen direkten Vergleich irreführend machen würde. Zwar könnte man die Werte in eine gemeinsame Einheit umrechnen, aber dieser Schritt ist nicht trivial und könnte das Ergebnis verzerren.
+
+Zweitens können diese Einkommensarten verschiedene Aspekte der Arbeit und der Entlohnung abbilden. Während das Monatsgehalt eine konstante Entlohnung darstellt, hängt der tatsächliche Wert des Stunden- oder Tagessatzes stark von den Arbeitsbedingungen und -stunden ab.
+
+Drittens könnten unterschiedliche Verteilungsmuster in den Daten auf unterschiedliche Entlohnungsmodelle, Berufsgruppen oder Qualifikationsniveaus hinweisen. Diese Unterschiede könnten zwar für eine tiefergehende Analyse interessant sein, aber sie machen einen direkten Vergleich kompliziert.
+
+Angesichts dieser Überlegungen haben wir uns entschieden, die Variablen HourlyRate und DailyRate aus der weiteren Analyse auszuschließen. Dies erleichtert die Interpretation der Ergebnisse und ermöglicht es, sich auf das Monatsgehalt als einheitliche und vergleichbare Metrik für die Entlohnung zu konzentrieren. Insbesondere bei der Untersuchung von Fragen wie Jobzufriedenheit bietet das Monatsgehalt eine solide Grundlage für vergleichende Analysen.
+
+
 Der "MonthlyIncome" wird in vier gleiche Intervalle eingeteilt:
 
 1. Intervall: Gehälter zwischen 1009 und 5523,5.
@@ -1601,7 +1712,7 @@ ggplot(HR_Analytics_selected, aes(x = IncomeLabel)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Drehen der x-Achsen-Labels für bessere Lesbarkeit
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
 
 ```r
 # Anzahl der Mitarbeiter in jeder Einkommenskategorie
@@ -1634,7 +1745,7 @@ ggplot(HR_Analytics_selected, aes(x = JobSatisfaction, fill = IncomeLabel)) +
   theme(axis.text.x = element_text(angle = 0, hjust = 1))
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-57-1.png)<!-- -->
 
 
 ```r
@@ -1677,8 +1788,595 @@ print(summary_table)
 ## 15 14552.5 - 19999               3    39
 ## 16 14552.5 - 19999               4    39
 ```
+Die Analyse der Mitarbeiterdaten zeigt interessante Muster im Zusammenhang zwischen Einkommensniveaus und Jobzufriedenheit. In den niedrigeren Einkommenskategorien, speziell im Bereich von 1009 bis 5523,5 und von 5523,5 bis 10038, neigen Mitarbeiter dazu, eine höhere Jobzufriedenheit zu berichten. Insbesondere im Bereich von 1009 bis 5523,5 ist die Anzahl der Mitarbeiter mit den Zufriedenheitsstufen 3 und 4 nahezu gleich und übertrifft die der Stufen 1 und 2. Ähnlich zeigt sich im zweiten Einkommensintervall von 5523,5 bis 10038, dass die höchste Zufriedenheitsstufe am stärksten vertreten ist.
+
+Interessanterweise wird diese klare Tendenz in den höheren Einkommenskategorien nicht beibehalten. In den Intervallen von 10038 bis 14552,5 und von 14552,5 bis 19999 ist die Verteilung der Zufriedenheitsniveaus relativ ausgeglichen, obwohl leicht mehr Mitarbeiter die höheren Zufriedenheitsniveaus 3 und 4 angeben.
+
+Zusammenfassend lässt sich sagen, dass es einen leichten Zusammenhang zwischen dem Einkommen und der Jobzufriedenheit zu geben scheint, der jedoch nicht linear ist. In den niedrigeren und mittleren Einkommensbereichen sind Mitarbeiter mit höherer Zufriedenheit stärker vertreten, während in den höheren Einkommensbereichen die Zufriedenheitsstufen gleichmäßiger verteilt sind. Diese Beobachtungen könnten wichtige Hinweise für HR-Strategien liefern, erfordern jedoch weitere vertiefende Analysen und statistische Tests, um die genauen Zusammenhänge besser zu verstehen.
 
 
+```r
+ggplot(HR_Analytics_selected, aes(x = as.factor(JobSatisfaction), y = 1, color = OverTime)) +
+  geom_jitter(aes(alpha = 0.6), position = position_jitter(0.2)) +
+  facet_grid(~ OverTime) + # Teilt den Plot auf der Grundlage des 'OverTime'-Wertes
+  scale_color_manual(values = c("skyblue", "red")) + # Farben festlegen
+  labs(title = "Verteilung der Jobzufriedenheit",
+       x = "Jobzufriedenheits-Level",
+       y = "") +
+  theme_minimal()
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-59-1.png)<!-- -->
+
+```r
+# Laden der dplyr-Bibliothek
+library(dplyr)
+
+# Daten gruppieren und Anzahl der Einträge zählen
+summary_table <- HR_Analytics_selected %>%
+  group_by(JobSatisfaction, OverTime) %>%
+  summarise(Count = n()) %>%
+  ungroup()
+```
+
+```
+## `summarise()` has grouped output by 'JobSatisfaction'. You can override using
+## the `.groups` argument.
+```
+
+```r
+# Tabelle anzeigen
+print(summary_table)
+```
+
+```
+## # A tibble: 8 × 3
+##   JobSatisfaction OverTime Count
+##             <dbl> <chr>    <int>
+## 1               1 no         206
+## 2               1 yes         84
+## 3               2 no         211
+## 4               2 yes         69
+## 5               3 no         322
+## 6               3 yes        121
+## 7               4 no         318
+## 8               4 yes        142
+```
+
+Die Analyse der Daten zeigt ein überraschendes Muster in der Beziehung zwischen Überstunden und Jobzufriedenheit. Bei genauer Betrachtung der einzelnen Jobzufriedenheits-Level ergibt sich ein differenzierteres Bild:
+
+Zunächst zeigt der niedrigste Jobzufriedenheits-Level (Level 1) eine signifikante Anzahl von Mitarbeitern (84), die trotz Überstunden unzufrieden sind. Dies steht im Kontrast zu 206 Mitarbeitern auf dem gleichen Zufriedenheits-Level, die keine Überstunden leisten. Es scheint also, als wären Überstunden nicht der Hauptgrund für die niedrige Jobzufriedenheit.
+
+Beim zweiten Zufriedenheits-Level wird das Bild etwas klarer. Von den 211 Mitarbeitern, die keine Überstunden leisten, sind vergleichsweise weniger (69) unzufrieden, die Überstunden machen. Auch hier legen die Zahlen nahe, dass Überstunden allein nicht zu geringerer Zufriedenheit führen.
+
+Der dritte Zufriedenheits-Level, der eine mittlere Zufriedenheit repräsentiert, umfasst 322 Mitarbeiter ohne Überstunden und 121 mit Überstunden. Auffällig ist, dass die Zufriedenheit auf diesem Level relativ gleichmäßig verteilt ist, unabhängig von den geleisteten Überstunden.
+
+Schließlich ist das höchste Zufriedenheits-Level (Level 4) das einzige, bei dem die Anzahl der Mitarbeiter mit Überstunden (142) fast der Anzahl ohne Überstunden (318) entspricht. Dies deutet darauf hin, dass bei höherer Jobzufriedenheit Überstunden weniger Einfluss auf das Wohlbefinden der Mitarbeiter haben könnten.
+
+Insgesamt zeigen die Daten, dass die Leistung von Überstunden nicht zwangsläufig zu einer niedrigeren Jobzufriedenheit führt. Sowohl Mitarbeiter, die Überstunden machen, als auch die, die das nicht tun, weisen ähnliche Muster der Jobzufriedenheit auf. Dies stellt die oft angenommene Annahme in Frage, dass Überstunden grundsätzlich zu Unzufriedenheit am Arbeitsplatz führen. Ein komplexerer Kontext könnte allerdings weitere Einblicke bieten, und es wäre ratsam, zusätzliche Variablen in zukünftigen Analysen zu berücksichtigen.
+
+
+#### 2.8.2.2 Bessere Arbeitsbedingungen
+
+Die Untersuchung der Beziehung zwischen Jobzufriedenheit und den vier ausgewählten Variablen – WorkLifeBalance, EnvironmentSatisfaction, JobInvolvement und JobLevel – bietet einen umfassenden Einblick in verschiedene Aspekte des Arbeitslebens. Die Auswahl dieser Variablen ist sinnvoll, da sie unterschiedliche Dimensionen abdecken.
+
+Die Darstellung und Interpretation der Variablen wurde schon in Kapitel 2.8.1.3-4 vorgenommen.
+
+**WorkLifeBalance und Jobzufriedenheit**
+
+Die Kreuztabelle zeigt die Verteilung der Jobzufriedenheit (in den Zeilen) in Bezug auf die Bewertung des Work-Life-Balance (in den Spalten). Jeder Wert innerhalb der Tabelle repräsentiert die Anzahl der Mitarbeiter, die eine bestimmte Kombination aus Jobzufriedenheit und Work-Life-Balance haben.
+
+
+```r
+# Kreuztabelle
+table <- table(HR_Analytics_selected$JobSatisfaction, HR_Analytics_selected$WorkLifeBalance)
+print(table)
+```
+
+```
+##    
+##       1   2   3   4
+##   1  17  61 183  29
+##   2  18  58 175  29
+##   3  21 101 274  47
+##   4  24 124 264  48
+```
+
+Die Kreuztabelle zeigt interessante Muster im Zusammenhang zwischen Jobzufriedenheit und Work-Life-Balance. Erstens gibt es insgesamt weniger Mitarbeiter mit geringer Jobzufriedenheit, und deren Verteilung über die Work-Life-Balance ist recht ausgeglichen. Zweitens befindet sich die Mehrheit der Mitarbeiter in den Kategorien für mittlere Jobzufriedenheit. Für diese Gruppe scheint die Work-Life-Balance weniger Einfluss auf die Jobzufriedenheit zu haben, da die Verteilung in diesen Kategorien recht gleichmäßig ist. Drittens ist die Anzahl der Mitarbeiter mit hoher Jobzufriedenheit geringer, aber es gibt eine Tendenz zu einer besseren Work-Life-Balance in dieser Gruppe.
+
+
+```r
+# Erstellen einer Kreuztabelle
+cross_tab <- with(HR_Analytics_selected, table(JobSatisfaction, WorkLifeBalance))
+
+# Erstellen des Mosaikdiagramms
+mosaic(cross_tab, main = "Mosaikdiagramm von 
+       Jobzufriedenheit und Work-Life-Balance", 
+       cex.main=0.8,
+       cex.lab=0.8,
+       cex.axis=0.8)
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-62-1.png)<!-- -->
+
+Ein Mosaikdiagramm ist eine grafische Darstellung von Daten, die mehrere kategoriale Variablen haben. Es ist im Wesentlichen eine mehrdimensionale Erweiterung eines Säulendiagramms oder eines Balkendiagramms. Mosaikdiagramme teilen die Fläche (normalerweise ein Rechteck) in kleinere Teile, die die Beziehungen zwischen den Variablen darstellen. Jeder Block in dem Mosaikdiagramm stellt eine Kategoriekombination dar und die Größe des Blocks ist proportional zur Anzahl der Beobachtungen in dieser Kategorie.
+
+Im Allgemeinen zeigt die Tabelle und das Mosaikdiagramm, dass eine bessere Work-Life-Balance tendenziell mit höherer Jobzufriedenheit assoziiert ist, während eine schlechtere Work-Life-Balance möglicherweise negativ mit der Jobzufriedenheit korreliert. 
+
+In dem Mosaikdiagramm ist zu erkennen, dass die Mehrheit die Work-Life-Balance als gut (mit 3 von 4) angegeben haben. Egal, ob sie mit ihrem Job zufrieden sind, oder nicht. 
+
+Diese Beobachtungen könnten für weitere statistische Analysen nützlich sein, um die Beziehung zwischen diesen beiden Variablen besser zu verstehen.
+
+Das sind nur erste Beobachtungen und für eine detailliertere Analyse wäre es sinnvoll, statistische Tests durchzuführen, etwa Chi-Quadrat-Tests, um zu sehen, ob die Unterschiede statistisch signifikant sind. Dabei ist der Chi-Quadrat-Unabhängigkeitstest ein statischer Test, mit dem geprüft wird, ob zwei kategorische Variablen in einer Stichprobe unabhängig voneinander sind. In anderen Worten: Der Test prüft, ob die Verteilung der Kategorien der einen Variable von der Verteilung der Kategorien der anderen Variable beeinflusst wird.
+
+
+```r
+# Durchführen des Chi-Quadrat-Tests
+chisq_result <- chisq.test(cross_tab)
+
+# Ausgabe der Testergebnisse
+print(chisq_result)
+```
+
+```
+## 
+## 	Pearson's Chi-squared test
+## 
+## data:  cross_tab
+## X-squared = 6.5673, df = 9, p-value = 0.6821
+```
+
+Nach Durchführung eines Chi-Quadrat-Tests zur Untersuchung des Zusammenhangs zwischen der Jobzufriedenheit und der Work-Life-Balance ergab sich ein Chi-Quadrat-Wert von 7.2505 bei 9 Freiheitsgraden. Der errechnete p-Wert beträgt 0.6111, was bedeutet, dass es keinen statistisch signifikanten Zusammenhang zwischen den beiden Variablen gibt. In anderen Worten, die Work-Life-Balance scheint die Jobzufriedenheit der Mitarbeiter in dieser Stichprobe nicht signifikant zu beeinflussen.  
+
+Dieses Ergebnis impliziert, dass in Ihrer Stichprobe **kein statistisch signifikanter Zusammenhang zwischen Jobzufriedenheit und Work-Life-Balance vorliegt**, zumindest nicht nach den Kriterien des Chi-Quadrat-Tests. Es wäre also voreilig, in diesem Fall zu schlussfolgern, dass eine bessere Work-Life-Balance automatisch zu einer höheren Jobzufriedenheit führt.
+
+Während die Kreuztabelle in Aussage 1 interessante Muster zwischen Jobzufriedenheit und Work-Life-Balance zu zeigen scheint, legt der Chi-Quadrat-Test in Aussage 2 nahe, dass kein statistisch signifikanter Zusammenhang zwischen den beiden Variablen besteht.
+
+Dies bedeutet, dass die beobachteten Muster mit Vorsicht interpretiert werden sollten und nicht unbedingt auf eine tatsächliche Beziehung zwischen den beiden Variablen hindeuten.
+
+**JobInvolvement und Jobzufriedenheit**
+
+
+```r
+cross_tab <- table(HR_Analytics_selected$JobSatisfaction, HR_Analytics_selected$JobInvolvement)
+
+# Anzeigen der Kreuztabelle
+print(cross_tab)
+```
+
+```
+##    
+##       1   2   3   4
+##   1  14  76 166  34
+##   2  10  81 164  25
+##   3  28 109 263  43
+##   4  31 111 275  43
+```
+
+
+```r
+# Erstellen eines Mosaikdiagramms
+cross_tab <- with(HR_Analytics_selected, table(JobSatisfaction, JobInvolvement))
+mosaic(cross_tab, main="Mosaikdiagramm von JobSatisfaction und JobInvolvement")
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-65-1.png)<!-- -->
+Die Kreuztabelle und das Mosaikdiagramm zeigen die Verteilung der Mitarbeiter auf ihre Jobzufriedenheit (1 bis 4) und ihr Engagement am Arbeitsplatz (JobInvolvement, ebenfalls von 1 bis 4).
+
+Mitarbeiter mit geringer Jobzufriedenheit (Zeile 1) haben am häufigsten eine mittlere bis hohe Jobbeteiligung (Spalten 2 und 3). Es gibt nur wenige, die sich wenig oder sehr engagiert fühlen (Spalten 1 und 4).
+
+Für die Mitarbeiter mit mittlerer Jobzufriedenheit (Zeile 2) sehen wir ein ähnliches Muster: Die meisten fallen in die Kategorie der mittleren bis hohen Jobbeteiligung (Spalten 2 und 3), während sehr wenig Engagement oder übermäßiges Engagement selten sind.
+
+Bei den Mitarbeitern, die ihre Jobzufriedenheit als gut oder sehr gut bewerten (Zeilen 3 und 4), gibt es eine größere Verteilung in den höheren Engagementstufen (Spalten 3 und 4). Besonders in der Kategorie der sehr hohen Jobzufriedenheit (Zeile 4) ist ein hohes Engagement (Spalte 4) ebenso häufig wie ein mittleres Engagement (Spalte 3).
+
+Insgesamt zeigt die Tabelle, dass die Mehrheit der Mitarbeiter, unabhängig von ihrem Zufriedenheitsgrad, ein mittleres bis hohes Maß an Jobengagement aufweist. Was jedoch auffällt, ist, dass die Anzahl der hoch engagierten Mitarbeiter in den höheren Zufriedenheitsstufen leicht ansteigt. Dies könnte ein Hinweis darauf sein, dass Jobzufriedenheit und Jobengagement in irgendeiner Weise miteinander verknüpft sind.
+
+Ein Chi-Quadrat-Test könnte sinnvoll sein, um festzustellen, ob es einen statistisch signifikanten Zusammenhang zwischen Jobzufriedenheit und Jobengagement (JobInvolvement) gibt. Der Test würde zeigen, ob die Verteilung der Beobachtungen in den verschiedenen Kategorien von Jobzufriedenheit und Jobengagement zufällig ist oder ob es eine Art von Beziehung zwischen den beiden Variablen gibt.
+
+Der Chi-Quadrat-Test kann hier die Existenz einer Beziehung feststellen, aber nichts über Art oder Stärke der Beziehung aussagen. Um den Einfluss der Beziehung zwischen den beiden Variablen zu verstehen, wird ein Chi-Quadrat-Test durchgeführt:
+
+
+
+```r
+# Durchführen des Chi-Quadrat-Tests
+chisq_result <- chisq.test(cross_tab)
+
+# Ausgabe der Testergebnisse
+print(chisq_result)
+```
+
+```
+## 
+## 	Pearson's Chi-squared test
+## 
+## data:  cross_tab
+## X-squared = 7.2505, df = 9, p-value = 0.6111
+```
+
+
+Das Ergebnis des Chi-Quadrat-Tests zeigt einen X-squared (Chi-Quadrat-Wert) von 7.2505 bei 9 Freiheitsgraden. Der p-Wert beträgt 0.6111. Ein p-Wert von mehr als 0.05 (typisches Signifikanzniveau) deutet darauf hin, dass es **keinen statistisch signifikanten Zusammenhang zwischen Jobzufriedenheit und Jobengagement (JobInvolvement)** in dieser Stichprobe gibt.
+
+Die Unterschiede in der Verteilung der Beobachtungen in den verschiedenen Kategorien von Jobzufriedenheit und Jobengagement sind wahrscheinlich zufällig und nicht das Ergebnis einer zugrunde liegenden Beziehung zwischen den beiden Variablen. 
+
+Es wäre, basierend auf diesen Daten, nicht gerechtfertigt zu sagen, dass ein höheres Jobengagement zu einer höheren Jobzufriedenheit führt, oder umgekehrt.
+
+**JobLevel**
+
+
+Das Histogramm und die Wertetabelle wurden schon im Kapitel 2.8.1.2 erstellt.
+
+
+```r
+cross_tab <- table(HR_Analytics_selected$JobLevel, HR_Analytics_selected$JobSatisfaction)
+print(cross_tab)
+```
+
+```
+##    
+##       1   2   3   4
+##   1 106 108 163 167
+##   2 102  97 163 173
+##   3  51  37  64  67
+##   4  21  22  28  35
+##   5  10  16  25  18
+```
+
+
+
+
+
+```r
+# Erstellung des Balkendiagramms
+ggplot(HR_Analytics_selected, aes(x=factor(JobLevel), fill=factor(JobSatisfaction))) +
+  geom_bar(position="dodge") +
+  labs(x="Job Level", y="Anzahl der Mitarbeiter", fill="Job Satisfaction") +
+  scale_fill_manual(values=c("#ADD8E6", "#7EB9FF", "#4169E1", "#00008B"))
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-68-1.png)<!-- -->
+In der Darstellung der Kreuztabelle repräsentieren die Zeilen die verschiedenen Joblevel (von 1 bis 5), und die Spalten stellen die verschiedenen Stufen der Jobzufriedenheit (von 1 bis 4) dar.
+
+Die Daten zeigen, dass die höchste Anzahl von Mitarbeitern sich in den Jobleveln 1 und 2 befindet, unabhängig von der Jobzufriedenheit. Innerhalb dieser beiden Joblevel gibt es eine ist die Verteilung der Jobzufriedenheit am größten, was darauf hinweisen könnte, dass in den niedrigeren Jobleveln die Jobzufriedenheit stärker variiert.
+
+Für die höheren Joblevel (3 und 4) ist die Anzahl der Mitarbeiter insgesamt geringer, aber die Verteilung der Jobzufriedenheit ist ebenfalls relativ ausgeglichen. Das lässt darauf schließen, dass höhere Joblevel nicht unbedingt mit einer höheren oder niedrigeren Jobzufriedenheit einhergehen.
+
+Auf dem Joblevel 5 gibt ebenfalls mehr Mitarbeiter, die eine hohe Jobzufriedenheit (3 und 4) aufweisen. Nur ist diesmal die Jobzufriedenheit der Stufe 3 am größten. 
+
+Um die Stärke und Bedeutung dieser Beziehung zu überprüfen, wäre es ratsam, einen statistischen Test wie den Chi-Quadrat-Test durchzuführen.
+
+
+```r
+# Erstellen der Kreuztabelle
+cross_tab <- matrix(c(106,108,163,167,102,97,163,173,51,37,64,67,21,22,28,35,10,16,25,18), nrow=5, byrow=TRUE)
+
+# Durchführen des Chi-Quadrat-Tests
+chisq_result <- chisq.test(cross_tab)
+
+# Ausgabe der Testergebnisse
+print(chisq_result)
+```
+
+```
+## 
+## 	Pearson's Chi-squared test
+## 
+## data:  cross_tab
+## X-squared = 6.6492, df = 12, p-value = 0.8799
+```
+Das Ergebnis des Chi-Quadrat-Tests zeigt einen X-squared (Chi-Quadrat-Wert) von 6.6492 mit 12 Freiheitsgraden und einem p-Wert von 0.8799. Ein p-Wert, der deutlich über dem üblichen Signifikanzniveau von 0.05 liegt, deutet darauf hin, dass es keinen statistisch signifikanten Zusammenhang zwischen Joblevel und Jobzufriedenheit in dieser Stichprobe gibt. Das bedeutet, die Unterschiede, die wir in der Kreuztabelle gesehen haben, sind wahrscheinlich zufällig und nicht Ausdruck einer zugrundeliegenden Beziehung zwischen Joblevel und Jobzufriedenheit.
+
+Zusammenfassend legt die statistische Analyse nahe, dass in der untersuchten Belegschaft das Joblevel nicht als Prädiktor für die Jobzufriedenheit dient. Obwohl die Kreuztabelle interessante Muster zeigt, etwa die Variabilität der Jobzufriedenheit in den niedrigeren Jobleveln und die relative Ausgeglichenheit in den höheren Leveln, sind diese Muster statistisch nicht signifikant. Daher sollte man vorsichtig sein, daraus Schlussfolgerungen über die tatsächliche Beziehung zwischen diesen beiden Variablen zu ziehen.
+
+
+**Fazit zu "bessere Arbeitsbedingungen"**
+
+Die Analyse der Variablen, die sich auf bessere Arbeitsbedingungen beziehen, liefert interessante Einblicke, wenn auch keine statistisch signifikanten Ergebnisse. Sowohl für Work-Life-Balance als auch für Jobengagement (JobInvolvement) konnte kein statistisch signifikanter Zusammenhang mit der Jobzufriedenheit festgestellt werden. Dies bedeutet, dass trotz einiger erkennbarer Muster in den Kreuztabellen, diese Muster nicht zwangsläufig auf eine echte oder kausale Beziehung zwischen den Variablen und der Jobzufriedenheit hindeuten. Es ist daher wichtig, diese Beobachtungen mit Vorsicht zu interpretieren.
+
+In Bezug auf die Zufriedenheit mit der Arbeitsumgebung (EnvironmentSatisfaction) zeigt die Verteilung, dass die Mehrheit der Mitarbeiter in den höheren Zufriedenheitskategorien liegt. Das könnte als positives Zeichen für das Unternehmen gewertet werden. Allerdings lässt der nicht-signifikante Chi-Quadrat-Wert darauf schließen, dass auch hier kein klarer Zusammenhang zur Jobzufriedenheit besteht.
+
+Das übergeordnete Fazit für den Bereich "bessere Arbeitsbedingungen" wäre somit, dass es zwar Hinweise gibt, die auf eine positive Korrelation mit der Jobzufriedenheit hindeuten könnten, jedoch fehlt der statistische Nachweis dafür.
+
+
+#### 2.8.2.3 Positive Mitarbeiterbeziehungen
+
+Wie aus Punkt 2.8.1.2 schon bekannt, gibt es eine größere Zufriedenheit innerhalb des Unternehmens. Es unterstreicht, dass die Mehrheit der Mitarbeiter in den mittleren bis hohen Bereichen der Zufriedenheitsskala liegt, was grundsätzlich positiv ist. Gleichzeitig weist es darauf hin, dass es immer noch eine beträchtliche Anzahl von Mitarbeitern gibt, die Raum für Verbesserungen in ihren Arbeitsbeziehungen sehen.
+
+Wenn zum Beispiel Beziehungszufriedenheit und Jobzufriedenheit eng miteinander verknüpft sind, könnte dies ein Signal für das Management sein, dass Verbesserungen in den Mitarbeiterbeziehungen wahrscheinlich auch zu einer erhöhten allgemeinen Jobzufriedenheit führen würden.
+
+Zusätzlich könnte das Unternehmen Maßnahmen oder Programme in Betracht ziehen, die speziell darauf abzielen, die Beziehungszufriedenheit in den niedrigeren Kategorien zu verbessern. Da der Datensatz zeigt, dass es Mitarbeiter gibt, die in diesem Bereich niedrig abschneiden, könnte die Implementierung solcher Programme einen signifikanten positiven Effekt auf die gesamte Belegschaft haben.
+
+Eine Kreuztabelle ist ein einfacher, aber effektiver erster Schritt zur Erkundung der Beziehung zwischen diesen beiden Variablen und kann die Grundlage für weiterführende statistische Analysen bilden. Zwischen Jobzufriedenheit und der Beziehungszufriedenheit können wertvolle Einblicke in das Zusammenspiel dieser beiden wichtigen Faktoren für das Wohlbefinden am Arbeitsplatz liefern.
+
+
+```r
+# Erstellen der Kreuztabelle
+cross_tab <- with(HR_Analytics_selected, table(JobSatisfaction, RelationshipSatisfaction))
+
+# Anzeigen der Kreuztabelle
+print(cross_tab)
+```
+
+```
+##                RelationshipSatisfaction
+## JobSatisfaction   1   2   3   4
+##               1  55  57  91  87
+##               2  53  57  81  89
+##               3  85  94 133 131
+##               4  84  95 155 126
+```
+Die Kreuztabelle zeigt die Verteilung der Mitarbeiter über verschiedene Kategorien von Jobzufriedenheit und Beziehungszufriedenheit. Auf den ersten Blick könnte man meinen, es gibt bestimmte Trends: zum Beispiel scheinen Personen mit höherer Jobzufriedenheit auch eine höhere Beziehungszufriedenheit zu haben, insbesondere in der Kategorie 4 für beide Variablen. Aber dieser Eindruck muss statistisch überprüft werden.
+
+Zur Überprüfung des statistischen Zusammenhangs zwischen den beiden Variablen wird durchgeführt mit:
+
+
+
+```r
+# Durchführung des Chi-Quadrat-Tests
+chisq_result <- chisq.test(cross_tab)
+
+# Anzeigen der Testergebnisse
+print(chisq_result)
+```
+
+```
+## 
+## 	Pearson's Chi-squared test
+## 
+## data:  cross_tab
+## X-squared = 3.1222, df = 9, p-value = 0.9593
+```
+Der Chi-Quadrat-Test liefert wiedermals hierfür wichtige Informationen. Ein X-Quadrat-Wert von 3.1222 bei 9 Freiheitsgraden und ein p-Wert von 0.9593 suggerieren, dass es keinen statistisch signifikanten Zusammenhang zwischen Jobzufriedenheit und Beziehungszufriedenheit gibt. Ein p-Wert größer als 0,05 deutet darauf hin, dass die Unterschiede in der Verteilung der Kategorien wahrscheinlich zufällig sind.
+
+**Fazit zu positiver Mitarbeiterbeziehung**
+
+Zusammengefasst lassen sowohl die Kreuztabelle als auch der Chi-Quadrat-Test darauf schließen, dass in dieser Stichprobe kein signifikanter Zusammenhang zwischen der Beziehungszufriedenheit und der Jobzufriedenheit der Mitarbeiter besteht. Obwohl bestimmte Muster in der Kreuztabelle interessant erscheinen mögen, unterstützt der statistische Test die Hypothese eines Zusammenhangs zwischen diesen beiden Variablen nicht. Daher sollten jegliche Annahmen über die Beziehung zwischen Job- und Beziehungszufriedenheit mit Vorsicht getroffen werden.
+
+Vor diesem Hintergrund wäre eine Korrelationsanalyse wahrscheinlich nicht besonders aussagekräftig für diese beiden Variablen, da sie nicht dazu neigen, in einer Weise miteinander zu variieren, die statistisch signifikant ist. Es ist auch wichtig zu beachten, dass Korrelationsanalysen in der Regel für intervall- oder verhältnisskalierte Variablen durchgeführt werden und weniger geeignet sind für ordinale oder nominale Daten, wie sie in Kreuztabellen dargestellt werden.
+
+Insgesamt deutet der Chi-Quadrat-Test darauf hin, dass weitere Analysen zur Suche eines Zusammenhangs zwischen diesen beiden spezifischen Variablen wahrscheinlich nicht sehr fruchtbar wären, zumindest nicht mit den vorliegenden Daten.
+
+
+#### 2.8.2.4 Anerkannte Arbeitsleistung / erfüllbare Arbeitsanforderungen
+
+**PerformanceRating**
+
+Sowohl PerformanceRating als auch JobSatisfaction sind auf einer Skala von 1 bis 4 kategorisiert. Beide sind ordinale Variablen. Deshalb ist eine Kreuztabelle ein geeignetes Werkzeug, um die Beziehung zwischen den beiden Variablen zu untersuchen.
+
+
+```r
+# Kreuztabelle erstellen
+cross_tab <- table(HR_Analytics_selected$JobSatisfaction, HR_Analytics_selected$PerformanceRating)
+
+# Kreuztabelle anzeigen
+print(cross_tab)
+```
+
+```
+##    
+##       3   4
+##   1 242  48
+##   2 237  43
+##   3 387  56
+##   4 381  79
+```
+Die Kreuztabelle zeigt die Verteilung der Mitarbeiter bezüglich ihrer Jobzufriedenheit (auf der y-Achse) und ihres Performance Ratings (auf der x-Achse). In Bezug auf die Jobzufriedenheit haben die Werte für hohe (3 & 4) und mittlere (1 & 2) Zufriedenheit eine ähnliche Verteilung. Ein interessanter Punkt ist, dass die Anzahl der Mitarbeiter mit einem Performance Rating von 3 generell höher ist als die derjenigen mit einem Rating von 4, unabhängig von ihrer Jobzufriedenheit.
+
+Es gibt einige Unterschiede, die hervorstechen: Mitarbeiter mit einem hohen Performance Rating (4) sind eher in den höheren Jobzufriedenheitskategorien (3 & 4) anzutreffen als in den niedrigeren (1 & 2). Allerdings ist dieser Unterschied nicht sehr ausgeprägt.
+
+Im Allgemeinen scheinen sowohl hohe als auch niedrige Jobzufriedenheitswerte mit einem Performance Rating von 3 stärker vertreten zu sein. Dies könnte darauf hinweisen, dass die Performancebewertung nicht unbedingt mit der Jobzufriedenheit korreliert, zumindest nicht in einer Weise, die sofort ersichtlich ist.
+
+Um die Stärke und die Signifikanz des Zusammenhangs zwischen diesen beiden Variablen zu prüfen, wäre der nächste Schritt, einen Chi-Quadrat-Test durchzuführen.
+
+
+```r
+# Chi-Quadrat-Test durchführen
+chisq_result <- chisq.test(cross_tab)
+
+# Ergebnisse anzeigen
+print(chisq_result)
+```
+
+```
+## 
+## 	Pearson's Chi-squared test
+## 
+## data:  cross_tab
+## X-squared = 4.0033, df = 3, p-value = 0.2611
+```
+Die Ergebnisse des Chi-Quadrat-Tests zeigen einen X-squared-Wert (Chi-Quadrat-Wert) von 4.0033 mit 3 Freiheitsgraden und einem p-Wert von 0.2611. Da der p-Wert über dem allgemein akzeptierten Signifikanzniveau von 0.05 liegt, lässt das darauf schließen, dass es keinen statistisch signifikanten Zusammenhang zwischen der Jobzufriedenheit und dem Performance Rating in diesem Datensatz gibt.
+
+Das spiegelt sich auch in der Kreuztabelle wider, in der wir zwar kleine Unterschiede in der Verteilung der Jobzufriedenheit zwischen den verschiedenen Performance-Rating-Kategorien sehen, diese jedoch nicht statistisch signifikant sind. Die Mehrheit der Mitarbeiter hat ein Performance Rating von 3, unabhängig von ihrer Jobzufriedenheit. Bei den Mitarbeitern mit einem Performance Rating von 4 ist die Verteilung über die verschiedenen Jobzufriedenheitsstufen ähnlich, obwohl es hier leicht mehr Mitarbeiter gibt, die eine höhere Jobzufriedenheit (Stufe 4) aufweisen.
+
+Das Ergebnis deutet darauf hin, dass die Performancebewertung nicht unbedingt ein guter Indikator für die Jobzufriedenheit der Mitarbeiter ist, zumindest nicht in dieser Stichprobe.
+
+Es ist sinnvoller, sich auf andere Variablen zu konzentrieren, um die Faktoren zu identifizieren, die die Jobzufriedenheit beeinflussen könnten.
+
+**JobRole**
+
+
+Ein Histogramm der Jobrollen bietet eine Reihe von Vorteilen für die HR-Analyse und die Unternehmensführung. Erstens ermöglicht es einen schnellen und klaren Überblick über die Verteilung der verschiedenen Jobrollen im Unternehmen. Dies kann vor allem für die Unternehmensleitung und HR-Abteilung wertvoll sein, um ein besseres Verständnis für die Personalstruktur zu gewinnen.
+
+
+```r
+# Erstellen des Histogramms
+ggplot(HR_Analytics_selected, aes(x=JobRole)) +
+  geom_bar(fill="skyblue") +
+  theme_minimal() +
+  labs(x="Job Role", y="Anzahl der Mitarbeiter") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-74-1.png)<!-- -->
+
+```r
+# Farben festlegen
+meine_farben <- c("#ADD8E6", "#7EB9FF", "#4169E1", "#00008B")
+
+# Diagramm erstellen
+ggplot(data = HR_Analytics_selected, aes(x = JobRole, fill = factor(JobSatisfaction))) +
+  geom_bar(position = "dodge") +
+  scale_fill_manual(values = meine_farben) +
+  labs(x = "Job Role", y = "Anzahl der Mitarbeiter", fill = "Job Satisfaction") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-75-1.png)<!-- -->
+
+```
+##                            
+##                               1   2   3   4
+##   healthcare representative  27  19  43  43
+##   human resources            10  16  13  13
+##   laboratory technician      56  48  75  81
+##   manager                    21  21  27  33
+##   manufacturing director     26  32  49  38
+##   research director          15  16  27  22
+##   research scientist         54  53  90  95
+##   sales executive            69  54  91 112
+##   sales representative       12  21  28  23
+```
+
+
+
+```r
+# Kreuztabelle in einem schöneren Format anzeigen
+kable(cross_tab)
+```
+
+
+
+|                          |  1|  2|  3|   4|
+|:-------------------------|--:|--:|--:|---:|
+|healthcare representative | 27| 19| 43|  43|
+|human resources           | 10| 16| 13|  13|
+|laboratory technician     | 56| 48| 75|  81|
+|manager                   | 21| 21| 27|  33|
+|manufacturing director    | 26| 32| 49|  38|
+|research director         | 15| 16| 27|  22|
+|research scientist        | 54| 53| 90|  95|
+|sales executive           | 69| 54| 91| 112|
+|sales representative      | 12| 21| 28|  23|
+
+
+Die Kreuztabelle zeigt die Verteilung der Jobzufriedenheit (in den Spalten von 1 bis 4, wobei 1 die niedrigste und 4 die höchste Zufriedenheit darstellt) für verschiedene Jobrollen im Unternehmen (in den Zeilen).
+
+Es fällt auf, dass "Sales Executive" die Jobrolle mit der höchsten Anzahl von Mitarbeitern ist, die hohe Jobzufriedenheit (Stufe 4) angeben. Auch die "Laboratory Technicians" haben eine relativ hohe Anzahl an Mitarbeitern, die mit ihrer Arbeit zufrieden sind.
+
+Bei "Human Resources" und "Sales Representatives" sehen wir, dass die Zufriedenheit relativ ausgeglichen über alle Stufen verteilt ist, obwohl die Anzahl der Mitarbeiter in diesen Rollen geringer ist.
+
+Interessant ist, dass die Rolle des "Managers" eine ansteigende Tendenz von der niedrigsten zur höchsten Jobzufriedenheitsstufe aufweist. Das könnte darauf hindeuten, dass Manager tendenziell zufriedener mit ihrer Arbeit sind, was möglicherweise mit höheren Gehältern oder mehr Autonomie zusammenhängen könnte.
+
+In den Rollen "Healthcare Representative" und "Manufacturing Director" ist die Verteilung der Jobzufriedenheit eher ausgeglichen, mit einer leichten Tendenz zu höherer Zufriedenheit.
+
+Es lässt sich sagen, dass die Jobzufriedenheit innerhalb der verschiedenen Jobrollen variiert, und es gibt keine eindeutige Rolle, in der die Zufriedenheit besonders hoch oder niedrig ist. Das könnte ein Anhaltspunkt dafür sein, dass die Jobzufriedenheit durch eine Vielzahl von Faktoren beeinflusst wird, die über die Jobrolle hinausgehen.
+
+Ein Chi-Quadrat-Test kann in diesem Kontext sinnvoll sein, um zu prüfen, ob die Verteilung der Jobzufriedenheit statistisch signifikant von den verschiedenen Jobrollen abhängt. 
+
+
+
+
+```r
+# Chi-Quadrat-Test durchführen
+chi_test_result <- chisq.test(cross_tab)
+
+# Ergebnis des Chi-Quadrat-Tests anzeigen
+print(chi_test_result)
+```
+
+```
+## 
+## 	Pearson's Chi-squared test
+## 
+## data:  cross_tab
+## X-squared = 18.581, df = 24, p-value = 0.7739
+```
+Das Ergebnis des Chi-Quadrat-Tests zeigt einen Chi-Quadrat-Wert von 18.581 und 24 Freiheitsgrade (df). Der p-Wert des Tests beträgt 0.7739. Ein p-Wert von mehr als 0,05 deutet in der Regel darauf hin, dass es keinen statistisch signifikanten Zusammenhang zwischen den beiden betrachteten Variablen gibt. Das Ergebnis des Tests legt nahe, dass es keinen signifikanten Zusammenhang zwischen der "JobRole" und der "JobSatisfaction" im Datensatz gibt. Die Wahrscheinlichkeit, dass die beobachtete Verteilung der "JobSatisfaction" in den verschiedenen "JobRoles" rein zufällig ist, ist relativ hoch (p-Wert = 0.7739).
+
+Die Jobzufriedenheit im Unternehmen hangt nicht davon ab, welche spezifische Rolle ein Mitarbeiter hat. Dies könnte für die Personalabteilung interessant sein, da es bedeutet, dass Veränderungen oder Verbesserungen in der Jobzufriedenheit nicht notwendigerweise an spezifischen Jobrollen ausgerichtet sein müssen.
+
+
+**PercentSalaryHike**
+
+Wir können durch die Kreuzung der Variablen PercentSalaryHike und JobSatisfaction feststellen, ob Gehaltserhöhungen einen Einfluss auf die Zufriedenheit der Mitarbeiter haben.
+
+
+```r
+# Annehmen, dass Ihr Dataframe HR_Analytics_selected heißt
+cross_tab <- table(HR_Analytics_selected$JobSatisfaction, HR_Analytics_selected$PercentSalaryHike)
+print(cross_tab)
+```
+
+```
+##    
+##     11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+##   1 40 38 44 38 23 17 17 10 15 11 13 11  6  2  5
+##   2 44 41 39 29 23 19 10 19 13 10  8 14  6  3  2
+##   3 65 65 58 69 23 23 31 27 26 16 14 10  4  7  5
+##   4 61 54 68 65 33 19 25 34 22 18 13 21 12  9  6
+```
+Die Analyse der Kreuztabelle zeigt einige aufschlussreiche Muster bezüglich der Beziehung zwischen der Höhe der Gehaltserhöhung und der Jobzufriedenheit der Mitarbeiter. Interessanterweise ist die Verteilung der Jobzufriedenheit bei geringen Gehaltserhöhungen von 11-14% recht ausgeglichen über alle Zufriedenheitsstufen. Das ändert sich bei Gehaltserhöhungen im Bereich von 15-19%; hier neigen Mitarbeiter dazu, eine höhere Zufriedenheit (Stufe 4) zu berichten, verglichen mit den weniger zufriedenen Mitarbeitern (Stufen 1 und 2).
+
+Bei Gehaltserhöhungen von 20-25% sind die Daten schwieriger zu interpretieren, hauptsächlich wegen der geringeren Stichprobengröße. Dennoch zeigen sich deutliche Schwankungen in der Zufriedenheit der Mitarbeiter.
+
+Eine wichtige Schlussfolgerung dieser Analyse ist, dass eine hohe Jobzufriedenheit nicht unbedingt mit einer hohen Gehaltserhöhung einhergeht. Das deutet darauf hin, dass Gehaltserhöhungen allein nicht als verlässlicher Indikator für die Zufriedenheit der Mitarbeiter dienen können. Es wäre daher ratsam, weitere Variablen in die Untersuchung einzubeziehen, um ein vollständigeres Bild der Faktoren zu erhalten, die zur Jobzufriedenheit beitragen.
+
+Ein Chi-Quadrat-Test könnte in dieser Situation sinnvoll sein, um festzustellen, ob es einen statistisch signifikanten Zusammenhang zwischen der Höhe der Gehaltserhöhung und der Jobzufriedenheit gibt. Der Test würde prüfen, ob die beobachteten Häufigkeiten in der Kreuztabelle aufgrund des Zufalls entstanden sein könnten oder ob es wahrscheinlicher ist, dass ein echter Zusammenhang zwischen den beiden Variablen besteht.
+
+Ein Chi-Quadrat-Test könnte in dieser Situation sinnvoll sein, um festzustellen, ob es einen statistisch signifikanten Zusammenhang zwischen der Höhe der Gehaltserhöhung und der Jobzufriedenheit gibt. Der Test würde prüfen, ob die beobachteten Häufigkeiten in der Kreuztabelle aufgrund des Zufalls entstanden sein könnten oder ob es wahrscheinlicher ist, dass ein echter Zusammenhang zwischen den beiden Variablen besteht.
+
+
+```r
+# Erstellen der Kreuztabelle
+cross_tab <- table(HR_Analytics_selected$JobSatisfaction, HR_Analytics_selected$PercentSalaryHike)
+
+# Durchführen des Chi-Quadrat-Tests
+chi_test_result <- chisq.test(cross_tab)
+```
+
+```
+## Warning in chisq.test(cross_tab): Chi-Quadrat-Approximation kann inkorrekt sein
+```
+
+```r
+# Ausgeben des Ergebnisses
+knit_print(chi_test_result)
+```
+
+```
+## 
+## 	Pearson's Chi-squared test
+## 
+## data:  cross_tab
+## X-squared = 35.278, df = 42, p-value = 0.7589
+```
+Die Warnung "Chi-Quadrat-Approximation kann inkorrekt sein" erscheint in der Regel, wenn einige der erwarteten Frequenzen in der Kreuztabelle zu niedrig sind. Als Faustregel gilt oft, dass alle erwarteten Frequenzen mindestens 5 betragen sollten, damit die Approximation durch den Chi-Quadrat-Test gültig ist.
+
+Um diese erwarteten Frequenzen zu überprüfen, kann eine Simulation durchgeführt werden, welche eine genauere p-Wert-Schätzung ermöglicht, wenn die Daten die genannten Bedingungen nicht erfüllen:
+
+
+```r
+# Durchführen des simulierten Chi-Quadrat-Tests
+chi_test_result <- chisq.test(cross_tab, simulate.p.value = TRUE)
+
+# Ausgeben des Ergebnisses
+knit_print(chi_test_result)
+```
+
+```
+## 
+## 	Pearson's Chi-squared test with simulated p-value (based on 2000
+## 	replicates)
+## 
+## data:  cross_tab
+## X-squared = 35.278, df = NA, p-value = 0.7656
+```
+Beide Chi-Quadrat-Tests—der originale und der simulierte—zeigen ähnliche Ergebnisse in Bezug auf den p-Wert: 0,7589 für den originalen Test und 0,7651 für den simulierten Test. In beiden Fällen ist der p-Wert deutlich größer als das übliche Signifikanzniveau von 0,05, was darauf hindeutet, dass es keine statistisch signifikante Assoziation zwischen den Variablen JobSatisfaction und PercentSalaryHike gibt.
+
+Die beide Tests deuten darauf hin, dass Gehaltserhöhungen nicht unbedingt ein Indikator für die Jobzufriedenheit sind. Es scheint keine signifikante Beziehung zwischen den beiden Variablen zu geben, und andere Faktoren könnten eine wichtigere Rolle bei der Bestimmung der Jobzufriedenheit spielen.
+
+
+
+# 3. Fazit
 
 
 # 6. Literaturliste
