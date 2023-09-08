@@ -46,18 +46,16 @@ Dieser Bericht wird nach dem **Cross-Industry Standard Process for Data Mining (
 
 Der CRISP-DM-Leitfaden (Cross-Industry Standard Process for Data Mining) wurde ursprünglich im Jahr 1999 veröffentlicht. Dieser Leitfaden stellt ein Rahmenwerk für den Prozess der Datenanalyse und des Data Mining vor und hat zum Ziel, den gesamten Lebenszyklus eines Data-Mining-Projekts zu strukturieren. Der Leitfaden wurde von einem Konsortium entwickelt, das Unternehmen wie IBM, NCR Corporation und DaimlerChrysler AG umfasste.
 
-**Der CRISP-DM-Leitfaden ist in sechs Phasen unterteilt:**
+**Der CRISP-DM-Leitfaden in Fokus: Phasen 1 und 2**
 
-1. Business Understanding: Verständnis für die geschäftlichen Anforderungen und Ziele  
-2. Data Understanding: Verständnis für die verfügbaren Daten und ihre Qualität  
-3. Data Preparation: Vorbereitung und Aufbereitung der Daten für die Analyse  
-4. Modeling: Auswahl und Anwendung von Data-Mining-Techniken und -Modellen  
-5. Evaluation: Bewertung der Modelle in Bezug auf ihre Effektivität und Geschäftsnutzen  
-6. Deployment: Implementierung der Modelle in die geschäftliche Praxis  
+1. Business Understanding: Verständnis für die Anforderungen und Ziele.  
+2. Data Understanding: Verständnis für die verfügbaren Daten und ihrer Qualität und Relevanz für die gestellte These.    
 
 Dieser Leitfaden hat sich als sehr nützlich und anwendungsorientiert erwiesen und wird häufig in der Industrie sowie im akademischen Bereich verwendet. Er bietet eine strukturierte Herangehensweise, um Data-Mining-Projekte effizient und effektiv zu managen.
 
 Jede dieser Phasen wird in diesem Bericht ausführlich behandelt, um einen ganzheitlichen Überblick und fundierte Schlussfolgerungen zu ermöglichen.
+
+Nachdem ein solides Verständnis für die Anforderungen und die vorliegenden Daten erlangt wird, schließt sich in Kapitel 2 eine Explorative Datenanalyse mit Regressionsanalyse an, um die erzielten Ergebnisse im Kontext zu verstehen und eventuelle Unklarheiten oder Einschränkungen zu identifizieren.
 
 
 # 2. Data Understanding
@@ -2368,18 +2366,502 @@ knit_print(chi_test_result)
 ## 	replicates)
 ## 
 ## data:  cross_tab
-## X-squared = 35.278, df = NA, p-value = 0.7656
+## X-squared = 35.278, df = NA, p-value = 0.7581
 ```
 Beide Chi-Quadrat-Tests—der originale und der simulierte—zeigen ähnliche Ergebnisse in Bezug auf den p-Wert: 0,7589 für den originalen Test und 0,7651 für den simulierten Test. In beiden Fällen ist der p-Wert deutlich größer als das übliche Signifikanzniveau von 0,05, was darauf hindeutet, dass es keine statistisch signifikante Assoziation zwischen den Variablen JobSatisfaction und PercentSalaryHike gibt.
 
 Die beide Tests deuten darauf hin, dass Gehaltserhöhungen nicht unbedingt ein Indikator für die Jobzufriedenheit sind. Es scheint keine signifikante Beziehung zwischen den beiden Variablen zu geben, und andere Faktoren könnten eine wichtigere Rolle bei der Bestimmung der Jobzufriedenheit spielen.
 
+### 2.8.3 Korrelation und Regression verschiedener Variablen
+
+Die Korrelations- und Regressionsanalysen sind nützliche Werkzeuge zur Untersuchung der Beziehung zwischen metrischen Variablen, haben jedoch ihre eigenen Einschränkungen. Die Korrelationsanalyse gibt Aufschluss darüber, ob und in welcher Stärke ein linearer Zusammenhang zwischen den Variablen besteht, aber sie macht keine Aussagen zur Kausalität. Die Regressionsanalyse hingegen ermöglicht es, den Einfluss einer oder mehrerer unabhängiger Variablen auf eine abhängige Variable zu schätzen. Sie kann auch andere Variablen kontrollieren, um die Kausalität besser zu verstehen. 
+
+Betrachtet werden nur die Variablen aus dem HR_Analytics_selected Datensatz.
+
+1. Gehalt: Ein höheres Einkommen könnte zu einer höheren Jobzufriedenheit führen.
+2. WorkLifeBalance: Ein gutes Verhältnis von Arbeit und Freizeit könnte sich positiv auf die Jobzufriedenheit auswirken.
+3. EnvironmentSatisfaction: Eine hohe Zufriedenheit mit der Arbeitsumgebung könnte die Jobzufriedenheit erhöhen.
+4. JobInvolvement: Ein höheres Engagement im Job könnte zu einer höheren Jobzufriedenheit führen.
+5. RelationshipSatisfaction: Die Zufriedenheit mit den Arbeitsbeziehungen könnte auch relevant sein.
+6. PerformanceRating: Die Leistungsbewertung könnte in Verbindung mit der Jobzufriedenheit stehen.
+
+Die ausgewählten Variablen bieten ein vielseitiges Bild der Faktoren, die potenziell die Jobzufriedenheit beeinflussen könnten, und sind daher interessante Kandidaten für eine Korrelationsanalyse.
+
+Diese Variablen sind aus verschiedenen Dimensionen des Arbeitslebens ausgewählt und könnten ein komplexes, aber aufschlussreiches Bild der Faktoren liefern, die zur Jobzufriedenheit beitragen. Durch die Untersuchung der Korrelationen zwischen diesen Variablen und der Jobzufriedenheit könnten wertvolle Erkenntnisse für die Personalentwicklung und die Unternehmenskultur gewonnen werden.
+
+**Gehalt**
+
+MonthlyIncome wird nicht mehr in Abschitte eingeteilt und als kontinuierlich behandelt. Dafür ist der Pearson-Korrelationskoeffizien gut geeignet
+
+
+
+```r
+# Pearson-Korrelation
+
+cor_result <- cor(HR_Analytics_selected$MonthlyIncome, HR_Analytics_selected$JobSatisfaction, method = "pearson")
+
+
+# Ergebnisse anzeigen
+knit_print(cor_result)
+```
+
+```
+## [1] -0.00871184
+```
+
+
+
+```r
+ggplot(HR_Analytics_selected, aes(x = MonthlyIncome, y = JobSatisfaction)) +
+  geom_point() +
+  geom_smooth(method = 'lm') +
+  xlab('Monatliches Einkommen') +
+  ylab('Jobzufriedenheit')
+```
+
+```
+## `geom_smooth()` using formula = 'y ~ x'
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-83-1.png)<!-- -->
+Das Ergebnis der Pearson-Korrelation zwischen den Variablen "MonthlyIncome" (Monatliches Einkommen) und "JobSatisfaction" (Jobzufriedenheit) zeigt einen Wert von -0.00871184, der sehr nahe an Null liegt. In der Praxis bedeutet dies, dass zwischen diesen beiden Variablen kein signifikanter linearer Zusammenhang zu bestehen scheint. Das heißt, das monatliche Einkommen der Mitarbeiter ist kein zuverlässiger Indikator für ihre Jobzufriedenheit in diesem Datensatz. Andere Faktoren, die nicht in dieser speziellen Korrelationsanalyse berücksichtigt wurden, könnten eine Rolle spielen.
+
+
+```r
+# Einfache lineare Regression
+regressionsmodell <- lm(JobSatisfaction ~ MonthlyIncome, data = HR_Analytics_selected)
+
+# Zusammenfassung des Regressionsmodells anzeigen
+summary(regressionsmodell)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ MonthlyIncome, data = HR_Analytics_selected)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.7395 -0.7359  0.2664  1.2638  1.2988 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)    2.742e+00  4.904e-02  55.908   <2e-16 ***
+## MonthlyIncome -2.042e-06  6.112e-06  -0.334    0.738    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.103 on 1471 degrees of freedom
+## Multiple R-squared:  7.59e-05,	Adjusted R-squared:  -0.0006039 
+## F-statistic: 0.1117 on 1 and 1471 DF,  p-value: 0.7383
+```
+
+```r
+knit_print(regressionsmodell)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ MonthlyIncome, data = HR_Analytics_selected)
+## 
+## Coefficients:
+##   (Intercept)  MonthlyIncome  
+##     2.742e+00     -2.042e-06
+```
+
+Die Ausgabe des linearen Regressionsmodells zeigt verschiedene Statistiken, die uns bei der Interpretation des Zusammenhangs zwischen JobSatisfaction und MonthlyIncome helfen können:
+
+Der Koeffizient für MonthlyIncome ist -2.042e-06, was nahe an null liegt. Dies bedeutet, dass eine Änderung des monatlichen Einkommens nur einen sehr geringen direkten Einfluss auf die Jobzufriedenheit hat.Der p-Wert ist 0,738, was deutlich über dem allgemein akzeptierten Schwellenwert von 0,05 liegt. Dies bedeutet, dass MonthlyIncome nicht signifikant zur Vorhersage der JobSatisfaction beiträgt.
+
+
+```r
+# Erstellen des Plots
+ggplot(HR_Analytics_selected, aes(x = MonthlyIncome, y = JobSatisfaction)) +
+  geom_point() +  # Scatterplot
+  geom_smooth(method = "lm", se = FALSE) +  # Regressionslinie
+  ggtitle("Regressionsanalyse von MonthlyIncome und JobSatisfaction") +
+  xlab("Monatliches Einkommen") +
+  ylab("Jobzufriedenheit")
+```
+
+```
+## `geom_smooth()` using formula = 'y ~ x'
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-85-1.png)<!-- -->
+
+Das lineare Regressionsmodell liefert verschiedene Statistiken zur Beurteilung des Zusammenhangs zwischen Jobzufriedenheit und monatlichem Einkommen. Der Koeffizient für das monatliche Einkommen liegt nahezu bei Null, was darauf hinweist, dass eine Änderung im Einkommen nur einen minimalen direkten Einfluss auf die Jobzufriedenheit hat. Zudem ist der p-Wert mit 0,738 weit über dem allgemein akzeptierten Schwellenwert von 0,05, was die Nicht-Signifikanz der Variable im Modell unterstreicht. Sowohl der R-Quadrat als auch der adjustierte R-Quadrat sind extrem niedrig, was darauf hindeutet, dass das Modell nicht gut darin ist, die Varianz der Zielvariable zu erklären. Der p-Wert des F-Tests bestätigt ebenfalls die mangelnde Signifikanz des gesamten Modells. Obwohl die Residuen in etwa symmetrisch erscheinen, ist dies allein nicht ausreichend, um die Modellgüte zu beurteilen. Insgesamt deuten die Ergebnisse darauf hin, dass das monatliche Einkommen kein signifikanter Prädiktor für die Jobzufriedenheit ist.
+
+**Work-Life-Balance**
+
+Die Korellation wurde schon in Kapitel 2.8.2.2 nicht nachgewiesen. Die Regressionsanalyse zwischen der Variable "WorkLifeBalance" und "JobSatisfaction" kann äußerst aufschlussreich sein, da beide Faktoren wesentliche Aspekte des Arbeitslebens darstellen. Ein ausgewogenes Verhältnis zwischen Arbeit und Freizeit (Work-Life-Balance) wird oft als wichtiger Faktor für die allgemeine Zufriedenheit im Beruf angesehen. Ein gutes Gleichgewicht könnte zu höherer Produktivität, geringerer Fluktuation und besserer allgemeiner Mitarbeiterzufriedenheit führen. Durch die Analyse des Zusammenhangs zwischen diesen beiden Variablen können Unternehmen wertvolle Erkenntnisse gewinnen, um Arbeitsbedingungen zu verbessern und die Mitarbeiterzufriedenheit zu steigern.
+
+
+
+```r
+# Regressionsanalyse
+regression_model <- lm(JobSatisfaction ~ WorkLifeBalance, data = HR_Analytics_selected)
+
+# Zusammenfassung des Regressionsmodells
+summary(regression_model)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ WorkLifeBalance, data = HR_Analytics_selected)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.7820 -0.7212  0.2788  1.2484  1.3092 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)      2.81248    0.11613  24.218   <2e-16 ***
+## WorkLifeBalance -0.03043    0.04074  -0.747    0.455    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.103 on 1471 degrees of freedom
+## Multiple R-squared:  0.0003791,	Adjusted R-squared:  -0.0003005 
+## F-statistic: 0.5578 on 1 and 1471 DF,  p-value: 0.4553
+```
+
+```r
+knit_print(regressionsmodell)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ MonthlyIncome, data = HR_Analytics_selected)
+## 
+## Coefficients:
+##   (Intercept)  MonthlyIncome  
+##     2.742e+00     -2.042e-06
+```
+
+
+
+
+```r
+# Erstellung der Plottergrafik
+ggplot(HR_Analytics_selected, aes(x = WorkLifeBalance, y = JobSatisfaction)) +
+  geom_point() +  # Punkte für die einzelnen Daten
+  geom_smooth(method = 'lm') +  # Linie für das lineare Modell
+  ggtitle('Regressionsanalyse von WorkLifeBalance und JobSatisfaction') +
+  xlab('WorkLifeBalance') +
+  ylab('JobSatisfaction')
+```
+
+```
+## `geom_smooth()` using formula = 'y ~ x'
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-87-1.png)<!-- -->
+
+Die Regressionsanalyse wurde durchgeführt, um den Einfluss der Work-Life-Balance auf die Jobzufriedenheit zu untersuchen. Die Ergebnisse des Modells zeigen jedoch, dass dieser Einfluss offenbar sehr gering ist. Der Schätzwert für den Koeffizienten der Work-Life-Balance ist mit -0,03043 nahezu null, was darauf hindeutet, dass eine Veränderung in der Work-Life-Balance nur einen minimalen direkten Einfluss auf die Jobzufriedenheit ausübt.
+
+Zudem liegt der p-Wert für die Variable Work-Life-Balance bei 0,455, weit über dem üblichen Signifikanzniveau von 0,05. Dies signalisiert, dass die Work-Life-Balance nicht signifikant zur Erklärung der Varianz in der Jobzufriedenheit beiträgt. Dies wird auch durch das sehr niedrige Multiple R-Quadrat von 0,0003791 und das negative adjustierte R-Quadrat von -0,0003005 bestätigt, die beide darauf hinweisen, dass das Modell die Varianz der Zielvariable Jobzufriedenheit kaum erklärt.
+
+Die F-Statistik und der dazugehörige p-Wert des F-Tests liegen ebenfalls über dem Signifikanzniveau und weisen darauf hin, dass das gesamte Modell nicht signifikant ist. Obwohl die Residuen des Modells relativ symmetrisch verteilt zu sein scheinen, reicht diese Information allein nicht aus, um die Qualität des Modells zu bewerten.
+
+Insgesamt zeigen die Ergebnisse, dass die Work-Life-Balance keinen signifikanten Einfluss auf die Jobzufriedenheit hat, zumindest gemäß dieser Regressionsanalyse. Daher könnte es sinnvoll sein, weitere Variablen oder komplexere Modelle in Betracht zu ziehen, um ein besseres Verständnis für die Faktoren zu bekommen, die die Jobzufriedenheit beeinflussen.
+
+
+**EnvironmentSatisfaction**
+
+Die Untersuchung des Zusammenhangs zwischen der Zufriedenheit mit der Arbeitsumgebung (EnvironmentSatisfaction) und der allgemeinen Jobzufriedenheit (JobSatisfaction) könnte sehr aufschlussreich sein. Intuitiv würde man annehmen, dass eine positiv wahrgenommene Arbeitsumgebung zu einer erhöhten allgemeinen Jobzufriedenheit führt. Eine solche Analyse kann dazu beitragen, spezifische Maßnahmen zur Verbesserung der Arbeitsumgebung und damit der allgemeinen Zufriedenheit der Mitarbeiter zu identifizieren.
+
+
+```r
+# Durchführen der linearen Regression
+modell <- lm(JobSatisfaction ~ EnvironmentSatisfaction, data = HR_Analytics_selected)
+
+# Ausgabe des Modellergebnisses
+summary(modell)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ EnvironmentSatisfaction, data = HR_Analytics_selected)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -1.742 -0.734  0.266  1.266  1.281 
+## 
+## Coefficients:
+##                         Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)              2.74939    0.07723  35.602   <2e-16 ***
+## EnvironmentSatisfaction -0.00769    0.02632  -0.292     0.77    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.104 on 1471 degrees of freedom
+## Multiple R-squared:  5.805e-05,	Adjusted R-squared:  -0.0006217 
+## F-statistic: 0.08539 on 1 and 1471 DF,  p-value: 0.7702
+```
+
+```r
+knit_print(modell)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ EnvironmentSatisfaction, data = HR_Analytics_selected)
+## 
+## Coefficients:
+##             (Intercept)  EnvironmentSatisfaction  
+##                 2.74939                 -0.00769
+```
+
+
+
+
+```r
+# Erstellung der Plottergrafik
+ggplot(HR_Analytics_selected, aes(x = EnvironmentSatisfaction, y = JobSatisfaction)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Regression von JobSatisfaction auf EnvironmentSatisfaction",
+       x = "Zufriedenheit mit der Arbeitsumgebung",
+       y = "Jobzufriedenheit")
+```
+
+```
+## `geom_smooth()` using formula = 'y ~ x'
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-89-1.png)<!-- -->
+Die Ergebnisse zeigen jedoch, dass die Zufriedenheit mit der Arbeitsumgebung kaum einen Einfluss auf die Jobzufriedenheit hat.
+
+Der Koeffizient für "EnvironmentSatisfaction" beträgt -0,00769 und ist statistisch nicht signifikant (p-Wert von 0,77), was weit über dem üblichen Schwellenwert von 0,05 liegt. Dies deutet darauf hin, dass die Variable "EnvironmentSatisfaction" nicht signifikant zur Erklärung der Jobzufriedenheit beiträgt.
+
+Darüber hinaus sind die Werte für das Multiple R-Quadrat und das Adjustierte R-Quadrat extrem niedrig (nahe Null), was darauf hinweist, dass das Modell die Varianz in der Zielvariable "JobSatisfaction" nicht gut erklärt.
+
+Die Analyse zeigt, dass im vorliegenden Datensatz kein signifikanter linearer Zusammenhang zwischen der Zufriedenheit mit der Arbeitsumgebung und der allgemeinen Jobzufriedenheit besteht. Daher wäre es ratsam, weitere Variablen oder komplexere Modelle in Betracht zu ziehen, um die Faktoren zu identifizieren, die die Jobzufriedenheit beeinflussen.
+
+**JobInvolvement**
+
+Eine Regressionsanalyse zwischen der Variable "Jobinvolvement" (Jobeinbindung) und "JobSatisfaction" (Jobzufriedenheit) könnte besonders aufschlussreich sein. Beide Variablen sind zentrale Aspekte der Mitarbeitererfahrung und könnten in enger Beziehung zueinander stehen. Jobinvolvement beschreibt, wie sehr sich ein Mitarbeiter in seinem Job engagiert oder einbringt. Höheres Jobinvolvement könnte theoretisch zu höherer Jobzufriedenheit führen, da engagierte Mitarbeiter oft mehr persönliche Erfüllung aus ihrer Arbeit ziehen. Auf der anderen Seite könnte es auch sein, dass ein zu hohes Jobinvolvement auf Kosten der Work-Life-Balance geht und damit die Jobzufriedenheit negativ beeinflusst. Daher ist es sinnvoll, diese Beziehung empirisch zu überprüfen.
+
+
+```r
+# Lineare Regression zwischen JobSatisfaction und Jobinvolvement
+lm_model <- lm(JobSatisfaction ~ JobInvolvement, data = HR_Analytics_selected)
+
+# Zusammenfassung des Modells
+summary(lm_model)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ JobInvolvement, data = HR_Analytics_selected)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.7796 -0.7500  0.2796  1.2500  1.3091 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)     2.80919    0.11393  24.658   <2e-16 ***
+## JobInvolvement -0.02958    0.04038  -0.732    0.464    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.103 on 1471 degrees of freedom
+## Multiple R-squared:  0.0003645,	Adjusted R-squared:  -0.000315 
+## F-statistic: 0.5364 on 1 and 1471 DF,  p-value: 0.464
+```
+
+```r
+knit_print(lm_model)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ JobInvolvement, data = HR_Analytics_selected)
+## 
+## Coefficients:
+##    (Intercept)  JobInvolvement  
+##        2.80919        -0.02958
+```
+
+```r
+# Grafische Darstellung
+plot(HR_Analytics_selected$JobInvolvement, HR_Analytics_selected$JobSatisfaction, 
+     main = "Regressionsanalyse: Jobinvolvement und JobSatisfaction",
+     xlab = "Jobinvolvement", 
+     ylab = "JobSatisfaction",
+     pch = 16)
+abline(lm_model, col = "red")
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-90-1.png)<!-- -->
+Der Koeffizient für "JobInvolvement" beträgt -0,02958, was nahe an Null liegt. Dies deutet darauf hin, dass Veränderungen im JobInvolvement nur einen sehr geringen direkten Einfluss auf die Jobzufriedenheit haben könnten. Dieser Koeffizient ist jedoch statistisch nicht signifikant, wie der p-Wert von 0,464 zeigt. Ein p-Wert über dem allgemein akzeptierten Schwellenwert von 0,05 deutet darauf hin, dass der beobachtete Effekt zufällig sein könnte.
+
+Zudem sind die Werte für das Multiple R-Quadrat und das Adjustierte R-Quadrat extrem niedrig (nahe Null), was darauf hindeutet, dass das Regressionsmodell nicht gut darin ist, die Varianz in der Zielvariable "JobSatisfaction" zu erklären.
+
+Die F-Statistik beträgt 0,5364 und der p-Wert des F-Tests ist ebenfalls nicht signifikant (0,464), was darauf hindeutet, dass das gesamte Modell nicht signifikant ist.
+
+Insgesamt legen die Ergebnisse nahe, dass JobInvolvement wenig bis gar keinen Einfluss auf die Jobzufriedenheit hat, zumindest nach diesem Modell und in dieser speziellen Datensammlung.
+
+**RelationshipSatisfaction**
+
+Die Erforschung des Zusammenhangs zwischen RelationshipSatisfaction (Beziehungszufriedenheit) und JobSatisfaction (Jobzufriedenheit) kann wertvolle Einblicke in die Faktoren bieten, die die Zufriedenheit am Arbeitsplatz beeinflussen. Beziehungszufriedenheit kann sich auf die Beziehungen zu Kollegen, Vorgesetzten oder auch auf die allgemeine Arbeitsumgebung beziehen. Ein besseres Verständnis dieser Beziehung kann Organisationen dabei helfen, Strategien zu entwickeln, um die Zufriedenheit und Produktivität ihrer Mitarbeiter zu erhöhen.
+
+
+```r
+# Erstellen des linearen Regressionsmodells
+model <- lm(JobSatisfaction ~ RelationshipSatisfaction, data = HR_Analytics_selected)
+
+# Ergebnisse anzeigen
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ RelationshipSatisfaction, data = HR_Analytics_selected)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.7465 -0.7359  0.2641  1.2640  1.2851 
+## 
+## Coefficients:
+##                          Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)               2.75702    0.07764  35.509   <2e-16 ***
+## RelationshipSatisfaction -0.01053    0.02659  -0.396    0.692    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.103 on 1471 degrees of freedom
+## Multiple R-squared:  0.0001067,	Adjusted R-squared:  -0.0005731 
+## F-statistic: 0.1569 on 1 and 1471 DF,  p-value: 0.6921
+```
+
+```r
+knit_print(lm_model)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ JobInvolvement, data = HR_Analytics_selected)
+## 
+## Coefficients:
+##    (Intercept)  JobInvolvement  
+##        2.80919        -0.02958
+```
+
+```r
+# Plottergrafik erstellen
+plot(HR_Analytics_selected$RelationshipSatisfaction, HR_Analytics_selected$JobSatisfaction,
+     xlab = "RelationshipSatisfaction",
+     ylab = "JobSatisfaction",
+     main = "Regression von JobSatisfaction auf RelationshipSatisfaction")
+abline(model, col = "red")
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-91-1.png)<!-- -->
+Die durchgeführte lineare Regressionsanalyse zielte darauf ab, den Zusammenhang zwischen der Beziehungszufriedenheit und der Jobzufriedenheit zu untersuchen. Laut dem Regressionsmodell gibt es jedoch keinen statistisch signifikanten Zusammenhang zwischen diesen beiden Variablen. Der Intercept, also der Schnittpunkt der Regressionslinie mit der y-Achse, beträgt etwa 2.757, was bedeutet, dass die erwartete Jobzufriedenheit bei einer Beziehungszufriedenheit von null bei diesem Wert liegt. Der Schätzwert für den Einfluss der Beziehungszufriedenheit auf die Jobzufriedenheit ist mit etwa -0.01053 sehr gering und sogar negativ. Dennoch ist dieser Wert nicht statistisch signifikant, da der P-Wert von 0.692 weit über dem allgemein akzeptierten Signifikanzniveau von 0.05 liegt. Zudem sind die Werte für das multiple und das adjustierte Bestimmtheitsmaß extrem niedrig, was darauf hindeutet, dass das Modell die Varianz der Zielvariable Jobzufriedenheit kaum erklären kann. Insgesamt deutet die Analyse darauf hin, dass die Beziehungszufriedenheit in der untersuchten Stichprobe nicht signifikant mit der Jobzufriedenheit assoziiert ist. Das legt nahe, dass Unternehmen, die die Zufriedenheit ihrer Mitarbeiter verbessern möchten, ihre Aufmerksamkeit möglicherweise auf andere Faktoren lenken sollten.
+
+
+**PerformanceRating**
+
+Eine lineare Regressionsanalyse zwischen der Leistungsbewertung (PerformanceRating) und der Jobzufriedenheit (JobSatisfaction) kann wertvolle Einblicke in die Beziehung zwischen der wahrgenommenen Leistung der Mitarbeiter und ihrem Zufriedenheitsgrad liefern. Ein solcher Zusammenhang könnte für das Management wertvoll sein, um besser zu verstehen, wie die Zufriedenheit der Mitarbeiter ihre Leistung beeinflussen könnte oder umgekehrt. Dies könnte insbesondere für die Personalentwicklung und Talentmanagement-Strategien relevant sein.
+
+
+```r
+# Führen der linearen Regressionsanalyse durch
+model <- lm(JobSatisfaction ~ PerformanceRating, data = HR_Analytics_selected)
+
+# Ausgabe der Zusammenfassung des Modells
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ PerformanceRating, data = HR_Analytics_selected)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.7345 -0.7274  0.2727  1.2727  1.2727 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)       2.705843   0.253222   10.69   <2e-16 ***
+## PerformanceRating 0.007168   0.079781    0.09    0.928    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.104 on 1471 degrees of freedom
+## Multiple R-squared:  5.487e-06,	Adjusted R-squared:  -0.0006743 
+## F-statistic: 0.008071 on 1 and 1471 DF,  p-value: 0.9284
+```
+
+```r
+knit_print(lm_model)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ JobInvolvement, data = HR_Analytics_selected)
+## 
+## Coefficients:
+##    (Intercept)  JobInvolvement  
+##        2.80919        -0.02958
+```
+
+```r
+# Erstellung der Plottergrafik
+ggplot(HR_Analytics_selected, aes(x = PerformanceRating, y = JobSatisfaction)) +
+  geom_point() +  # Zeigt die einzelnen Datenpunkte
+  geom_smooth(method = "lm", se = FALSE) +  # Fügt die Regressionslinie hinzu
+  ggtitle("Zusammenhang zwischen Leistungsbewertung und Jobzufriedenheit") +
+  xlab("Leistungsbewertung") +
+  ylab("Jobzufriedenheit")
+```
+
+```
+## `geom_smooth()` using formula = 'y ~ x'
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-92-1.png)<!-- -->
+
+Die Durchführung einer linearen Regressionsanalyse zwischen der Leistungsbewertung (PerformanceRating) und der Jobzufriedenheit (JobSatisfaction) in einem HR-Analysekontext schien zunächst sinnvoll, um die Beziehung zwischen diesen beiden Variablen zu verstehen. Das Ziel war es, zu ergründen, ob eine höhere Leistungsbewertung mit einer höheren Jobzufriedenheit korreliert, was für das Personalmanagement nützlich sein könnte.
+
+Leider haben die Ergebnisse der Regressionsanalyse nicht viel Licht auf diese Beziehung geworfen. Der p-Wert für die Variable PerformanceRating beträgt 0,928, was deutlich über dem üblichen Signifikanzniveau von 0,05 liegt. Das bedeutet, dass wir nicht davon ausgehen können, dass die Leistungsbewertung einen signifikanten Einfluss auf die Jobzufriedenheit hat, zumindest nach den Daten in dieser Analyse.
+
+Ebenso ist der Multiple R-Quadratwert extrem niedrig (nahezu null), was darauf hinweist, dass das Modell praktisch keine der Varianz in der Jobzufriedenheit erklärt. Die adjustierte R-Quadrat-Statistik ist sogar negativ, was häufig ein Zeichen dafür ist, dass das Modell nicht gut an die Daten angepasst ist.
+
+In einem ähnlichen Kontext wurde auch die Beziehung zwischen der Arbeitsbeteiligung (JobInvolvement) und der Jobzufriedenheit untersucht. Auch hier waren die Ergebnisse nicht signifikant, mit einem p-Wert von 0,464 für die Variable JobInvolvement.
+
+Insgesamt scheint es, dass weder die Leistungsbewertung noch die Arbeitsbeteiligung signifikante Prädiktoren für die Jobzufriedenheit in diesem Datensatz sind. Dies könnte darauf hindeuten, dass weitere Faktoren, die nicht in diesen Analysen berücksichtigt wurden, für die Jobzufriedenheit wichtiger sind. Es wäre sinnvoll, die Analyse auf zusätzliche Variablen auszudehnen oder alternative statistische Methoden in Betracht zu ziehen, um die Faktoren zu identifizieren, die die Jobzufriedenheit tatsächlich beeinflussen könnten.
 
 
 # 3. Fazit
 
+In der Arbeit habe ich mich intensiv mit dem Thema der Regressionsanalysen im Kontext von Humanressourcen und insbesondere der Jobzufriedenheit beschäftigt. Ich habe aus verschiedene Blickwinkeln die potenzielle Beziehung zur Jobzufriedenheit zu untersuchen. Unter anderem die Themen Gehalt, bessere Arbeitsbedingungen, positive Mitarbeiterbeziehungen und Anerkannte Arbeitsleistung / erfüllbare Arbeitsanforderungen.
 
-# 6. Literaturliste
+Überraschenderweise zeigten die Regressionsanalysen, dass keiner der ausgewählten Aspekten einen signifikanten Einfluss auf die Jobzufriedenheit hatte. Dies führt zu einer Reihe von Überlegungen und Fragen: Ist die Methodik geeignet? Ist der Datensatz repräsentativ? Welche anderen Faktoren könnten eine Rolle spielen? Diese Fragen sind nicht nur für die wissenschaftliche Forschung von Bedeutung, sondern haben auch praktische Implikationen für das Personalmanagement und die Organisationsentwicklung.
+
+Obwohl Regressionsanalysen nützliche Werkzeuge für die Datenerkundung sein können, ist es wichtig, ihre Limitationen zu verstehen. Die Ergebnisse zeigen, dass Jobzufriedenheit ein komplexes Konstrukt ist, das wahrscheinlich von einer Vielzahl von Faktoren beeinflusst wird, und dass weitere Untersuchungen in verschiedenen Richtungen erforderlich sind, um ein vollständiges Bild zu erhalten.
+
+Vielleicht habe ich ja auch bewiesen, dass die Jobzufriedenheit einfach nicht mit den genannten Aspekten zu tun hat.
+
+Die Diskussion unterstreicht die Notwendigkeit einer sorgfältigen Planung und Durchführung von Analysen sowie einer kritischen Interpretation der Ergebnisse. Es wird deutlich, dass die Arbeit im Bereich der Humanressourcen und der Organisationspsychologie multidimensional und komplex ist, was den Wert von sorgfältig durchgeführten, umfassenden Studien unterstreicht.
+
+
+
+# 4. Literaturliste
 
 
 
