@@ -2131,7 +2131,7 @@ Insgesamt bietet der Wert der Standardabweichung auf den robust skalierten Daten
 
 ## 3.2 Modelle trainieren und auswerten
 
-**Lineares Regressionsmodell**
+### 3.2.1 Lineares Regressionsmodell
 
 Um ein lineares Regressionsmodell zu trainieren, beginnt beginnt man, den  Datensatz zu laden. Der Datensatz ist bereits unter dem Namen HR_Analytics_selected in der Arbeitsumgebung verfügbar ist. Die zentrale Funktion für die lineare Regression in R ist lm, die für "linear model" steht. Diese Funktion erwartet eine Formel, die die abhängige und die unabhängige Variable des Modells beschreibt, sowie den Namen des Datensatzes, der diese Variablen enthält.
 
@@ -2165,7 +2165,7 @@ Schließlich gibt der F-Statistik-Wert und der dazugehörige p-Wert an, ob das M
 
 Insgesamt deutet alles darauf hin, dass das aktuelle lineare Regressionsmodell nicht gut geeignet ist, um die Jobzufriedenheit auf Grundlage der monatlichen Einkommen und der Leistungsbewertungen vorherzusagen. Es wäre sinnvoll, andere unabhängige Variablen in Betracht zu ziehen oder alternative Modellierungsansätze zu verfolgen.
 
-**Entscheidungsbaum**
+### 3.2.2 Entscheidungsbaum
 
 Ein Entscheidungsbaum ist eine interessante Alternative zu linearen Regressionsmodellen, besonders wenn man komplexere oder nichtlineare Zusammenhänge zwischen den Variablen vermutet. Im Gegensatz zu linearen Modellen, die auf der Annahme basieren, dass es eine lineare Beziehung zwischen der abhängigen und den unabhängigen Variablen gibt, macht ein Entscheidungsbaum keine solchen Annahmen. Das macht ihn flexibel und anpassungsfähig an verschiedene Arten von Datensätzen und Problemen.
 
@@ -2215,7 +2215,7 @@ Schließlich betrachten wir die Leistungsmetriken Mean Absolute Error (MAE) und 
 Diese Analyse deutet wiederum darauf hin, dass ein einfacher Entscheidungsbaum nicht ausreicht, um die Jobzufriedenheit effektiv vorherzusagen, zumindest nicht mit den ausgewählten unabhängigen Variablen. 
 
 
-**Random Forest**
+### 3.2.3 Random Forest
 
 Im Gegensatz zu einem einzelnen Entscheidungsbaum ist ein Random Forest eine Enemble-Methode, die mehrere Bäume trainiert und ihre Vorhersagen kombiniert, um ein robusteres und genaues Modell zu erhalten. Durch das Hinzufügen von Zufälligkeit und das Kombinieren der Ergebnisse mehrerer Bäume reduziert der Random Forest die Wahrscheinlichkeit des Overfitting, während er gleichzeitig komplexere Beziehungen in den Daten modellieren kann.
 
@@ -2230,13 +2230,104 @@ test_data <- HR_Analytics_selected[-trainIndex, ]
 
 ```
 
+Nun kann der Random Forest trainiert werden. Im einfachsten Fall wird erst einmal der Random Forest mit den Standardparametern verwendet:
+
+```{r}
+# Random Forest Modell trainieren
+fit_rf <- randomForest(JobSatisfaction ~ MonthlyIncome + PerformanceRating, data = train_data)
+
+```
+Die Warnmeldung zeigt, dass die Zielvariable JobSatisfaction nur fünf oder weniger einzigartige Werte aufweist. In solchen Fällen ist es oft sinnvoller, eine Klassifikationsaufgabe statt einer Regressionsaufgabe durchzuführen. 
+
+Die Zielvariable JobSatisfaction ist numerisch eingestuft, aber eigentlich sollte sie kategorial behandelt werden. Das wird als Faktor behandelt:
 
 
+```{r}
+# Konvertieren der Zielvariable zu einem Faktor
+train_data$JobSatisfaction <- as.factor(train_data$JobSatisfaction)
+test_data$JobSatisfaction <- as.factor(test_data$JobSatisfaction)
+
+# Random Forest Klassifikationsmodell
+fit_rf <- randomForest(JobSatisfaction ~ MonthlyIncome + PerformanceRating, data = train_data)
+
+```
+
+Da JobSatisfaction nun als Faktor behandelt wird, wird mit Random Forest ein Klassifikationsmodell erstellt. Die Leistung des Modells kann jetzt durch Klassifikationsmetriken wie die Genauigkeit oder die F1-Punktzahl, Präzision und Sensitivität bewertet werden.
 
 
+**Modell optimieren**
+
+Nach der ersten Bewertung kann man feststellen, dass das Modell nicht optimal ist. Um es zu optimieren, wird mit verschiedenen Hyperparametern des Random-Forest-Modells experimentiert, wie etwa der Anzahl der Bäume im Wald oder der maximalen Anzahl der betrachteten Merkmale bei jedem Split. Die Wahl der richtigen Hyperparameter kann durch Kreuzvalidierung ermittelt werden. 
+
+Der Datensatz wird in Trainings- und Testsets aufgeteilt:
+
+```{r}
+set.seed(123)
+trainIndex <- createDataPartition(HR_Analytics_selected$JobSatisfaction, p=.7, list=FALSE)
+train_data <- HR_Analytics_selected[trainIndex,]
+test_data <- HR_Analytics_selected[-trainIndex,]
+
+```
+
+Das Random-Forest-Modell wird erstellt:
+
+```{r}
+set.seed(123)
+initial_rf <- randomForest(JobSatisfaction ~ MonthlyIncome + PerformanceRating, data=train_data)
+print(initial_rf)
+
+```
+
+Um das Modell zu optimieren, kann die train-Funktion verwendet werden, welche Kreuzvalidierung für die Hpyerparameteroptimierung anwendet:
+
+```{r}
+set.seed(123)
+tuneGrid = expand.grid(.mtry=c(1:3))
+ctrl = trainControl(method="cv", number=10)
+optimized_rf = train(JobSatisfaction ~ MonthlyIncome + PerformanceRating, data=train_data, method="rf", trControl=ctrl, tuneGrid=tuneGrid)
+print(optimized_rf)
+
+```
+
+### 3.2.3 Neues Modelling - Random Forest 2
+
+m Kontext der Datenanalyse wird entschieden, das monatliche Einkommen der Mitarbeiter in vier unterschiedliche Intervalle einzuteilen. Die Intervallgrenzen wurden so festgelegt, dass sie die Gesamtheit der Gehälter in vier gleiche Bereiche aufteilen. Der Grund für diese Entscheidung ist, dass wir die Auswirkungen unterschiedlicher Einkommensklassen auf die Jobzufriedenheit besser verstehen möchten. Durch die Einteilung des monatlichen Einkommens in diskrete Kategorien können wir das Verhalten der Mitarbeiter innerhalb dieser Einkommensklassen besser erfassen und generelle Trends oder Muster identifizieren, die in den Rohdaten möglicherweise nicht sofort ersichtlich sind.
+
+Die Kategorisierung ist insbesondere für den Einsatz von Machine-Learning-Modellen wie dem Random Forest interessant. Random Forest ist flexibel im Umgang mit kategorialen Variablen und die Kategorisierung der Gehaltsdaten könnte dazu beitragen, das Modell robuster zu machen, indem es die Anfälligkeit für Ausreißer reduziert. Gleichzeitig könnten die Intervalle dem Modell helfen, bessere Schlussfolgerungen über den Einfluss des Einkommens auf die Jobzufriedenheit zu ziehen, da sie einen vereinfachten aber dennoch informativen Überblick über die Einkommensverteilung bieten.
+
+Nach der Einteilung des monatlichen Einkommens in diese Intervalle wird der Random Forest erneut trainieren und die Leistung des Modells anhand von Metriken wie Genauigkeit und F1-Score bewerten. Wir werden auch verschiedene Hyperparameter des Modells durch Kreuzvalidierung optimieren, um die beste Konfiguration zu finden. Die Idee dabei ist, dass die kategorisierte Variable es dem Modell ermöglicht, nuanciertere und genauere Vorhersagen bezüglich der Jobzufriedenheit zu treffen.
+
+Durch diesen Ansatz wird erhofft, ein leistungsstärkeres und interpretierbareres Modell zu erhalten, das uns wertvolle Einblicke in die Beziehung zwischen Einkommen und Jobzufriedenheit bietet.
+
+**Erstellen der Trainingsdaten**
 
 
+```{r}
+# Laden Sie die benötigten Bibliotheken
+library(caret)
 
+# Simulieren Sie einige Daten (ersetzen Sie dies durch Ihre tatsächlichen Daten)
+data <- data.frame(
+  MonthlyIncome = runif(1000, 1009, 19999),
+  JobSatisfaction = sample(1:5, 1000, replace = TRUE)
+)
+
+# Teilen Sie MonthlyIncome in Intervalle ein
+breaks <- c(1009, 5523.5, 10038, 14552.5, 19999)
+labels <- c("Intervall_1", "Intervall_2", "Intervall_3", "Intervall_4")
+data$MonthlyIncome_Cat <- cut(data$MonthlyIncome, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Teilen Sie die Daten in Trainings- und Testsets auf (80/20)
+set.seed(123)
+trainIndex <- createDataPartition(data$MonthlyIncome_Cat, p = .8, list = FALSE)
+trainData <- data[trainIndex, ]
+testData <- data[-trainIndex, ]
+
+# Überprüfen Sie die ersten Zeilen der Trainings- und Testdaten
+head(trainData)
+head(testData)
+
+```
 
 
 
