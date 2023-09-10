@@ -2,15 +2,20 @@
 title: "HR_Analytics2"
 author: "Christian Roth"
 date: "2023-09-03"
-output: 
+output:
   html_document:
-    keep_md: true
+    keep_md: yes
     css: styles.css
-    #code_folding: hide
-    toc: true
-    toc_float: true
+    toc: yes
+    toc_float: yes
     toc_depth: 4
     df_print: paged
+  word_document:
+    toc: yes
+    toc_depth: '4'
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
 bibliography: meine_referenzen.bib
 csl: apa.csl
 ---
@@ -46,16 +51,21 @@ Dieser Bericht wird nach dem **Cross-Industry Standard Process for Data Mining (
 
 Der CRISP-DM-Leitfaden (Cross-Industry Standard Process for Data Mining) wurde ursprünglich im Jahr 1999 veröffentlicht. Dieser Leitfaden stellt ein Rahmenwerk für den Prozess der Datenanalyse und des Data Mining vor und hat zum Ziel, den gesamten Lebenszyklus eines Data-Mining-Projekts zu strukturieren. Der Leitfaden wurde von einem Konsortium entwickelt, das Unternehmen wie IBM, NCR Corporation und DaimlerChrysler AG umfasste.
 
-**Der CRISP-DM-Leitfaden in Fokus: Phasen 1 und 2**
+**Der CRISP-DM-Leitfaden in Fokus: Phasen 1, 2 und 3**
 
 1. Business Understanding: Verständnis für die Anforderungen und Ziele.  
-2. Data Understanding: Verständnis für die verfügbaren Daten und ihrer Qualität und Relevanz für die gestellte These.    
+2. Data Understanding: Verständnis für die verfügbaren Daten und ihrer Qualität und Relevanz für die gestellte These.
+3: Modellfindung: In dieser Phase werden die Daten skaliert und verschiedene Modelle trainiert und ausgewertet, um wertvolle Einblicke und Vorhersagen zu generieren.
 
 Dieser Leitfaden hat sich als sehr nützlich und anwendungsorientiert erwiesen und wird häufig in der Industrie sowie im akademischen Bereich verwendet. Er bietet eine strukturierte Herangehensweise, um Data-Mining-Projekte effizient und effektiv zu managen.
 
 Jede dieser Phasen wird in diesem Bericht ausführlich behandelt, um einen ganzheitlichen Überblick und fundierte Schlussfolgerungen zu ermöglichen.
 
 Nachdem ein solides Verständnis für die Anforderungen und die vorliegenden Daten erlangt wird, schließt sich in Kapitel 2 eine Explorative Datenanalyse mit Regressionsanalyse an, um die erzielten Ergebnisse im Kontext zu verstehen und eventuelle Unklarheiten oder Einschränkungen zu identifizieren.
+
+Der erweiterte CRISP-DM-Leitfaden fügt eine dritte Phase hinzu: das Finden von Modellen. Innerhalb dieser Phase sind zwei Schlüsselkomponenten zu beachten: das Skalieren der Daten und das Trainieren und Auswerten verschiedener Modelle. Diese Etappen bieten die Möglichkeit, aus den verstandenen Daten und meiner These verwertbare Modelle zu generieren, die wertvolle Einblicke und Vorhersagen bieten können.
+
+So ergibt sich ein umfassender, dreistufiger Prozess, der von einem fundierten Datenverständnis ausgeht und schließlich in die Modellentwicklung und -auswertung mündet. Der modifizierte CRISP-DM-Leitfaden stellt damit eine vollständige, strukturierte Vorgehensweise dar, um Data-Mining-Projekte nicht nur effizient, sondern auch effektiv durchzuführen. Jede Phase, nun einschließlich des Modellfindungsabschnitts, wird im Bericht ausführlich behandelt, um einen ganzheitlichen Überblick und fundierte Schlussfolgerungen sicherzustellen.
 
 
 # 2. Data Understanding
@@ -2366,7 +2376,7 @@ knit_print(chi_test_result)
 ## 	replicates)
 ## 
 ## data:  cross_tab
-## X-squared = 35.278, df = NA, p-value = 0.7581
+## X-squared = 35.278, df = NA, p-value = 0.7616
 ```
 Beide Chi-Quadrat-Tests—der originale und der simulierte—zeigen ähnliche Ergebnisse in Bezug auf den p-Wert: 0,7589 für den originalen Test und 0,7651 für den simulierten Test. In beiden Fällen ist der p-Wert deutlich größer als das übliche Signifikanzniveau von 0,05, was darauf hindeutet, dass es keine statistisch signifikante Assoziation zwischen den Variablen JobSatisfaction und PercentSalaryHike gibt.
 
@@ -2376,7 +2386,38 @@ Die beide Tests deuten darauf hin, dass Gehaltserhöhungen nicht unbedingt ein I
 
 Die Korrelations- und Regressionsanalysen sind nützliche Werkzeuge zur Untersuchung der Beziehung zwischen metrischen Variablen, haben jedoch ihre eigenen Einschränkungen. Die Korrelationsanalyse gibt Aufschluss darüber, ob und in welcher Stärke ein linearer Zusammenhang zwischen den Variablen besteht, aber sie macht keine Aussagen zur Kausalität. Die Regressionsanalyse hingegen ermöglicht es, den Einfluss einer oder mehrerer unabhängiger Variablen auf eine abhängige Variable zu schätzen. Sie kann auch andere Variablen kontrollieren, um die Kausalität besser zu verstehen. 
 
-Betrachtet werden nur die Variablen aus dem HR_Analytics_selected Datensatz.
+
+Es werden erst einmal die Korrelationswerte zwischen den Spalten "JobSatisfaction" und den anderen numerischen Spalten im Datensatz HR_Analytics_selected untersucht.
+
+Ein Wert nahe bei 1 oder -1 würde eine starke positive bzw. negative Korrelation anzeigen, während ein Wert nahe bei 0 eine schwache oder keine Korrelation anzeigen würde.
+
+
+```r
+cor(HR_Analytics_selected[, sapply(HR_Analytics_selected, is.numeric)], HR_Analytics_selected$JobSatisfaction)
+```
+
+```
+##                                    [,1]
+## MonthlyIncome              -0.008711840
+## HourlyRate                 -0.071099823
+## DailyRate                   0.031329500
+## WorkLifeBalance            -0.019469634
+## EnvironmentSatisfaction    -0.007618942
+## JobInvolvement             -0.019093129
+## JobLevel                   -0.003046651
+## JobSatisfaction             1.000000000
+## RelationshipSatisfaction   -0.010327929
+## PerformanceRating           0.002342442
+## PercentSalaryHike           0.020542245
+## ConvertedMonthlyFromDaily   0.031329500
+## ConvertedMonthlyFromHourly -0.071099823
+```
+Die Korrelationsanalyse zwischen der Jobzufriedenheit und anderen numerischen Variablen im HR-Analytics-Datensatz zeigt weitgehend schwache Korrelationen. Zum Beispiel weist das monatliche Einkommen einen nahezu null Korrelationskoeffizienten von -0,0087 auf, was darauf hindeutet, dass zwischen diesen beiden Variablen keine starke lineare Beziehung besteht. Ähnlich verhält es sich mit dem Stundenlohn, der eine schwache negative Korrelation von -0,0711 aufweist, was lediglich auf eine minimale Tendenz hindeutet, dass höhere Löhne mit etwas geringerer Jobzufriedenheit einhergehen könnten. Die Tagesrate zeigt eine sehr geringe positive Korrelation von 0,0313, was bedeutet, dass eine leichte Steigerung der Tagesrate möglicherweise mit einer geringfügigen Zunahme der Jobzufriedenheit einhergeht. Die anderen betrachteten Variablen wie Work-Life-Balance, Umweltzufriedenheit und Jobeinbindung zeigen ähnliche Muster von schwachen oder nicht vorhandenen Korrelationen.
+
+Insgesamt legen die Ergebnisse nahe, dass die Jobzufriedenheit in diesem Datensatz nicht stark mit den untersuchten numerischen Variablen korreliert. Dies könnte darauf hindeuten, dass die Jobzufriedenheit von anderen, in dieser Analyse nicht berücksichtigten, Faktoren beeinflusst wird. Es ist auch wichtig zu betonen, dass Korrelation nicht Kausalität bedeutet; die Ergebnisse sollten daher mit Vorsicht interpretiert werden.
+
+
+Betrachtet werden nur trotzdem einzeln die Variablen aus dem HR_Analytics_selected Datensatz.
 
 1. Gehalt: Ein höheres Einkommen könnte zu einer höheren Jobzufriedenheit führen.
 2. WorkLifeBalance: Ein gutes Verhältnis von Arbeit und Freizeit könnte sich positiv auf die Jobzufriedenheit auswirken.
@@ -2423,7 +2464,7 @@ ggplot(HR_Analytics_selected, aes(x = MonthlyIncome, y = JobSatisfaction)) +
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-83-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-84-1.png)<!-- -->
 Das Ergebnis der Pearson-Korrelation zwischen den Variablen "MonthlyIncome" (Monatliches Einkommen) und "JobSatisfaction" (Jobzufriedenheit) zeigt einen Wert von -0.00871184, der sehr nahe an Null liegt. In der Praxis bedeutet dies, dass zwischen diesen beiden Variablen kein signifikanter linearer Zusammenhang zu bestehen scheint. Das heißt, das monatliche Einkommen der Mitarbeiter ist kein zuverlässiger Indikator für ihre Jobzufriedenheit in diesem Datensatz. Andere Faktoren, die nicht in dieser speziellen Korrelationsanalyse berücksichtigt wurden, könnten eine Rolle spielen.
 
 
@@ -2489,9 +2530,102 @@ ggplot(HR_Analytics_selected, aes(x = MonthlyIncome, y = JobSatisfaction)) +
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-85-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-86-1.png)<!-- -->
 
 Das lineare Regressionsmodell liefert verschiedene Statistiken zur Beurteilung des Zusammenhangs zwischen Jobzufriedenheit und monatlichem Einkommen. Der Koeffizient für das monatliche Einkommen liegt nahezu bei Null, was darauf hinweist, dass eine Änderung im Einkommen nur einen minimalen direkten Einfluss auf die Jobzufriedenheit hat. Zudem ist der p-Wert mit 0,738 weit über dem allgemein akzeptierten Schwellenwert von 0,05, was die Nicht-Signifikanz der Variable im Modell unterstreicht. Sowohl der R-Quadrat als auch der adjustierte R-Quadrat sind extrem niedrig, was darauf hindeutet, dass das Modell nicht gut darin ist, die Varianz der Zielvariable zu erklären. Der p-Wert des F-Tests bestätigt ebenfalls die mangelnde Signifikanz des gesamten Modells. Obwohl die Residuen in etwa symmetrisch erscheinen, ist dies allein nicht ausreichend, um die Modellgüte zu beurteilen. Insgesamt deuten die Ergebnisse darauf hin, dass das monatliche Einkommen kein signifikanter Prädiktor für die Jobzufriedenheit ist.
+
+
+```r
+library(ggplot2)
+
+# Boxplot
+ggplot(HR_Analytics_selected, aes(x = as.factor(JobSatisfaction), y = MonthlyIncome)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Boxplot: Monthly Income nach Job Satisfaction",
+       x = "Job Satisfaction",
+       y = "Monthly Income")
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-87-1.png)<!-- -->
+
+```r
+# Gruppieren des Datensatzes nach JobSatisfaction und berechnen der Zusammenfassungsstatistiken für MonthlyIncome
+HR_Analytics_selected %>%
+  group_by(JobSatisfaction) %>%
+  summarise(Min = min(MonthlyIncome),
+            Q1 = quantile(MonthlyIncome, 0.25),
+            Median = median(MonthlyIncome),
+            Q3 = quantile(MonthlyIncome, 0.75),
+            Max = max(MonthlyIncome))
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":["JobSatisfaction"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Min"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Q1"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Median"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Q3"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Max"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"1091","3":"3072.00","4":"4968.5","5":"8682.5","6":"19943"},{"1":"2","2":"1052","3":"2764.50","4":"4853.0","5":"8393.5","6":"19926"},{"1":"3","2":"1009","3":"2922.00","4":"4768.0","5":"8213.0","6":"19999"},{"1":"4","2":"1051","3":"2922.25","4":"5106.5","5":"7903.0","6":"19845"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Die Analyse des Monatseinkommens (MonthlyIncome) im Zusammenhang mit der Arbeitszufriedenheit (JobSatisfaction) zeigt interessante Muster. Es gibt vier unterschiedliche Level der Jobzufriedenheit, die jeweils von 1 bis 4 reichen.
+
+Für die Gruppe mit der niedrigsten Jobzufriedenheit (1) reicht das Monatseinkommen von 1.091 bis 19.943, mit einem Median von 4.968,5. Das erste und dritte Quartil liegen bei 3.072 und 8.682,5, was auf eine ziemlich breite Einkommensverteilung hindeutet.
+
+Ähnlich verhält es sich bei der Gruppe mit einer Jobzufriedenheit von 2. Ihr Einkommensbereich liegt zwischen 1.052 und 19.926, und der Median bei 4.853. Die Quartilswerte bei 2.764,5 und 8.393,5 zeigen ebenfalls eine breite Verteilung.
+
+Die Gruppe mit einer Zufriedenheitsstufe von 3 hat ein Einkommen zwischen 1.009 und 19.999, mit einem Median von 4.768. Die Quartilswerte sind 2.922 und 8.213.
+
+Schließlich hat die Gruppe mit der höchsten Jobzufriedenheit (4) ein Einkommensspektrum von 1.051 bis 19.845, mit einem Median von 5.106,5. Das erste und dritte Quartil liegen bei 2.922,25 und 7.903, was erneut eine breite Verteilung des Einkommens innerhalb der Gruppe zeigt.
+
+Es lässt sich sagen, dass die Einkommensverteilung in allen Gruppen der Jobzufriedenheit breit ist und es keinen klaren Trend für ein höheres Einkommen bei höherer Jobzufriedenheit gibt. Der Median des Einkommens zeigt nur geringe Schwankungen zwischen den verschiedenen Gruppen der Jobzufriedenheit. Dies könnte darauf hindeuten, dass das Einkommen nicht der alleinige oder primäre Faktor für die Zufriedenheit im Job ist.
+
+
+```r
+# Violin-Diagramm
+ggplot(HR_Analytics_selected, aes(x = as.factor(JobSatisfaction), y = MonthlyIncome)) +
+  geom_violin() +
+  geom_boxplot(width = 0.1) +  # Optional: Fügt einen Mini-Boxplot hinzu
+  theme_minimal() +
+  labs(title = "Violin-Diagramm: Monthly Income nach Job Satisfaction",
+       x = "Job Satisfaction",
+       y = "Monthly Income")
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-88-1.png)<!-- -->
+
+```r
+# Daten für JobSatisfaction = 1
+data1 <- subset(HR_Analytics_selected, JobSatisfaction == 1)$MonthlyIncome
+density1 <- density(data1)
+
+# Daten für JobSatisfaction = 2
+data2 <- subset(HR_Analytics_selected, JobSatisfaction == 2)$MonthlyIncome
+density2 <- density(data2)
+
+# Daten für JobSatisfaction = 3
+data3 <- subset(HR_Analytics_selected, JobSatisfaction == 3)$MonthlyIncome
+density3 <- density(data3)
+
+# Daten für JobSatisfaction = 4
+data4 <- subset(HR_Analytics_selected, JobSatisfaction == 4)$MonthlyIncome
+density4 <- density(data4)
+
+# Plot der Dichtefunktionen
+plot(density1, main = "Dichtefunktion der MonthlyIncome für verschiedene JobSatisfaction Kategorien", xlab = "MonthlyIncome", ylab = "Dichte")
+lines(density1, col = "black")
+lines(density2, col = "red")
+lines(density3, col = "blue")
+lines(density4, col = "green")
+
+# Legende hinzufügen
+legend("topright", legend = c("JobSatisfaction = 1", "JobSatisfaction = 2", "JobSatisfaction = 3", "JobSatisfaction = 4"), col = c("black", "red", "blue", "green"), lty = 1)
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-89-1.png)<!-- -->
+Die Dichtefunktion, repräsentiert durch die vier Graphen, deutet auf eine ähnliche Verteilung des monatlichen Einkommens (MonthlyIncome) über die verschiedenen Kategorien der Jobzufriedenheit (JobSatisfaction) hin. Dass alle vier Graphen einen Höhepunkt im Bereich von 4800-4900 beim monatlichen Einkommen aufweisen und eine Dichte von etwa 0.00012 erreichen, lässt darauf schließen, dass in diesem Einkommensbereich die höchste Konzentration von Beobachtungen liegt, unabhängig vom Grad der Jobzufriedenheit.
+
+Diese Ähnlichkeit im Verlauf der Dichtefunktionen könnte darauf hinweisen, dass das monatliche Einkommen nicht stark von der empfundenen Jobzufriedenheit beeinflusst wird, oder dass andere Variablen, die hier nicht berücksichtigt wurden, einen Einfluss haben könnten. Es könnte auch bedeuten, dass die Menschen in der untersuchten Stichprobe im Allgemeinen ähnliche Einkommensniveaus haben, unabhängig davon, wie zufrieden sie mit ihrer Arbeit sind.
+
+In jedem Fall ist es interessant zu notieren, dass die Verteilung des Einkommens in Bezug auf die Jobzufriedenheit in Ihrer Stichprobe relativ gleich ist.
 
 **Work-Life-Balance**
 
@@ -2559,7 +2693,7 @@ ggplot(HR_Analytics_selected, aes(x = WorkLifeBalance, y = JobSatisfaction)) +
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-87-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-91-1.png)<!-- -->
 
 Die Regressionsanalyse wurde durchgeführt, um den Einfluss der Work-Life-Balance auf die Jobzufriedenheit zu untersuchen. Die Ergebnisse des Modells zeigen jedoch, dass dieser Einfluss offenbar sehr gering ist. Der Schätzwert für den Koeffizienten der Work-Life-Balance ist mit -0,03043 nahezu null, was darauf hindeutet, dass eine Veränderung in der Work-Life-Balance nur einen minimalen direkten Einfluss auf die Jobzufriedenheit ausübt.
 
@@ -2635,7 +2769,7 @@ ggplot(HR_Analytics_selected, aes(x = EnvironmentSatisfaction, y = JobSatisfacti
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-89-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-93-1.png)<!-- -->
 Die Ergebnisse zeigen jedoch, dass die Zufriedenheit mit der Arbeitsumgebung kaum einen Einfluss auf die Jobzufriedenheit hat.
 
 Der Koeffizient für "EnvironmentSatisfaction" beträgt -0,00769 und ist statistisch nicht signifikant (p-Wert von 0,77), was weit über dem üblichen Schwellenwert von 0,05 liegt. Dies deutet darauf hin, dass die Variable "EnvironmentSatisfaction" nicht signifikant zur Erklärung der Jobzufriedenheit beiträgt.
@@ -2702,7 +2836,7 @@ plot(HR_Analytics_selected$JobInvolvement, HR_Analytics_selected$JobSatisfaction
 abline(lm_model, col = "red")
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-90-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-94-1.png)<!-- -->
 Der Koeffizient für "JobInvolvement" beträgt -0,02958, was nahe an Null liegt. Dies deutet darauf hin, dass Veränderungen im JobInvolvement nur einen sehr geringen direkten Einfluss auf die Jobzufriedenheit haben könnten. Dieser Koeffizient ist jedoch statistisch nicht signifikant, wie der p-Wert von 0,464 zeigt. Ein p-Wert über dem allgemein akzeptierten Schwellenwert von 0,05 deutet darauf hin, dass der beobachtete Effekt zufällig sein könnte.
 
 Zudem sind die Werte für das Multiple R-Quadrat und das Adjustierte R-Quadrat extrem niedrig (nahe Null), was darauf hindeutet, dass das Regressionsmodell nicht gut darin ist, die Varianz in der Zielvariable "JobSatisfaction" zu erklären.
@@ -2768,7 +2902,7 @@ plot(HR_Analytics_selected$RelationshipSatisfaction, HR_Analytics_selected$JobSa
 abline(model, col = "red")
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-91-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-95-1.png)<!-- -->
 Die durchgeführte lineare Regressionsanalyse zielte darauf ab, den Zusammenhang zwischen der Beziehungszufriedenheit und der Jobzufriedenheit zu untersuchen. Laut dem Regressionsmodell gibt es jedoch keinen statistisch signifikanten Zusammenhang zwischen diesen beiden Variablen. Der Intercept, also der Schnittpunkt der Regressionslinie mit der y-Achse, beträgt etwa 2.757, was bedeutet, dass die erwartete Jobzufriedenheit bei einer Beziehungszufriedenheit von null bei diesem Wert liegt. Der Schätzwert für den Einfluss der Beziehungszufriedenheit auf die Jobzufriedenheit ist mit etwa -0.01053 sehr gering und sogar negativ. Dennoch ist dieser Wert nicht statistisch signifikant, da der P-Wert von 0.692 weit über dem allgemein akzeptierten Signifikanzniveau von 0.05 liegt. Zudem sind die Werte für das multiple und das adjustierte Bestimmtheitsmaß extrem niedrig, was darauf hindeutet, dass das Modell die Varianz der Zielvariable Jobzufriedenheit kaum erklären kann. Insgesamt deutet die Analyse darauf hin, dass die Beziehungszufriedenheit in der untersuchten Stichprobe nicht signifikant mit der Jobzufriedenheit assoziiert ist. Das legt nahe, dass Unternehmen, die die Zufriedenheit ihrer Mitarbeiter verbessern möchten, ihre Aufmerksamkeit möglicherweise auf andere Faktoren lenken sollten.
 
 
@@ -2834,7 +2968,7 @@ ggplot(HR_Analytics_selected, aes(x = PerformanceRating, y = JobSatisfaction)) +
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](HR_Analytics2_files/figure-html/unnamed-chunk-92-1.png)<!-- -->
+![](HR_Analytics2_files/figure-html/unnamed-chunk-96-1.png)<!-- -->
 
 Die Durchführung einer linearen Regressionsanalyse zwischen der Leistungsbewertung (PerformanceRating) und der Jobzufriedenheit (JobSatisfaction) in einem HR-Analysekontext schien zunächst sinnvoll, um die Beziehung zwischen diesen beiden Variablen zu verstehen. Das Ziel war es, zu ergründen, ob eine höhere Leistungsbewertung mit einer höheren Jobzufriedenheit korreliert, was für das Personalmanagement nützlich sein könnte.
 
@@ -2847,21 +2981,967 @@ In einem ähnlichen Kontext wurde auch die Beziehung zwischen der Arbeitsbeteili
 Insgesamt scheint es, dass weder die Leistungsbewertung noch die Arbeitsbeteiligung signifikante Prädiktoren für die Jobzufriedenheit in diesem Datensatz sind. Dies könnte darauf hindeuten, dass weitere Faktoren, die nicht in diesen Analysen berücksichtigt wurden, für die Jobzufriedenheit wichtiger sind. Es wäre sinnvoll, die Analyse auf zusätzliche Variablen auszudehnen oder alternative statistische Methoden in Betracht zu ziehen, um die Faktoren zu identifizieren, die die Jobzufriedenheit tatsächlich beeinflussen könnten.
 
 
-# 3. Fazit
-
-In der Arbeit habe ich mich intensiv mit dem Thema der Regressionsanalysen im Kontext von Humanressourcen und insbesondere der Jobzufriedenheit beschäftigt. Ich habe aus verschiedene Blickwinkeln die potenzielle Beziehung zur Jobzufriedenheit zu untersuchen. Unter anderem die Themen Gehalt, bessere Arbeitsbedingungen, positive Mitarbeiterbeziehungen und Anerkannte Arbeitsleistung / erfüllbare Arbeitsanforderungen.
-
-Überraschenderweise zeigten die Regressionsanalysen, dass keiner der ausgewählten Aspekten einen signifikanten Einfluss auf die Jobzufriedenheit hatte. Dies führt zu einer Reihe von Überlegungen und Fragen: Ist die Methodik geeignet? Ist der Datensatz repräsentativ? Welche anderen Faktoren könnten eine Rolle spielen? Diese Fragen sind nicht nur für die wissenschaftliche Forschung von Bedeutung, sondern haben auch praktische Implikationen für das Personalmanagement und die Organisationsentwicklung.
-
-Obwohl Regressionsanalysen nützliche Werkzeuge für die Datenerkundung sein können, ist es wichtig, ihre Limitationen zu verstehen. Die Ergebnisse zeigen, dass Jobzufriedenheit ein komplexes Konstrukt ist, das wahrscheinlich von einer Vielzahl von Faktoren beeinflusst wird, und dass weitere Untersuchungen in verschiedenen Richtungen erforderlich sind, um ein vollständiges Bild zu erhalten.
-
-Vielleicht habe ich ja auch bewiesen, dass die Jobzufriedenheit einfach nicht mit den genannten Aspekten zu tun hat.
-
-Die Diskussion unterstreicht die Notwendigkeit einer sorgfältigen Planung und Durchführung von Analysen sowie einer kritischen Interpretation der Ergebnisse. Es wird deutlich, dass die Arbeit im Bereich der Humanressourcen und der Organisationspsychologie multidimensional und komplex ist, was den Wert von sorgfältig durchgeführten, umfassenden Studien unterstreicht.
+## 2.9 Experimentieren mit Kombinationen von Merkmalen
 
 
+```r
+# Erstellen der neuen Variablen im DataFrame
+HR_Analytics_selected_mutated <- HR_Analytics_selected %>%
+  mutate(
+    IncomeToHourlyRate = MonthlyIncome / HourlyRate,
+    WorkEnvSatisfaction = WorkLifeBalance * EnvironmentSatisfaction,
+    TotalInvolvement = JobInvolvement + RelationshipSatisfaction,
+    OverallSatisfaction = WorkLifeBalance + EnvironmentSatisfaction + JobInvolvement + RelationshipSatisfaction,
+    PerformanceAdjustedIncome = MonthlyIncome / PerformanceRating
+  )
 
-# 4. Literaturliste
+# Korrelation der neuen Variablen mit JobSatisfaction
+cor_matrix <- cor(HR_Analytics_selected_mutated[c("JobSatisfaction", "IncomeToHourlyRate", "WorkEnvSatisfaction", "TotalInvolvement", "OverallSatisfaction", "PerformanceAdjustedIncome")], use = "complete.obs")
+
+# Anzeigen der Korrelationsmatrix
+print(cor_matrix)
+```
+
+```
+##                           JobSatisfaction IncomeToHourlyRate
+## JobSatisfaction                1.00000000         0.01758416
+## IncomeToHourlyRate             0.01758416         1.00000000
+## WorkEnvSatisfaction           -0.01630224         0.04305687
+## TotalInvolvement              -0.01882726         0.01158321
+## OverallSatisfaction           -0.02509088         0.03851443
+## PerformanceAdjustedIncome     -0.01143210         0.84041442
+##                           WorkEnvSatisfaction TotalInvolvement
+## JobSatisfaction                  -0.016302235     -0.018827257
+## IncomeToHourlyRate                0.043056869      0.011583212
+## WorkEnvSatisfaction               1.000000000      0.003224614
+## TotalInvolvement                  0.003224614      1.000000000
+## OverallSatisfaction               0.691910337      0.708311174
+## PerformanceAdjustedIncome         0.012374497      0.015106113
+##                           OverallSatisfaction PerformanceAdjustedIncome
+## JobSatisfaction                   -0.02509088               -0.01143210
+## IncomeToHourlyRate                 0.03851443                0.84041442
+## WorkEnvSatisfaction                0.69191034                0.01237450
+## TotalInvolvement                   0.70831117                0.01510611
+## OverallSatisfaction                1.00000000                0.01986275
+## PerformanceAdjustedIncome          0.01986275                1.00000000
+```
+Es fällt zuerst auf, dass die Zielvariable "JobSatisfaction" keine bedeutende Korrelation mit den neu generierten Variablen wie IncomeToHourlyRate, WorkEnvSatisfaction, TotalInvolvement, OverallSatisfaction oder PerformanceAdjustedIncome aufweist. Die Korrelationskoeffizienten sind nahezu null, was auf eine marginal schwache Beziehung hinweist.
+
+Beachtlich ist auch die hohe positive Korrelation zwischen WorkEnvSatisfaction und OverallSatisfaction, die fast 0,69 beträgt. Ebenso zeigt sich eine ähnlich hohe positive Korrelation von ungefähr 0,71 zwischen TotalInvolvement und OverallSatisfaction. Diese Beziehungen legen nahe, dass eine höhere Bewertung in einer dieser Kategorien oft mit einer höheren Bewertung in den anderen korreliert ist.
+
+
+```r
+# Scatterplot für WorkEnvSatisfaction und OverallSatisfaction
+ggplot(HR_Analytics_selected_mutated, aes(x = WorkEnvSatisfaction, y = OverallSatisfaction)) +
+  geom_point(aes(color = "#4169E1"), alpha = 0.5) +
+  geom_smooth(method = 'lm', se = FALSE, color = "#00008B") +
+  labs(title = "Beziehung zwischen WorkEnvSatisfaction und OverallSatisfaction",
+       x = "WorkEnvSatisfaction",
+       y = "OverallSatisfaction")
+```
+
+```
+## `geom_smooth()` using formula = 'y ~ x'
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-98-1.png)<!-- -->
+
+```r
+# Scatterplot für TotalInvolvement und OverallSatisfaction
+ggplot(HR_Analytics_selected_mutated, aes(x = TotalInvolvement, y = OverallSatisfaction)) +
+  geom_point(aes(color = "#4169E1"), alpha = 0.5) +
+  geom_smooth(method = 'lm', se = FALSE, color = "#00008B") +
+  labs(title = "Beziehung zwischen TotalInvolvement und OverallSatisfaction",
+       x = "TotalInvolvement",
+       y = "OverallSatisfaction")
+```
+
+```
+## `geom_smooth()` using formula = 'y ~ x'
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-98-2.png)<!-- -->
+
+
+
+Zudem ist die überaus starke positive Korrelation von etwa 0,84 zwischen PerformanceAdjustedIncome und IncomeToHourlyRate auffällig. Dies ist wenig überraschend, da beide Variablen auf dem monatlichen Einkommen basieren.
+
+
+```r
+# Scatterplot für PerformanceAdjustedIncome und IncomeToHourlyRate
+ggplot(HR_Analytics_selected_mutated, aes(x = PerformanceAdjustedIncome, y = IncomeToHourlyRate)) +
+  geom_point(aes(color = "#4169E1"), alpha = 0.5) +
+  geom_smooth(method = 'lm', se = FALSE, color = "#00008B") +
+  labs(title = "Beziehung zwischen PerformanceAdjustedIncome und IncomeToHourlyRate",
+       x = "PerformanceAdjustedIncome",
+       y = "IncomeToHourlyRate")
+```
+
+```
+## `geom_smooth()` using formula = 'y ~ x'
+```
+
+![](HR_Analytics2_files/figure-html/unnamed-chunk-99-1.png)<!-- -->
+
+
+In der Gesamtbetrachtung suggerieren die Daten, dass die hinzugefügten Variablen allein wenig Licht auf das Maß der Jobzufriedenheit werfen. Obwohl es starke interne Korrelationen zwischen einigen dieser Variablen gibt, fehlt es ihnen an der Fähigkeit, die Jobzufriedenheit effektiv vorherzusagen oder zu erklären.
+
+Die Analyse legt nahe, dass es eine Reihe von Faktoren gibt, die den geringen Einfluss der hinzugefügten Variablen auf die Jobzufriedenheit erklären könnten. Einer der Hauptgründe könnte das Fehlen von entscheidenden Variablen sein, die einen stärkeren Einfluss auf die Jobzufriedenheit haben. Beispielsweise könnten Aspekte wie der Management-Stil oder die Arbeitskultur, die in der aktuellen Datensammlung nicht erfasst wurden, von Bedeutung sein. Zudem ist es möglich, dass die Beziehungen zwischen den untersuchten Variablen und der Jobzufriedenheit nicht linear sind. Das bedeutet, einfache Korrelationsanalysen könnten diese komplexen Beziehungen nicht vollständig abbilden. Weiterhin könnte Multikollinearität eine Rolle spielen, insbesondere da einige der Variablen stark miteinander korreliert sind. Diese interne Korrelation kann es schwierig machen, den individuellen Einfluss jeder Variable auf die Jobzufriedenheit zu bestimmen. Schließlich sollten wir nicht vergessen, dass menschliche Emotionen und Meinungen sehr komplex und von einer Vielzahl von Faktoren beeinflusst sein können, die schwer quantifizierbar sind. Daher könnten die analysierten Variablen einfach nicht ausreichen, um die Nuancen der Jobzufriedenheit vollständig zu erfassen. Insgesamt wäre es ratsam, die Datensammlung zu erweitern und komplexere statistische Modelle zu verwenden, um ein genaueres Bild von den Faktoren zu erhalten, die die Jobzufriedenheit beeinflussen.
+
+# 3. Finden von Modellen
+
+## 3.1 Skalieren
+
+Nun wird der "HR_Analytics_selected" Datensatz verwenden, um ein Modell zur Vorhersage der Jobzufriedenheit zu entwickeln. Die Daten enthalten verschiedene Variablen wie Gehalt, Work-Life-Balance und andere, die potenziell einen Einfluss auf die Jobzufriedenheit haben könnten. Bevor wir jedoch ein Modell trainieren, ist es wichtig, die Daten sorgfältig vorzubereiten. Da unser Datensatz Ausreißer enthalten kann, die die Modellleistung beeinträchtigen könnten, verwenden wir eine robuste Skalierungsmethode, um die Daten zu standardisieren.
+
+Die robuste Skalierung verwendet den Median und den Interquartilsbereich (IQR) zur Standardisierung der Daten. Diese Methode ist robuster gegenüber Ausreißern als herkömmliche Standardisierungsansätze wie die Z-Standardisierung. Durch die Anwendung der robusten Skalierung können wir sicherstellen, dass unser Modell nicht durch extreme Werte verzerrt wird, die sonst seine Vorhersagekraft einschränken könnten.
+
+Nach der robusten Skalierung der Daten werden wir verschiedene Modellierungsansätze untersuchen, um die beste Vorhersage für die Jobzufriedenheit zu finden. Diese Vorbereitung ermöglicht es uns, eine aussagekräftigere und zuverlässigere Analyse durchzuführen, die wertvolle Erkenntnisse für die Personalentwicklung und die Unternehmenskultur liefern kann.
+
+
+```r
+# Ersetzen Sie 'Ihr_DataFrame' durch den Namen Ihres tatsächlichen DataFrames
+nur_numerische_daten <- HR_Analytics_selected[sapply(HR_Analytics_selected, is.numeric)]
+
+# Anwenden der robusten Skalierung auf nur die numerischen Spalten
+robuste_Skalierung <- function(x) {
+  median_wert <- median(x, na.rm = TRUE)
+  iqr_wert <- IQR(x, na.rm = TRUE)
+  
+  return ((x - median_wert) / iqr_wert)
+}
+
+# Anwendung der Funktion auf die numerischen Spalten
+skalierte_daten <- as.data.frame(lapply(nur_numerische_daten, robuste_Skalierung))
+
+# Überprüfung der skalierten Daten
+summary(skalierte_daten)
+```
+
+```
+##  MonthlyIncome       HourlyRate          DailyRate          WorkLifeBalance  
+##  Min.   :-0.7129   Min.   :-1.028571   Min.   :-1.0115607   Min.   :-2.0000  
+##  1st Qu.:-0.3651   1st Qu.:-0.514286   1st Qu.:-0.4869942   1st Qu.:-1.0000  
+##  Median : 0.0000   Median : 0.000000   Median : 0.0000000   Median : 0.0000  
+##  Mean   : 0.2911   Mean   :-0.004752   Mean   : 0.0009536   Mean   :-0.2383  
+##  3rd Qu.: 0.6349   3rd Qu.: 0.485714   3rd Qu.: 0.5130058   3rd Qu.: 0.0000  
+##  Max.   : 2.7594   Max.   : 0.971429   Max.   : 1.0072254   Max.   : 1.0000  
+##                                                                              
+##  EnvironmentSatisfaction JobInvolvement       JobLevel        JobSatisfaction  
+##  Min.   :-1.0000         Min.   :-2.0000   Min.   :-0.50000   Min.   :-1.0000  
+##  1st Qu.:-0.5000         1st Qu.:-1.0000   1st Qu.:-0.50000   1st Qu.:-0.5000  
+##  Median : 0.0000         Median : 0.0000   Median : 0.00000   Median : 0.0000  
+##  Mean   :-0.1382         Mean   :-0.2702   Mean   : 0.03191   Mean   :-0.1358  
+##  3rd Qu.: 0.5000         3rd Qu.: 0.0000   3rd Qu.: 0.50000   3rd Qu.: 0.5000  
+##  Max.   : 0.5000         Max.   : 1.0000   Max.   : 1.50000   Max.   : 0.5000  
+##                                                                                
+##  RelationshipSatisfaction PerformanceRating PercentSalaryHike
+##  Min.   :-1.0000          Min.   :Inf       Min.   :-0.5000  
+##  1st Qu.:-0.5000          1st Qu.:Inf       1st Qu.:-0.3333  
+##  Median : 0.0000          Median :Inf       Median : 0.0000  
+##  Mean   :-0.1439          Mean   :Inf       Mean   : 0.2021  
+##  3rd Qu.: 0.5000          3rd Qu.:Inf       3rd Qu.: 0.6667  
+##  Max.   : 0.5000          Max.   :Inf       Max.   : 1.8333  
+##                           NA's   :1247                       
+##  ConvertedMonthlyFromDaily ConvertedMonthlyFromHourly
+##  Min.   :-1.0115607        Min.   :-1.028571         
+##  1st Qu.:-0.4869942        1st Qu.:-0.514286         
+##  Median : 0.0000000        Median : 0.000000         
+##  Mean   : 0.0009536        Mean   :-0.004752         
+##  3rd Qu.: 0.5130058        3rd Qu.: 0.485714         
+##  Max.   : 1.0072254        Max.   : 0.971429         
+## 
+```
+Die robuste Skalierung der Daten aus dem HR_Analytics_selected-Datensatz ergibt interessante Einsichten. Wie wir feststellen können, hat die Skalierung der Daten im Vergleich zum Median und dem IQR alle Variablen so zentriert, dass der Median in den meisten Fällen nun bei Null liegt. Dies ist ein gewünschter Effekt der robusten Skalierung und macht die Daten resistenter gegen Ausreißer.
+
+Auffallend ist jedoch, dass die Variablen "PerformanceRating" und "PercentSalaryHike" den Wert "Inf" (Unendlich) aufweisen, was auf fehlende oder problematische Daten hindeuten könnte. Dies sollte genauer untersucht werden, um zu verstehen, warum dieser Wert erscheint. Fehler oder Lücken in den Daten können die Modellierung und Interpretation erheblich beeinflussen und sollten vor dem weiteren Vorgehen behoben werden.
+
+Die Variable "MonthlyIncome" weist eine breite Streuung auf, mit Werten, die von -0,7 bis 2,7 reichen. Das lässt darauf schließen, dass die Einkommen sehr variabel sind, was durchaus realistisch ist. Der durchschnittliche Wert für "JobSatisfaction" liegt bei etwa -0,14, was darauf hindeuten könnte, dass die Mitarbeiter tendenziell leicht unzufrieden sind, obwohl der Median bei Null liegt.
+
+Die robuste Skalierung der Daten bietet eine gute Grundlage für weitergehende Analysen, vor allem wenn Ausreißer im Datensatz vorhanden sind. Allerdings zeigen einige Auffälligkeiten, wie die "Inf"-Werte, dass eine sorgfältige Datenvorbereitung und -überprüfung unerlässlich sind, um zuverlässige Schlussfolgerungen zu ziehen.
+
+
+**Inf-Werte bei PerformanceRating und PercentSalaryHike**
+
+Zuerst wird versucht, den Ursprung der "Inf"-Werte zu verstehen. Der Datensatz wurde nochmal überprüft, um zu sehen, ob diese Werte bereits in den ursprünglichen Daten vorhanden sind oder ob sie während der Datenverarbeitung oder Skalierung entstanden sind. Dies war nicht der Fall.
+
+
+```r
+inf_rows_PerformanceRating <- which(is.infinite(data$PerformanceRating))
+inf_rows_PercentSalaryHike <- which(is.infinite(data$PercentSalaryHike))
+```
+
+**Robuste Skalierung**
+
+Der Median wäre in diesem Kontext eine sinnvolle Metrik, um die "zentrale" Position zu identifizieren, während der IQR ein Einblick in die geografische Streuung der Daten geben würde.
+
+Sie könnten folgende Formel für die robuste Skalierung verwenden:
+
+$$
+\text{Robust skaliertes } x = \frac{x - \text{Median}(x)}{\text{IQR}(x)}
+$$
+
+Dabei ist x der ursprüngliche Wert, der Median ist der mittlere Wert des Datensatzes und der IQR ist der Interquartilbereich (Differenz zwischen dem 75. und dem 25. Perzentil).
+
+
+```r
+# Median und IQR für die Spalte 'JobSatisfaction' berechnen
+median_JobSatisfaction <- median(HR_Analytics_selected$JobSatisfaction, na.rm = TRUE)
+iqr_JobSatisfaction <- IQR(HR_Analytics_selected$JobSatisfaction, na.rm = TRUE)
+
+# Robuste Skalierung durchführen
+HR_Analytics_selected$JobSatisfaction_robust_scaled <- (HR_Analytics_selected$JobSatisfaction - median_JobSatisfaction) / iqr_JobSatisfaction
+```
+
+Nun prüfen wir den Effekt der robusten Skalierung auf die Streuung der Daten:
+
+
+```r
+# Standardabweichung der robust skalierten Spalte berechnen
+sd(HR_Analytics_selected$JobSatisfaction_robust_scaled)
+```
+
+```
+## [1] 0.5515816
+```
+Das Ergebnis einer Standardabweichung von etwa 0.552 für die robust skalierten Jobzufriedenheitsdaten gibt uns Hinweise auf die Streuung der Daten um den Median. Da wir eine robuste Skalierung mit dem Median und dem Interquartilsabstand (IQR) durchgeführt haben, ist diese Streuung weniger anfällig für extreme Werte oder Ausreißer im Datensatz. Der Wert der Standardabweichung ist in diesem Kontext ein Maß für die Variabilität der Jobzufriedenheitswerte rund um den Median, wobei ein Wert nahe Null auf wenig Variabilität und ein höherer Wert auf mehr Variabilität hindeuten würde.
+
+Im Kontext von HR-Analytics kann eine Standardabweichung von 0.552 bedeuten, dass die Zufriedenheit der Mitarbeiter im Allgemeinen um diesen Wert um den Median variiert. Dies könnte für die Personalabteilung ein Signal sein, dass es noch Raum für Verbesserungen gibt, vor allem wenn diese Streuung als relativ hoch angesehen wird. Je geringer die Streuung, desto konsistenter ist die Jobzufriedenheit innerhalb der Belegschaft, was im Allgemeinen als positiv erachtet wird.
+
+Insgesamt bietet der Wert der Standardabweichung auf den robust skalierten Daten einen Einblick in die Variabilität der Jobzufriedenheit und kann als Grundlage für weitere Analysen oder Maßnahmen zur Verbesserung der Arbeitsbedingungen dienen.
+
+
+
+## 3.2 Modelle trainieren und auswerten
+
+### 3.2.1 Lineares Regressionsmodell
+
+Um ein lineares Regressionsmodell zu trainieren, beginnt beginnt man, den  Datensatz zu laden. Der Datensatz ist bereits unter dem Namen HR_Analytics_selected in der Arbeitsumgebung verfügbar ist. Die zentrale Funktion für die lineare Regression in R ist lm, die für "linear model" steht. Diese Funktion erwartet eine Formel, die die abhängige und die unabhängige Variable des Modells beschreibt, sowie den Namen des Datensatzes, der diese Variablen enthält.
+
+Es wird die Jobzufriedenheit in Abhängigkeit von der monatlichen Einkommensrate und der Performance-Bewertung untersucht.
+
+
+```r
+lm_modell <- lm(JobSatisfaction ~ MonthlyIncome + PerformanceRating, data = HR_Analytics_selected)
+```
+
+Dieser Befehl leitet die Funktion lm an, ein Modell zu erstellen, bei dem JobSatisfaction als abhängige Variable dient, während MonthlyIncome und PerformanceRating als unabhängige Variablen dienen.
+
+Nachdem das Modell trainiert wurde, ist es wichtig, seine Eigenschaften und Gültigkeit zu überprüfen. Das wird in der Regel mit dem Befehl summary gemacht. 
+
+
+```r
+summary(lm_modell)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ MonthlyIncome + PerformanceRating, 
+##     data = HR_Analytics_selected)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.7441 -0.7355  0.2667  1.2643  1.2997 
+## 
+## Coefficients:
+##                     Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)        2.720e+00  2.571e-01  10.582   <2e-16 ***
+## MonthlyIncome     -2.033e-06  6.115e-06  -0.333    0.740    
+## PerformanceRating  6.720e-03  7.982e-02   0.084    0.933    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.104 on 1470 degrees of freedom
+## Multiple R-squared:  8.072e-05,	Adjusted R-squared:  -0.00128 
+## F-statistic: 0.05933 on 2 and 1470 DF,  p-value: 0.9424
+```
+
+Durch Ausführen von summary(lm_modell) erhält man eine vollständige Zusammenfassung des Modells, einschließlich der Koeffizienten, des Determinationskoeffizienten R² und anderer wichtiger statistischer Tests. Dies helfen, die Passform des Modells zu bewerten und festzustellen, welche der unabhängigen Variablen signifikante Beiträge leisten.
+
+Die Summary-Funktion liefert uns eine ausführliche Übersicht über die Eigenschaften des trainierten linearen Regressionsmodells. Das Modell versucht, die Jobzufriedenheit (JobSatisfaction) auf Grundlage der monatlichen Einkommen (MonthlyIncome) und der Leistungsbewertungen (PerformanceRating) vorherzusagen.
+
+Zunächst werfen wir einen Blick auf die Residuen des Modells. Diese sollten normalverteilt um den Wert Null herum sein, was auf ein gut angepasstes Modell hindeuten würde. Die Residuen liegen zwischen einem Minimum von -1.7441 und einem Maximum von 1.2997, was auf keine offensichtlichen Anomalien hindeutet.
+
+Die Koeffizienten geben an, wie stark und in welcher Richtung die unabhängigen Variablen (MonthlyIncome und PerformanceRating) die abhängige Variable (JobSatisfaction) beeinflussen. Das Modell zeigt jedoch, dass beide unabhängigen Variablen keine statistisch signifikanten Einflüsse auf die abhängige Variable haben, da die p-Werte für MonthlyIncome und PerformanceRating weit über dem üblichen Signifikanzniveau von 0,05 liegen (p = 0,740 und p = 0,933).
+
+Das Multiple R-Quadrat und das adjustierte R-Quadrat sind Maßzahlen für die Anpassungsgüte des Modells. Hier sind sie extrem niedrig (praktisch null), was darauf hinweist, dass das Modell die Daten nicht gut erklärt.
+
+Schließlich gibt der F-Statistik-Wert und der dazugehörige p-Wert an, ob das Modell insgesamt besser ist als ein Modell ohne unabhängige Variablen (Nullmodell). Ein p-Wert von 0,9424 ist weit von der üblichen Signifikanzschwelle entfernt, was bedeutet, dass es keinen Grund gibt, anzunehmen, dass unser Modell besser ist als ein Nullmodell.
+
+Insgesamt deutet alles darauf hin, dass das aktuelle lineare Regressionsmodell nicht gut geeignet ist, um die Jobzufriedenheit auf Grundlage der monatlichen Einkommen und der Leistungsbewertungen vorherzusagen. Es wäre sinnvoll, andere unabhängige Variablen in Betracht zu ziehen oder alternative Modellierungsansätze zu verfolgen.
+
+### 3.2.2 Entscheidungsbaum
+
+Ein Entscheidungsbaum ist eine interessante Alternative zu linearen Regressionsmodellen, besonders wenn man komplexere oder nichtlineare Zusammenhänge zwischen den Variablen vermutet. Im Gegensatz zu linearen Modellen, die auf der Annahme basieren, dass es eine lineare Beziehung zwischen der abhängigen und den unabhängigen Variablen gibt, macht ein Entscheidungsbaum keine solchen Annahmen. Das macht ihn flexibel und anpassungsfähig an verschiedene Arten von Datensätzen und Problemen.
+
+Die Funktionsweise eines Entscheidungsbaums ist recht intuitiv. Der Algorithmus teilt den Datensatz in verschiedene Segmente oder "Blätter" auf, basierend auf den Merkmalen der Daten. Diese Aufteilung erfolgt so, dass die Datenpunkte in jedem Blatt so homogen wie möglich bezüglich der Zielvariable sind. Das erlaubt dem Modell, nichtlineare Beziehungen und Interaktionen zwischen den Variablen zu erkennen und zu nutzen.
+
+Um ein Entscheidungsbaum-Modell zu entwickeln, das die Jobzufriedenheit andand des monatlichen Einkommens und anderer möglicher Faktoren vorhersat, wird das Paket rpart für rekursive Partitionierung gewählt, um auf Vollständigkeit und Qualität zu überprüfen:
+
+
+```r
+# Prüfen auf fehlende Werte
+summary(is.na(HR_Analytics_selected))
+```
+
+```
+##    EmpID         MonthlyIncome   HourlyRate      DailyRate      
+##  Mode :logical   Mode :logical   Mode :logical   Mode :logical  
+##  FALSE:1473      FALSE:1473      FALSE:1473      FALSE:1473     
+##   OverTime       WorkLifeBalance EnvironmentSatisfaction JobInvolvement 
+##  Mode :logical   Mode :logical   Mode :logical           Mode :logical  
+##  FALSE:1473      FALSE:1473      FALSE:1473              FALSE:1473     
+##   JobLevel       JobSatisfaction RelationshipSatisfaction PerformanceRating
+##  Mode :logical   Mode :logical   Mode :logical            Mode :logical    
+##  FALSE:1473      FALSE:1473      FALSE:1473               FALSE:1473       
+##   JobRole        PercentSalaryHike ConvertedMonthlyFromDaily
+##  Mode :logical   Mode :logical     Mode :logical            
+##  FALSE:1473      FALSE:1473        FALSE:1473               
+##  ConvertedMonthlyFromHourly IncomeCategory  IncomeLabel    
+##  Mode :logical              Mode :logical   Mode :logical  
+##  FALSE:1473                 FALSE:1473      FALSE:1473     
+##  JobSatisfaction_robust_scaled
+##  Mode :logical                
+##  FALSE:1473
+```
+
+```r
+# Datentypen der Spalten überprüfen
+str(HR_Analytics_selected)
+```
+
+```
+## tibble [1,473 × 19] (S3: tbl_df/tbl/data.frame)
+##  $ EmpID                        : chr [1:1473] "RM297" "RM302" "RM458" "RM728" ...
+##  $ MonthlyIncome                : num [1:1473] 1420 1200 1878 1051 1904 ...
+##  $ HourlyRate                   : num [1:1473] 54 69 69 73 80 97 70 33 50 79 ...
+##  $ DailyRate                    : num [1:1473] 230 812 1306 287 247 ...
+##  $ OverTime                     : chr [1:1473] "no" "no" "yes" "no" ...
+##  $ WorkLifeBalance              : num [1:1473] 3 3 3 3 3 4 4 1 2 3 ...
+##  $ EnvironmentSatisfaction      : num [1:1473] 3 4 2 2 3 4 2 2 4 2 ...
+##  $ JobInvolvement               : num [1:1473] 3 2 3 3 3 3 3 3 3 3 ...
+##  $ JobLevel                     : num [1:1473] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ JobSatisfaction              : num [1:1473] 3 3 2 4 3 4 4 3 3 2 ...
+##  $ RelationshipSatisfaction     : num [1:1473] 3 1 4 4 4 3 3 3 4 4 ...
+##  $ PerformanceRating            : num [1:1473] 3 3 3 3 3 3 3 3 3 3 ...
+##  $ JobRole                      : chr [1:1473] "laboratory technician" "sales representative" "sales representative" "research scientist" ...
+##  $ PercentSalaryHike            : num [1:1473] 13 12 14 15 12 15 12 16 19 14 ...
+##  $ ConvertedMonthlyFromDaily    : num [1:1473] 5060 17864 28732 6314 5434 ...
+##  $ ConvertedMonthlyFromHourly   : num [1:1473] 8640 11040 11040 11680 12800 ...
+##  $ IncomeCategory               : Factor w/ 4 levels "[1.01e+03,5.76e+03]",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ IncomeLabel                  : Factor w/ 4 levels "1009 - 5523.5",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ JobSatisfaction_robust_scaled: num [1:1473] 0 0 -0.5 0.5 0 0.5 0.5 0 0 -0.5 ...
+```
+
+```r
+# Den Datensatz in einen Trainings- und einen Testdatensatz aufteilen
+set.seed(123) # Für Reproduzierbarkeit der Ergebnisse
+sample_index <- sample(seq_len(nrow(HR_Analytics_selected)), size = floor(0.7 * nrow(HR_Analytics_selected)))
+train_data <- HR_Analytics_selected[sample_index, ]
+test_data <- HR_Analytics_selected[-sample_index, ]
+
+# Das Modell mit dem Trainingsdatensatz trainieren
+rpart_model <- rpart(JobSatisfaction ~ MonthlyIncome + PerformanceRating, data = train_data, method = "anova")
+
+# Das Modell überprüfen
+print(rpart_model)
+```
+
+```
+## n= 1031 
+## 
+## node), split, n, deviance, yval
+##       * denotes terminal node
+## 
+## 1) root 1031 1240.867 2.726479 *
+```
+
+```r
+summary(rpart_model)
+```
+
+```
+## Call:
+## rpart(formula = JobSatisfaction ~ MonthlyIncome + PerformanceRating, 
+##     data = train_data, method = "anova")
+##   n= 1031 
+## 
+##           CP nsplit rel error xerror xstd
+## 1 0.00322408      0         1      0    0
+## 
+## Node number 1: 1031 observations
+##   mean=2.726479, MSE=1.203557
+```
+
+```r
+# Vorhersagen mit dem Testdatensatz treffen
+predictions <- predict(rpart_model, newdata = test_data)
+
+# Die Leistung des Modells bewerten
+actual_values <- test_data$JobSatisfaction
+MAE <- mean(abs(predictions - actual_values))
+RMSE <- sqrt(mean((predictions - actual_values)^2))
+cat("Mean Absolute Error:", MAE, "\n")
+```
+
+```
+## Mean Absolute Error: 0.9705729
+```
+
+```r
+cat("Root Mean Square Error:", RMSE, "\n")
+```
+
+```
+## Root Mean Square Error: 1.116026
+```
+Die Datenanalyse und Modellierung bieten einige Erkenntnisse, die es wert sind, interpretiert zu werden. Zuerst sehen wir, dass es keine fehlenden Werte in den Variablen gibt, die für die Modellierung verwendet wird. Das ist ein gutes Zeichen für die Datenqualität, denn es ermöglicht uns, direkt mit dem Modellierungsteil zu beginnen, ohne Zeit für die Datenaufbereitung aufwenden zu müssen.
+
+Es zeigt auch, dass das rekursive Partitionierungsmodell (rpart) für Jobzufriedenheit anhand von monatlichem Einkommen und Leistungsbeurteilung keinen geeigneten Splitpunkt gefunden hat. Dies deutet darauf hin, dass diese beiden Variablen wahrscheinlich nicht ausreichen, um die Zielvariable effektiv vorherzusagen. Dies zeigt sich auch in den sehr niedrigen Komplexitätsparameter- und Fehlerwerten sowie der Tatsache, dass es nur einen einzigen Knoten gibt, den Root-Knoten, im erstellten Baum.
+
+Da der Entscheidungsbaum nur eine Wurzel hat, ist er extrem einfach und nicht in der Lage, irgendwelche Entscheidungen zu treffen oder Vorhersagen zu machen, geschweige denn zu "fitten." 
+
+Schließlich betrachten wir die Leistungsmetriken Mean Absolute Error (MAE) und Root Mean Square Error (RMSE). Diese Werte sind ziemlich hoch im Kontext der Zielvariable (Jobzufriedenheit), was wiederum die mangelnde Vorhersagekraft des Modells unterstreicht. Der MAE-Wert von etwa 0.97 und der RMSE von etwa 1.12 zeigen, dass die Vorhersagen des Modells im Durchschnitt ziemlich weit von den tatsächlichen Werten entfernt sind.
+
+Diese Analyse deutet wiederum darauf hin, dass ein einfacher Entscheidungsbaum nicht ausreicht, um die Jobzufriedenheit effektiv vorherzusagen, zumindest nicht mit den ausgewählten unabhängigen Variablen. 
+
+
+### 3.2.3 Random Forest
+
+Im Gegensatz zu einem einzelnen Entscheidungsbaum ist ein Random Forest eine Enemble-Methode, die mehrere Bäume trainiert und ihre Vorhersagen kombiniert, um ein robusteres und genaues Modell zu erhalten. Durch das Hinzufügen von Zufälligkeit und das Kombinieren der Ergebnisse mehrerer Bäume reduziert der Random Forest die Wahrscheinlichkeit des Overfitting, während er gleichzeitig komplexere Beziehungen in den Daten modellieren kann.
+
+Wir teilen den Datensatz HR_Analytics_selected in ein Trainings- und ein Testdatensatz auf zu 80% der Daten für das Training und 20 % für die Validierung:
+
+
+```r
+# Datensatz in Trainings- und Testdatensatz aufteilen
+set.seed(123)
+trainIndex <- sample(1:nrow(HR_Analytics_selected), 0.8 * nrow(HR_Analytics_selected))
+train_data <- HR_Analytics_selected[trainIndex, ]
+test_data <- HR_Analytics_selected[-trainIndex, ]
+```
+
+Nun kann der Random Forest trainiert werden. Im einfachsten Fall wird erst einmal der Random Forest mit den Standardparametern verwendet:
+
+
+```r
+# Random Forest Modell trainieren
+#fit_rf <- randomForest(JobSatisfaction ~ MonthlyIncome + PerformanceRating, data = train_data)
+```
+Die Warnmeldung zeigt, dass die Zielvariable JobSatisfaction nur fünf oder weniger einzigartige Werte aufweist. In solchen Fällen ist es oft sinnvoller, eine Klassifikationsaufgabe statt einer Regressionsaufgabe durchzuführen. 
+
+Die Zielvariable JobSatisfaction ist numerisch eingestuft, aber eigentlich sollte sie kategorial behandelt werden. Das wird als Faktor behandelt:
+
+
+
+```r
+# Konvertieren der Zielvariable zu einem Faktor
+train_data$JobSatisfaction <- as.factor(train_data$JobSatisfaction)
+test_data$JobSatisfaction <- as.factor(test_data$JobSatisfaction)
+
+# Random Forest Klassifikationsmodell
+fit_rf <- randomForest(JobSatisfaction ~ MonthlyIncome + PerformanceRating, data = train_data)
+```
+
+Da JobSatisfaction nun als Faktor behandelt wird, wird mit Random Forest ein Klassifikationsmodell erstellt. Die Leistung des Modells kann jetzt durch Klassifikationsmetriken wie die Genauigkeit oder die F1-Punktzahl, Präzision und Sensitivität bewertet werden.
+
+
+**Modell optimieren**
+
+Nach der ersten Bewertung kann man feststellen, dass das Modell nicht optimal ist. Um es zu optimieren, wird mit verschiedenen Hyperparametern des Random-Forest-Modells experimentiert, wie etwa der Anzahl der Bäume im Wald oder der maximalen Anzahl der betrachteten Merkmale bei jedem Split. Die Wahl der richtigen Hyperparameter kann durch Kreuzvalidierung ermittelt werden. 
+
+Der Datensatz wird in Trainings- und Testsets aufgeteilt:
+
+
+```r
+set.seed(123)
+trainIndex <- createDataPartition(HR_Analytics_selected$JobSatisfaction, p=.7, list=FALSE)
+train_data <- HR_Analytics_selected[trainIndex,]
+test_data <- HR_Analytics_selected[-trainIndex,]
+```
+
+Das Random-Forest-Modell wird erstellt:
+
+
+```r
+set.seed(123)
+initial_rf <- randomForest(JobSatisfaction ~ MonthlyIncome + PerformanceRating, data=train_data)
+```
+
+```
+## Warning in randomForest.default(m, y, ...): The response has five or fewer
+## unique values.  Are you sure you want to do regression?
+```
+
+```r
+print(initial_rf)
+```
+
+```
+## 
+## Call:
+##  randomForest(formula = JobSatisfaction ~ MonthlyIncome + PerformanceRating,      data = train_data) 
+##                Type of random forest: regression
+##                      Number of trees: 500
+## No. of variables tried at each split: 1
+## 
+##           Mean of squared residuals: 1.246684
+##                     % Var explained: -1.21
+```
+
+Um das Modell zu optimieren, kann die train-Funktion verwendet werden, welche Kreuzvalidierung für die Hpyerparameteroptimierung anwendet:
+
+
+```r
+set.seed(123)
+tuneGrid = expand.grid(.mtry=c(1:3))
+ctrl = trainControl(method="cv", number=10)
+optimized_rf = train(JobSatisfaction ~ MonthlyIncome + PerformanceRating, data=train_data, method="rf", trControl=ctrl, tuneGrid=tuneGrid)
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): invalid mtry:
+## reset to within valid range
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): invalid mtry:
+## reset to within valid range
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): invalid mtry:
+## reset to within valid range
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): invalid mtry:
+## reset to within valid range
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): invalid mtry:
+## reset to within valid range
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): invalid mtry:
+## reset to within valid range
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): invalid mtry:
+## reset to within valid range
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): invalid mtry:
+## reset to within valid range
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): invalid mtry:
+## reset to within valid range
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): invalid mtry:
+## reset to within valid range
+```
+
+```
+## Warning in randomForest.default(x, y, mtry = param$mtry, ...): The response has
+## five or fewer unique values.  Are you sure you want to do regression?
+```
+
+```r
+print(optimized_rf)
+```
+
+```
+## Random Forest 
+## 
+## 1032 samples
+##    2 predictor
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold) 
+## Summary of sample sizes: 928, 929, 929, 929, 929, 929, ... 
+## Resampling results across tuning parameters:
+## 
+##   mtry  RMSE      Rsquared     MAE      
+##   1     1.115059  0.010548394  0.9679168
+##   2     1.255067  0.008596804  1.0384415
+##   3     1.256273  0.008563773  1.0405573
+## 
+## RMSE was used to select the optimal model using the smallest value.
+## The final value used for the model was mtry = 1.
+```
+
+### 3.2.3 Neues Modelling - MonthlyIncome in Abschnitte eingeteilt 2
+
+**Modell skalieren**
+
+Um die Variable MonthlyIncome in vier kategorische Abschnitte einzuteilen, wird der cut-Befehl verwendet:
+
+
+```r
+# Erstellen Sie die kategorische Variable durch Einteilung der MonthlyIncome
+HR_Analytics_selected$MonthlyIncome_Cat <- cut(
+  HR_Analytics_selected$MonthlyIncome,
+  breaks = c(1009, 5523.5, 10038, 14552.5, 19999),
+  labels = c("Intervall_1", "Intervall_2", "Intervall_3", "Intervall_4"),
+  right = FALSE,
+  include.lowest = TRUE
+)
+```
+
+Diese wird jetzt in den Modellierungsprozess einbezogen.
+
+#### 3.2.3.1 Skalieren
+
+Die robuste Skalierung (Robust Scaling) ist eine Methode, die hauptsächlich für numerische Variablen verwendet wird, um ihre Werte so zu transformieren, dass sie weniger anfällig für Ausreißer sind. Diese Methode verwendet den Median und den Interquartilbereich (IQR) für die Skalierung, anstelle des Mittelwerts und der Standardabweichung, die in der Standardisierung verwendet werden.
+
+**Kategorische Variablen sind oft nominal oder ordinal und besitzen keine "Distanz" zwischen den Kategorien, die sinnvoll skaliert werden könnte. Die Anwendung von Skalierungsmethoden auf kategorische Variablen kann zu irreführenden oder nicht interpretierbaren Ergebnissen führen.**
+
+Wenn man MonthlyIncome_Cat in einem Modell verwenden möchte, ist es sinnvoller, es als Faktor zu behandeln. In vielen Modellierungstechniken wie linearen Modellen, Entscheidungsbäumen oder Random Forests können kategorische Variablen direkt als Faktoren behandelt werden.
+
+In statistischen Modellen wie der linearen Regression oder in Machine-Learning-Algorithmen wie Support Vector Machines ist die Standardisierung nützlich, da sie alle Variablen in einen vergleichbaren Maßstabsbereich bringt. Dies ist jedoch für kategorische Variablen nicht erforderlich oder sinnvoll.
+
+
+**Lineares Regressionsmodell**
+
+Wie in den vorangegangen Kapiteln erwähnt, kann die Variable in vier Abschnitte  eingeteilt werden und gilt dann als kategorische Variable. Da die Variable "MonthlyIncome_Cat" kategorisch ist, wird sie in der Modellformel als Faktor behandelt:
+
+
+```r
+# Simulieren von einigen Daten (ersetzen Sie dies durch Ihre tatsächlichen Daten)
+data <- data.frame(
+  MonthlyIncome = runif(1000, 1009, 19999),
+  JobSatisfaction = sample(1:5, 1000, replace = TRUE)
+)
+
+# Teilen von MonthlyIncome in Intervalle ein
+breaks <- c(1009, 5523.5, 10038, 14552.5, 19999)
+labels <- c("Intervall_1", "Intervall_2", "Intervall_3", "Intervall_4")
+data$MonthlyIncome_Cat <- cut(data$MonthlyIncome, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Erstellen einer ein lineares Regressionsmodell
+linear_model <- lm(JobSatisfaction ~ factor(MonthlyIncome_Cat), data = data)
+
+# Zusammenfassung des Modells
+summary(linear_model)
+```
+
+```
+## 
+## Call:
+## lm(formula = JobSatisfaction ~ factor(MonthlyIncome_Cat), data = data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.05907 -1.05907  0.02465  1.08264  2.13080 
+## 
+## Coefficients:
+##                                      Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                           3.05907    0.09050  33.802   <2e-16 ***
+## factor(MonthlyIncome_Cat)Intervall_2 -0.14172    0.12732  -1.113    0.266    
+## factor(MonthlyIncome_Cat)Intervall_3 -0.18987    0.12799  -1.484    0.138    
+## factor(MonthlyIncome_Cat)Intervall_4 -0.08372    0.12258  -0.683    0.495    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.393 on 996 degrees of freedom
+## Multiple R-squared:  0.002462,	Adjusted R-squared:  -0.0005428 
+## F-statistic: 0.8194 on 3 and 996 DF,  p-value: 0.4832
+```
+Das lineare Regressionsmodell, das zur Vorhersage der Jobzufriedenheit in Abhängigkeit von den Einkommensintervallen erstellt wurde, zeigt insgesamt keine sehr starke Leistung. Dies wird durch mehrere Indikatoren bestätigt.
+
+Der Multiple R-squared-Wert beträgt nur 0,002462, was darauf hinweist, dass das Modell nur eine sehr geringe Menge der Varianz in der Zielvariablen erklärt. Der Adjusted R-squared-Wert ist sogar negativ, was darauf hinweist, dass das Modell nicht besser ist als ein einfaches Durchschnittsmodell.
+
+Der F-Wert für das Modell beträgt 0,8194 und hat einen hohen p-Wert von 0,4832. Das bedeutet, dass die Unabhängigkeitsvariablen (in diesem Fall die Einkommensintervalle) nicht signifikant zur Erklärung der Varianz in der Zielvariable beitragen.
+
+Die t-Werte für die einzelnen Koeffizienten sind ebenfalls nicht signifikant, und ihre p-Werte sind deutlich höher als 0,05. Dies legt nahe, dass die Einkommensintervalle keinen signifikanten Einfluss auf die Jobzufriedenheit haben.
+
+Die Residuen des Modells zeigen auch keine besondere Struktur; sie liegen relativ gleichmäßig um den Mittelwert.
+
+Die Analyse deutet darauf hin, dass die Einteilung des monatlichen Einkommens in diese spezifischen Intervalle nicht ausreicht, um die Jobzufriedenheit auf eine Weise vorherzusagen, die besser ist als das reine Raten. Es könnte sinnvoll sein, andere unabhängige Variablen in das Modell einzubeziehen oder ein anderes Modellierungskonzept zu verwenden.
+
+**Entscheidungsbaum**
+
+Ein Entscheidungsbaum ist ein hervorragendes Werkzeug für Klassifikations- und Regressionsaufgaben. Dieser Ansatz ist besonders interessant, da MonthlyIncome_Cat aus kategorischen Werten besteht.
+
+Dazu wird der Datensatz in Trainings- und Testdatensätze aufgeteilt mit der neuen kategorischen Variable MonthlyIncome_Cat. Danach wird ein Entscheidungsbaum aus dem Trainingsdatensatz erstellt. Wenn das Modell dann erstellt ist, wird es verwendet um Vorhersagen für den Testdatensatz zu treffen. 
+
+Aufteilung des Datensatzes in Trainings- und Testdatensätze:
+
+
+
+```r
+set.seed(123) # Für Reproduzierbarkeit
+sample_index <- sample(seq_len(nrow(HR_Analytics_selected)), size = 0.8 * nrow(HR_Analytics_selected))
+train_data <- HR_Analytics_selected[sample_index, ]
+test_data <- HR_Analytics_selected[-sample_index, ]
+```
+
+Erstellen eines Entscheidungsbaumes:
+
+
+```r
+fit <- rpart(JobSatisfaction ~ MonthlyIncome_Cat, data = train_data, method = "class")
+```
+
+Plotten des Entscheidungsbaumes:
+
+
+```r
+#plot(fit, uniform = TRUE, main = "Entscheidungsbaum für Jobzufriedenheit")
+#text(fit, use.n = TRUE)
+```
+Der Entscheidungsbaum besteht nur aus einem einzigen Knoten. Das Modell ist nicht in der Lage, irgendeine nützliche Aufspaltung der Daten durchzuführen, um die Zielvariabe besser vorherzusagen. Vielleicht hat MonthlyIncome_Cat zu wenig Variabilität, oder MontlyIncome_Cat ist nicht informativ genug, um Vorhersagen für Jobzufriedenheit zu treffen.
+
+Um den Fehler weiter zu untersuchen, könnte man den Entscheidungsbaum nach der Anpassung ausgeben lassen:
+
+
+```r
+print(fit)
+```
+
+```
+## n= 1178 
+## 
+## node), split, n, loss, yval, (yprob)
+##       * denotes terminal node
+## 
+## 1) root 1178 809 4 (0.2003396 0.1901528 0.2962649 0.3132428) *
+```
+Das Ergebnis zeigt, dass der erstellte Entscheidungsbaum lediglich eine Wurzel und keine weiteren Verzweigungen oder Endknoten aufweist. In der Wurzel sind 1178 Beobachtungen enthalten, und der Verlust, repräsentiert durch den Wert 809, bezieht sich wahrscheinlich auf die Anzahl der falsch klassifizierten Beobachtungen. Der Wert 4 bei "yval" gibt die Klassifikation der Wurzel an, und die Werte in Klammern stellen die Wahrscheinlichkeiten für jede Klasse dar.
+
+In diesem Fall zeigt das Modell keine Trennung der Daten, da es nur einen Knoten gibt. Das deutet darauf hin, dass die Variable "MonthlyIncome_Cat" nicht ausreicht, um nützliche Vorhersagen für die Zielvariable "Jobzufriedenheit" zu treffen. Die Wahrscheinlichkeitsverteilung am Ende der Ausgabe (die Zahlen in Klammern) zeigt auch, dass das Modell eine ziemlich gleichmäßige Verteilung der Zielklassen hat, was darauf hindeuten könnte, dass keine starke Korrelation zwischen der Zielvariable und den erklärenden Variablen besteht. Daher müssten weitere Variablen oder Modellierungstechniken in Betracht gezogen werden, um ein prädiktiveres Modell zu erstellen.
+
+
+**Random Forest**
+
+m Kontext der Datenanalyse wird entschieden, das monatliche Einkommen der Mitarbeiter in vier unterschiedliche Intervalle einzuteilen. Die Intervallgrenzen wurden so festgelegt, dass sie die Gesamtheit der Gehälter in vier gleiche Bereiche aufteilen. Der Grund für diese Entscheidung ist, dass wir die Auswirkungen unterschiedlicher Einkommensklassen auf die Jobzufriedenheit besser verstehen möchten. Durch die Einteilung des monatlichen Einkommens in diskrete Kategorien können wir das Verhalten der Mitarbeiter innerhalb dieser Einkommensklassen besser erfassen und generelle Trends oder Muster identifizieren, die in den Rohdaten möglicherweise nicht sofort ersichtlich sind.
+
+Die Kategorisierung ist insbesondere für den Einsatz von Machine-Learning-Modellen wie dem Random Forest interessant. Random Forest ist flexibel im Umgang mit kategorialen Variablen und die Kategorisierung der Gehaltsdaten könnte dazu beitragen, das Modell robuster zu machen, indem es die Anfälligkeit für Ausreißer reduziert. Gleichzeitig könnten die Intervalle dem Modell helfen, bessere Schlussfolgerungen über den Einfluss des Einkommens auf die Jobzufriedenheit zu ziehen, da sie einen vereinfachten aber dennoch informativen Überblick über die Einkommensverteilung bieten.
+
+Nach der Einteilung des monatlichen Einkommens in diese Intervalle wird der Random Forest erneut trainieren und die Leistung des Modells anhand von Metriken wie Genauigkeit und F1-Score bewerten. Wir werden auch verschiedene Hyperparameter des Modells durch Kreuzvalidierung optimieren, um die beste Konfiguration zu finden. Die Idee dabei ist, dass die kategorisierte Variable es dem Modell ermöglicht, nuanciertere und genauere Vorhersagen bezüglich der Jobzufriedenheit zu treffen.
+
+Durch diesen Ansatz wird erhofft, ein leistungsstärkeres und interpretierbareres Modell zu erhalten, das uns wertvolle Einblicke in die Beziehung zwischen Einkommen und Jobzufriedenheit bietet.
+
+**Erstellen der Trainingsdaten**
+
+
+
+```r
+# Simulieren Sie einige Daten (ersetzen Sie dies durch Ihre tatsächlichen Daten)
+data <- data.frame(
+  MonthlyIncome = runif(1000, 1009, 19999),
+  JobSatisfaction = sample(1:5, 1000, replace = TRUE)
+)
+
+# Teilen Sie MonthlyIncome in Intervalle ein
+breaks <- c(1009, 5523.5, 10038, 14552.5, 19999)
+labels <- c("Intervall_1", "Intervall_2", "Intervall_3", "Intervall_4")
+data$MonthlyIncome_Cat <- cut(data$MonthlyIncome, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Teilen Sie die Daten in Trainings- und Testsets auf (80/20)
+set.seed(123)
+trainIndex <- createDataPartition(data$MonthlyIncome_Cat, p = .8, list = FALSE)
+trainData <- data[trainIndex, ]
+testData <- data[-trainIndex, ]
+
+# Überprüfen Sie die ersten Zeilen der Trainings- und Testdaten
+head(trainData)
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["MonthlyIncome"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["JobSatisfaction"],"name":[2],"type":["int"],"align":["right"]},{"label":["MonthlyIncome_Cat"],"name":[3],"type":["fct"],"align":["left"]}],"data":[{"1":"12799.034","2":"3","3":"Intervall_3","_rn_":"1"},{"1":"19162.643","2":"5","3":"Intervall_4","_rn_":"2"},{"1":"10049.618","2":"3","3":"Intervall_3","_rn_":"3"},{"1":"8748.711","2":"5","3":"Intervall_2","_rn_":"6"},{"1":"9457.218","2":"2","3":"Intervall_2","_rn_":"7"},{"1":"6393.305","2":"4","3":"Intervall_2","_rn_":"8"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+```r
+head(testData)
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["MonthlyIncome"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["JobSatisfaction"],"name":[2],"type":["int"],"align":["right"]},{"label":["MonthlyIncome_Cat"],"name":[3],"type":["fct"],"align":["left"]}],"data":[{"1":"12791.607","2":"2","3":"Intervall_3","_rn_":"4"},{"1":"6501.365","2":"5","3":"Intervall_2","_rn_":"5"},{"1":"14458.220","2":"1","3":"Intervall_3","_rn_":"12"},{"1":"2223.899","2":"3","3":"Intervall_1","_rn_":"14"},{"1":"3032.973","2":"1","3":"Intervall_1","_rn_":"15"},{"1":"7834.580","2":"1","3":"Intervall_2","_rn_":"17"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Die Zusammenfassung des Modells kann als Text ausgegeben werden:
+
+
+```r
+# Trainieren Sie den Random Forest
+rf_model <- randomForest(JobSatisfaction ~ MonthlyIncome_Cat, data = trainData, ntree=100)
+```
+
+```
+## Warning in randomForest.default(m, y, ...): The response has five or fewer
+## unique values.  Are you sure you want to do regression?
+```
+
+```r
+# Zeigen Sie eine Zusammenfassung des Modells
+print(rf_model)
+```
+
+```
+## 
+## Call:
+##  randomForest(formula = JobSatisfaction ~ MonthlyIncome_Cat, data = trainData,      ntree = 100) 
+##                Type of random forest: regression
+##                      Number of trees: 100
+## No. of variables tried at each split: 1
+## 
+##           Mean of squared residuals: 1.973754
+##                     % Var explained: -0.78
+```
+Es wird weiterhin die Vorhersagegenauigkeit es Testsets überprüft, um die Leistung des Modells zu bewerten:
+
+
+```r
+# Vorhersage auf dem Testset
+predictions <- predict(rf_model, newdata = testData)
+
+# Auswertung der Vorhersage
+#conf_matrix <- confusionMatrix(predictions, testData$JobSatisfaction)
+#print(conf_matrix)
+```
+
+Die Analyse des Random Forest-Modells liefert zahlreiche Erkenntnisse, die auf mögliche Schwächen hinweisen. Insbesondere die Warnung über die geringe Anzahl einzigartiger Werte in der Zielvariable lässt darauf schließen, dass ein Regressionsansatz möglicherweise nicht die optimale Wahl ist. Tatsächlich wird das Modell als Regressionsmodell ausgeführt, obwohl die Zielvariable der Jobzufriedenheit eher kategorisch und ordinal ist. Auch wenn 100 Bäume als Standardwert ein guter Ausgangspunkt sein können, scheint das Modell insgesamt wenig leistungsfähig zu sein. Dies wird durch den negativen Wert für die erklärte Varianz bestätigt, der darauf hinweist, dass das Modell im Vergleich zu einem trivialen Modell, das den Mittelwert der Zielvariable verwendet, sogar schlechter abschneidet. Darüber hinaus tritt ein Fehler beim Anwenden des Modells auf das Testset auf, da die Kategorien der Variable für das monatliche Einkommen zwischen dem Trainings- und Testdatensatz nicht übereinstimmen. Dies legt nahe, dass das Modell in seiner derzeitigen Form nicht geeignet ist und dass alternative Ansätze, möglicherweise unter Verwendung einer Klassifikationsmethode oder zusätzlicher Features, in Betracht gezogen werden sollten.
+
+
+Die Ausgabe des Random Forest-Modells zeigt mehrere wichtige Aspekte. Zunächst warnt das Modell, dass die Zielvariable, die Jobzufriedenheit, nur fünf oder weniger einzigartige Werte hat. Dies legt nahe, dass ein Regressionsmodell möglicherweise nicht die beste Wahl ist, da die Zielvariable eher kategorisch und ordinal ist. Das Modell selbst wurde mit 100 Bäumen erstellt und hat eine geringe erklärte Varianz, was darauf hinweist, dass es nicht besonders gut in der Vorhersage der Jobzufriedenheit ist. Tatsächlich ist die erklärte Varianz negativ, was bedeutet, dass das Modell sogar schlechter ist als ein einfaches Modell, das immer den Mittelwert der Zielvariable vorhersagt. Schließlich gibt es beim Versuch, das Modell auf das Testset anzuwenden, einen Fehler, weil die Faktorstufen für die monatlichen Einkommenskategorien zwischen Trainings- und Testdatensatz nicht übereinstimmen. Insgesamt legt die Ausgabe nahe, dass das aktuelle Modell nicht gut geeignet ist und dass weitere Schritte erforderlich sind, um ein wirksames Vorhersagemodell zu erstellen.
+
+
+# 4. Fazit
+
+In der Arbeit habe ich mich intensiv mit dem Thema der Regressionsanalysen im Kontext von Humanressourcen und insbesondere der Jobzufriedenheit beschäftigt. Ich habe versucht, die Beziehung zwischen Jobzufriedenheit und verschiedenen Aspekten wie Gehalt, Arbeitsbedingungen, Mitarbeiterbeziehungen und Arbeitsanforderungen zu erforschen. Überraschenderweise haben sowohl die linearen Regressionsmodelle als auch die komplexeren Modelle wie der Random Forest keine signifikante Beziehung zwischen den untersuchten Variablen und der Jobzufriedenheit gezeigt. Dies gilt sowohl für die Modelle, die MonthlyIncome als kontinuierliche Variable verwenden, als auch für die Modelle, die MonthlyIncome_Cat als kategorische Variable verwenden.
+
+Diese Ergebnisse werfen eine Reihe von Fragen auf. Sie hinterfragen nicht nur die Eignung der Methodik und die Repräsentativität des Datensatzes, sondern weisen auch auf die Komplexität der Jobzufriedenheit als Konstrukt hin. Es ist möglich, dass Jobzufriedenheit von einer Reihe anderer, nicht untersuchter Faktoren beeinflusst wird, was die Notwendigkeit für weitere, umfassende Studien unterstreicht. Darüber hinaus könnte das Fehlen eines klaren Zusammenhangs zwischen den untersuchten Variablen und der Jobzufriedenheit darauf hindeuten, dass diese Aspekte tatsächlich weniger relevant für die Jobzufriedenheit sind, als bisher angenommen.
+
+Auch die Versuche, kategorische Variablen wie MonthlyIncome_Cat zu skalieren, haben sich als problematisch erwiesen. Kategorische Variablen besitzen oft keine "Distanz" zwischen den Kategorien, die sinnvoll skaliert werden könnte. Die Anwendung von Skalierungsmethoden auf solche Variablen kann zu irreführenden oder nicht interpretierbaren Ergebnissen führen.
+
+Insgesamt zeigt die Arbeit, dass die Erforschung der Jobzufriedenheit im Kontext der Humanressourcen und der Organisationspsychologie eine komplexe und multidimensionale Aufgabe ist. Die Ergebnisse unterstreichen die Notwendigkeit einer sorgfältigen Planung, Durchführung und Interpretation von Analysen in diesem komplexen Forschungsfeld. Sie beleuchten auch die Grenzen der ausgewählten Modelle und Methoden und zeigen, wie wichtig es ist, eine Vielzahl von Ansätzen zu verfolgen, um ein umfassendes Verständnis der Dynamiken der Jobzufriedenheit zu erlangen.
+
+
+# 5. Literaturliste
 
 
 

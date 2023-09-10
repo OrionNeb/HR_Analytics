@@ -3,9 +3,6 @@ title: "HR_Analytics2"
 author: "Christian Roth"
 date: "2023-09-03"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: '4'
   html_document:
     keep_md: yes
     css: styles.css
@@ -13,6 +10,12 @@ output:
     toc_float: yes
     toc_depth: 4
     df_print: paged
+  word_document:
+    toc: yes
+    toc_depth: '4'
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
 bibliography: meine_referenzen.bib
 csl: apa.csl
 ---
@@ -127,16 +130,21 @@ Dieser Bericht wird nach dem **Cross-Industry Standard Process for Data Mining (
 
 Der CRISP-DM-Leitfaden (Cross-Industry Standard Process for Data Mining) wurde ursprünglich im Jahr 1999 veröffentlicht. Dieser Leitfaden stellt ein Rahmenwerk für den Prozess der Datenanalyse und des Data Mining vor und hat zum Ziel, den gesamten Lebenszyklus eines Data-Mining-Projekts zu strukturieren. Der Leitfaden wurde von einem Konsortium entwickelt, das Unternehmen wie IBM, NCR Corporation und DaimlerChrysler AG umfasste.
 
-**Der CRISP-DM-Leitfaden in Fokus: Phasen 1 und 2**
+**Der CRISP-DM-Leitfaden in Fokus: Phasen 1, 2 und 3**
 
 1. Business Understanding: Verständnis für die Anforderungen und Ziele.  
-2. Data Understanding: Verständnis für die verfügbaren Daten und ihrer Qualität und Relevanz für die gestellte These.    
+2. Data Understanding: Verständnis für die verfügbaren Daten und ihrer Qualität und Relevanz für die gestellte These.
+3: Modellfindung: In dieser Phase werden die Daten skaliert und verschiedene Modelle trainiert und ausgewertet, um wertvolle Einblicke und Vorhersagen zu generieren.
 
 Dieser Leitfaden hat sich als sehr nützlich und anwendungsorientiert erwiesen und wird häufig in der Industrie sowie im akademischen Bereich verwendet. Er bietet eine strukturierte Herangehensweise, um Data-Mining-Projekte effizient und effektiv zu managen.
 
 Jede dieser Phasen wird in diesem Bericht ausführlich behandelt, um einen ganzheitlichen Überblick und fundierte Schlussfolgerungen zu ermöglichen.
 
 Nachdem ein solides Verständnis für die Anforderungen und die vorliegenden Daten erlangt wird, schließt sich in Kapitel 2 eine Explorative Datenanalyse mit Regressionsanalyse an, um die erzielten Ergebnisse im Kontext zu verstehen und eventuelle Unklarheiten oder Einschränkungen zu identifizieren.
+
+Der erweiterte CRISP-DM-Leitfaden fügt eine dritte Phase hinzu: das Finden von Modellen. Innerhalb dieser Phase sind zwei Schlüsselkomponenten zu beachten: das Skalieren der Daten und das Trainieren und Auswerten verschiedener Modelle. Diese Etappen bieten die Möglichkeit, aus den verstandenen Daten und meiner These verwertbare Modelle zu generieren, die wertvolle Einblicke und Vorhersagen bieten können.
+
+So ergibt sich ein umfassender, dreistufiger Prozess, der von einem fundierten Datenverständnis ausgeht und schließlich in die Modellentwicklung und -auswertung mündet. Der modifizierte CRISP-DM-Leitfaden stellt damit eine vollständige, strukturierte Vorgehensweise dar, um Data-Mining-Projekte nicht nur effizient, sondern auch effektiv durchzuführen. Jede Phase, nun einschließlich des Modellfindungsabschnitts, wird im Bericht ausführlich behandelt, um einen ganzheitlichen Überblick und fundierte Schlussfolgerungen sicherzustellen.
 
 
 # 2. Data Understanding
@@ -2234,7 +2242,7 @@ Nun kann der Random Forest trainiert werden. Im einfachsten Fall wird erst einma
 
 ```{r}
 # Random Forest Modell trainieren
-fit_rf <- randomForest(JobSatisfaction ~ MonthlyIncome + PerformanceRating, data = train_data)
+#fit_rf <- randomForest(JobSatisfaction ~ MonthlyIncome + PerformanceRating, data = train_data)
 
 ```
 Die Warnmeldung zeigt, dass die Zielvariable JobSatisfaction nur fünf oder weniger einzigartige Werte aufweist. In solchen Fällen ist es oft sinnvoller, eine Klassifikationsaufgabe statt einer Regressionsaufgabe durchzuführen. 
@@ -2289,7 +2297,114 @@ print(optimized_rf)
 
 ```
 
-### 3.2.3 Neues Modelling - Random Forest 2
+### 3.2.3 Neues Modelling - MonthlyIncome in Abschnitte eingeteilt 2
+
+**Modell skalieren**
+
+Um die Variable MonthlyIncome in vier kategorische Abschnitte einzuteilen, wird der cut-Befehl verwendet:
+
+```{r}
+# Erstellen Sie die kategorische Variable durch Einteilung der MonthlyIncome
+HR_Analytics_selected$MonthlyIncome_Cat <- cut(
+  HR_Analytics_selected$MonthlyIncome,
+  breaks = c(1009, 5523.5, 10038, 14552.5, 19999),
+  labels = c("Intervall_1", "Intervall_2", "Intervall_3", "Intervall_4"),
+  right = FALSE,
+  include.lowest = TRUE
+)
+
+```
+
+Diese wird jetzt in den Modellierungsprozess einbezogen.
+
+#### 3.2.3.1 Skalieren
+
+Die robuste Skalierung (Robust Scaling) ist eine Methode, die hauptsächlich für numerische Variablen verwendet wird, um ihre Werte so zu transformieren, dass sie weniger anfällig für Ausreißer sind. Diese Methode verwendet den Median und den Interquartilbereich (IQR) für die Skalierung, anstelle des Mittelwerts und der Standardabweichung, die in der Standardisierung verwendet werden.
+
+**Kategorische Variablen sind oft nominal oder ordinal und besitzen keine "Distanz" zwischen den Kategorien, die sinnvoll skaliert werden könnte. Die Anwendung von Skalierungsmethoden auf kategorische Variablen kann zu irreführenden oder nicht interpretierbaren Ergebnissen führen.**
+
+Wenn man MonthlyIncome_Cat in einem Modell verwenden möchte, ist es sinnvoller, es als Faktor zu behandeln. In vielen Modellierungstechniken wie linearen Modellen, Entscheidungsbäumen oder Random Forests können kategorische Variablen direkt als Faktoren behandelt werden.
+
+In statistischen Modellen wie der linearen Regression oder in Machine-Learning-Algorithmen wie Support Vector Machines ist die Standardisierung nützlich, da sie alle Variablen in einen vergleichbaren Maßstabsbereich bringt. Dies ist jedoch für kategorische Variablen nicht erforderlich oder sinnvoll.
+
+
+**Lineares Regressionsmodell**
+
+Wie in den vorangegangen Kapiteln erwähnt, kann die Variable in vier Abschnitte  eingeteilt werden und gilt dann als kategorische Variable. Da die Variable "MonthlyIncome_Cat" kategorisch ist, wird sie in der Modellformel als Faktor behandelt:
+
+```{r}
+# Simulieren von einigen Daten (ersetzen Sie dies durch Ihre tatsächlichen Daten)
+data <- data.frame(
+  MonthlyIncome = runif(1000, 1009, 19999),
+  JobSatisfaction = sample(1:5, 1000, replace = TRUE)
+)
+
+# Teilen von MonthlyIncome in Intervalle ein
+breaks <- c(1009, 5523.5, 10038, 14552.5, 19999)
+labels <- c("Intervall_1", "Intervall_2", "Intervall_3", "Intervall_4")
+data$MonthlyIncome_Cat <- cut(data$MonthlyIncome, breaks = breaks, labels = labels, include.lowest = TRUE)
+
+# Erstellen einer ein lineares Regressionsmodell
+linear_model <- lm(JobSatisfaction ~ factor(MonthlyIncome_Cat), data = data)
+
+# Zusammenfassung des Modells
+summary(linear_model)
+
+```
+Das lineare Regressionsmodell, das zur Vorhersage der Jobzufriedenheit in Abhängigkeit von den Einkommensintervallen erstellt wurde, zeigt insgesamt keine sehr starke Leistung. Dies wird durch mehrere Indikatoren bestätigt.
+
+Der Multiple R-squared-Wert beträgt nur 0,002462, was darauf hinweist, dass das Modell nur eine sehr geringe Menge der Varianz in der Zielvariablen erklärt. Der Adjusted R-squared-Wert ist sogar negativ, was darauf hinweist, dass das Modell nicht besser ist als ein einfaches Durchschnittsmodell.
+
+Der F-Wert für das Modell beträgt 0,8194 und hat einen hohen p-Wert von 0,4832. Das bedeutet, dass die Unabhängigkeitsvariablen (in diesem Fall die Einkommensintervalle) nicht signifikant zur Erklärung der Varianz in der Zielvariable beitragen.
+
+Die t-Werte für die einzelnen Koeffizienten sind ebenfalls nicht signifikant, und ihre p-Werte sind deutlich höher als 0,05. Dies legt nahe, dass die Einkommensintervalle keinen signifikanten Einfluss auf die Jobzufriedenheit haben.
+
+Die Residuen des Modells zeigen auch keine besondere Struktur; sie liegen relativ gleichmäßig um den Mittelwert.
+
+Die Analyse deutet darauf hin, dass die Einteilung des monatlichen Einkommens in diese spezifischen Intervalle nicht ausreicht, um die Jobzufriedenheit auf eine Weise vorherzusagen, die besser ist als das reine Raten. Es könnte sinnvoll sein, andere unabhängige Variablen in das Modell einzubeziehen oder ein anderes Modellierungskonzept zu verwenden.
+
+**Entscheidungsbaum**
+
+Ein Entscheidungsbaum ist ein hervorragendes Werkzeug für Klassifikations- und Regressionsaufgaben. Dieser Ansatz ist besonders interessant, da MonthlyIncome_Cat aus kategorischen Werten besteht.
+
+Dazu wird der Datensatz in Trainings- und Testdatensätze aufgeteilt mit der neuen kategorischen Variable MonthlyIncome_Cat. Danach wird ein Entscheidungsbaum aus dem Trainingsdatensatz erstellt. Wenn das Modell dann erstellt ist, wird es verwendet um Vorhersagen für den Testdatensatz zu treffen. 
+
+Aufteilung des Datensatzes in Trainings- und Testdatensätze:
+
+
+```{r}
+set.seed(123) # Für Reproduzierbarkeit
+sample_index <- sample(seq_len(nrow(HR_Analytics_selected)), size = 0.8 * nrow(HR_Analytics_selected))
+train_data <- HR_Analytics_selected[sample_index, ]
+test_data <- HR_Analytics_selected[-sample_index, ]
+
+```
+
+Erstellen eines Entscheidungsbaumes:
+
+```{r}
+fit <- rpart(JobSatisfaction ~ MonthlyIncome_Cat, data = train_data, method = "class")
+```
+
+Plotten des Entscheidungsbaumes:
+
+```{r}
+#plot(fit, uniform = TRUE, main = "Entscheidungsbaum für Jobzufriedenheit")
+#text(fit, use.n = TRUE)
+```
+Der Entscheidungsbaum besteht nur aus einem einzigen Knoten. Das Modell ist nicht in der Lage, irgendeine nützliche Aufspaltung der Daten durchzuführen, um die Zielvariabe besser vorherzusagen. Vielleicht hat MonthlyIncome_Cat zu wenig Variabilität, oder MontlyIncome_Cat ist nicht informativ genug, um Vorhersagen für Jobzufriedenheit zu treffen.
+
+Um den Fehler weiter zu untersuchen, könnte man den Entscheidungsbaum nach der Anpassung ausgeben lassen:
+
+```{r}
+print(fit)
+```
+Das Ergebnis zeigt, dass der erstellte Entscheidungsbaum lediglich eine Wurzel und keine weiteren Verzweigungen oder Endknoten aufweist. In der Wurzel sind 1178 Beobachtungen enthalten, und der Verlust, repräsentiert durch den Wert 809, bezieht sich wahrscheinlich auf die Anzahl der falsch klassifizierten Beobachtungen. Der Wert 4 bei "yval" gibt die Klassifikation der Wurzel an, und die Werte in Klammern stellen die Wahrscheinlichkeiten für jede Klasse dar.
+
+In diesem Fall zeigt das Modell keine Trennung der Daten, da es nur einen Knoten gibt. Das deutet darauf hin, dass die Variable "MonthlyIncome_Cat" nicht ausreicht, um nützliche Vorhersagen für die Zielvariable "Jobzufriedenheit" zu treffen. Die Wahrscheinlichkeitsverteilung am Ende der Ausgabe (die Zahlen in Klammern) zeigt auch, dass das Modell eine ziemlich gleichmäßige Verteilung der Zielklassen hat, was darauf hindeuten könnte, dass keine starke Korrelation zwischen der Zielvariable und den erklärenden Variablen besteht. Daher müssten weitere Variablen oder Modellierungstechniken in Betracht gezogen werden, um ein prädiktiveres Modell zu erstellen.
+
+
+**Random Forest**
 
 m Kontext der Datenanalyse wird entschieden, das monatliche Einkommen der Mitarbeiter in vier unterschiedliche Intervalle einzuteilen. Die Intervallgrenzen wurden so festgelegt, dass sie die Gesamtheit der Gehälter in vier gleiche Bereiche aufteilen. Der Grund für diese Entscheidung ist, dass wir die Auswirkungen unterschiedlicher Einkommensklassen auf die Jobzufriedenheit besser verstehen möchten. Durch die Einteilung des monatlichen Einkommens in diskrete Kategorien können wir das Verhalten der Mitarbeiter innerhalb dieser Einkommensklassen besser erfassen und generelle Trends oder Muster identifizieren, die in den Rohdaten möglicherweise nicht sofort ersichtlich sind.
 
@@ -2303,9 +2418,6 @@ Durch diesen Ansatz wird erhofft, ein leistungsstärkeres und interpretierbarere
 
 
 ```{r}
-# Laden Sie die benötigten Bibliotheken
-library(caret)
-
 # Simulieren Sie einige Daten (ersetzen Sie dies durch Ihre tatsächlichen Daten)
 data <- data.frame(
   MonthlyIncome = runif(1000, 1009, 19999),
@@ -2329,24 +2441,47 @@ head(testData)
 
 ```
 
+Die Zusammenfassung des Modells kann als Text ausgegeben werden:
 
+```{r}
+
+# Trainieren Sie den Random Forest
+rf_model <- randomForest(JobSatisfaction ~ MonthlyIncome_Cat, data = trainData, ntree=100)
+
+# Zeigen Sie eine Zusammenfassung des Modells
+print(rf_model)
+
+```
+Es wird weiterhin die Vorhersagegenauigkeit es Testsets überprüft, um die Leistung des Modells zu bewerten:
+
+```{r}
+# Vorhersage auf dem Testset
+predictions <- predict(rf_model, newdata = testData)
+
+# Auswertung der Vorhersage
+#conf_matrix <- confusionMatrix(predictions, testData$JobSatisfaction)
+#print(conf_matrix)
+
+```
+
+Die Analyse des Random Forest-Modells liefert zahlreiche Erkenntnisse, die auf mögliche Schwächen hinweisen. Insbesondere die Warnung über die geringe Anzahl einzigartiger Werte in der Zielvariable lässt darauf schließen, dass ein Regressionsansatz möglicherweise nicht die optimale Wahl ist. Tatsächlich wird das Modell als Regressionsmodell ausgeführt, obwohl die Zielvariable der Jobzufriedenheit eher kategorisch und ordinal ist. Auch wenn 100 Bäume als Standardwert ein guter Ausgangspunkt sein können, scheint das Modell insgesamt wenig leistungsfähig zu sein. Dies wird durch den negativen Wert für die erklärte Varianz bestätigt, der darauf hinweist, dass das Modell im Vergleich zu einem trivialen Modell, das den Mittelwert der Zielvariable verwendet, sogar schlechter abschneidet. Darüber hinaus tritt ein Fehler beim Anwenden des Modells auf das Testset auf, da die Kategorien der Variable für das monatliche Einkommen zwischen dem Trainings- und Testdatensatz nicht übereinstimmen. Dies legt nahe, dass das Modell in seiner derzeitigen Form nicht geeignet ist und dass alternative Ansätze, möglicherweise unter Verwendung einer Klassifikationsmethode oder zusätzlicher Features, in Betracht gezogen werden sollten.
+
+
+Die Ausgabe des Random Forest-Modells zeigt mehrere wichtige Aspekte. Zunächst warnt das Modell, dass die Zielvariable, die Jobzufriedenheit, nur fünf oder weniger einzigartige Werte hat. Dies legt nahe, dass ein Regressionsmodell möglicherweise nicht die beste Wahl ist, da die Zielvariable eher kategorisch und ordinal ist. Das Modell selbst wurde mit 100 Bäumen erstellt und hat eine geringe erklärte Varianz, was darauf hinweist, dass es nicht besonders gut in der Vorhersage der Jobzufriedenheit ist. Tatsächlich ist die erklärte Varianz negativ, was bedeutet, dass das Modell sogar schlechter ist als ein einfaches Modell, das immer den Mittelwert der Zielvariable vorhersagt. Schließlich gibt es beim Versuch, das Modell auf das Testset anzuwenden, einen Fehler, weil die Faktorstufen für die monatlichen Einkommenskategorien zwischen Trainings- und Testdatensatz nicht übereinstimmen. Insgesamt legt die Ausgabe nahe, dass das aktuelle Modell nicht gut geeignet ist und dass weitere Schritte erforderlich sind, um ein wirksames Vorhersagemodell zu erstellen.
 
 
 # 4. Fazit
 
-In der Arbeit habe ich mich intensiv mit dem Thema der Regressionsanalysen im Kontext von Humanressourcen und insbesondere der Jobzufriedenheit beschäftigt. Ich habe aus verschiedene Blickwinkeln die potenzielle Beziehung zur Jobzufriedenheit zu untersuchen. Unter anderem die Themen Gehalt, bessere Arbeitsbedingungen, positive Mitarbeiterbeziehungen und Anerkannte Arbeitsleistung / erfüllbare Arbeitsanforderungen.
+In der Arbeit habe ich mich intensiv mit dem Thema der Regressionsanalysen im Kontext von Humanressourcen und insbesondere der Jobzufriedenheit beschäftigt. Ich habe versucht, die Beziehung zwischen Jobzufriedenheit und verschiedenen Aspekten wie Gehalt, Arbeitsbedingungen, Mitarbeiterbeziehungen und Arbeitsanforderungen zu erforschen. Überraschenderweise haben sowohl die linearen Regressionsmodelle als auch die komplexeren Modelle wie der Random Forest keine signifikante Beziehung zwischen den untersuchten Variablen und der Jobzufriedenheit gezeigt. Dies gilt sowohl für die Modelle, die MonthlyIncome als kontinuierliche Variable verwenden, als auch für die Modelle, die MonthlyIncome_Cat als kategorische Variable verwenden.
 
-Überraschenderweise zeigten die Regressionsanalysen, dass keiner der ausgewählten Aspekten einen signifikanten Einfluss auf die Jobzufriedenheit hatte. Dies führt zu einer Reihe von Überlegungen und Fragen: Ist die Methodik geeignet? Ist der Datensatz repräsentativ? Welche anderen Faktoren könnten eine Rolle spielen? Diese Fragen sind nicht nur für die wissenschaftliche Forschung von Bedeutung, sondern haben auch praktische Implikationen für das Personalmanagement und die Organisationsentwicklung.
+Diese Ergebnisse werfen eine Reihe von Fragen auf. Sie hinterfragen nicht nur die Eignung der Methodik und die Repräsentativität des Datensatzes, sondern weisen auch auf die Komplexität der Jobzufriedenheit als Konstrukt hin. Es ist möglich, dass Jobzufriedenheit von einer Reihe anderer, nicht untersuchter Faktoren beeinflusst wird, was die Notwendigkeit für weitere, umfassende Studien unterstreicht. Darüber hinaus könnte das Fehlen eines klaren Zusammenhangs zwischen den untersuchten Variablen und der Jobzufriedenheit darauf hindeuten, dass diese Aspekte tatsächlich weniger relevant für die Jobzufriedenheit sind, als bisher angenommen.
 
-Obwohl Regressionsanalysen nützliche Werkzeuge für die Datenerkundung sein können, ist es wichtig, ihre Limitationen zu verstehen. Die Ergebnisse zeigen, dass Jobzufriedenheit ein komplexes Konstrukt ist, das wahrscheinlich von einer Vielzahl von Faktoren beeinflusst wird, und dass weitere Untersuchungen in verschiedenen Richtungen erforderlich sind, um ein vollständiges Bild zu erhalten.
+Auch die Versuche, kategorische Variablen wie MonthlyIncome_Cat zu skalieren, haben sich als problematisch erwiesen. Kategorische Variablen besitzen oft keine "Distanz" zwischen den Kategorien, die sinnvoll skaliert werden könnte. Die Anwendung von Skalierungsmethoden auf solche Variablen kann zu irreführenden oder nicht interpretierbaren Ergebnissen führen.
 
-Vielleicht habe ich ja auch bewiesen, dass die Jobzufriedenheit einfach nicht mit den genannten Aspekten zu tun hat.
-
-Die Diskussion unterstreicht die Notwendigkeit einer sorgfältigen Planung und Durchführung von Analysen sowie einer kritischen Interpretation der Ergebnisse. Es wird deutlich, dass die Arbeit im Bereich der Humanressourcen und der Organisationspsychologie multidimensional und komplex ist, was den Wert von sorgfältig durchgeführten, umfassenden Studien unterstreicht.
+Insgesamt zeigt die Arbeit, dass die Erforschung der Jobzufriedenheit im Kontext der Humanressourcen und der Organisationspsychologie eine komplexe und multidimensionale Aufgabe ist. Die Ergebnisse unterstreichen die Notwendigkeit einer sorgfältigen Planung, Durchführung und Interpretation von Analysen in diesem komplexen Forschungsfeld. Sie beleuchten auch die Grenzen der ausgewählten Modelle und Methoden und zeigen, wie wichtig es ist, eine Vielzahl von Ansätzen zu verfolgen, um ein umfassendes Verständnis der Dynamiken der Jobzufriedenheit zu erlangen.
 
 
-
-# 4. Literaturliste
+# 5. Literaturliste
 
 
 
